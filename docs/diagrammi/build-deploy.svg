@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" width="960" height="520" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
+  <rect width="960" height="520" rx="14" fill="#0b1020"/>
+  <text x="28" y="40" fill="#e2e8f0" font-size="20" font-weight="700">Dalla modifica al sito online</text>
+  <text x="28" y="64" fill="#94a3b8" font-size="13">Un solo comando, deploy/pubblica.sh, esegue tutta la colonna centrale e si ferma al primo controllo fallito.</text>
+
+  <!-- COLONNA BUILD -->
+  <text x="60" y="106" fill="#38bdf8" font-size="14" font-weight="700">npm run build</text>
+
+  <rect x="60" y="120" width="250" height="60" rx="10" fill="#111a33" stroke="#38bdf8"/>
+  <text x="185" y="144" fill="#e2e8f0" font-size="13" text-anchor="middle">1. prepare-assets.mjs</text>
+  <text x="185" y="164" fill="#94a3b8" font-size="11" text-anchor="middle">copia il wasm, scarica il modello, sha256</text>
+  <path d="M185 184 L185 208" stroke="#475569" stroke-width="2" marker-end="url(#m)"/>
+
+  <rect x="60" y="212" width="250" height="60" rx="10" fill="#111a33" stroke="#38bdf8"/>
+  <text x="185" y="236" fill="#e2e8f0" font-size="13" text-anchor="middle">2. tsc</text>
+  <text x="185" y="256" fill="#94a3b8" font-size="11" text-anchor="middle">controlla i tipi, non produce file</text>
+  <path d="M185 276 L185 300" stroke="#475569" stroke-width="2" marker-end="url(#m)"/>
+
+  <rect x="60" y="304" width="250" height="72" rx="10" fill="#111a33" stroke="#38bdf8"/>
+  <text x="185" y="328" fill="#e2e8f0" font-size="13" text-anchor="middle">3. vite build</text>
+  <text x="185" y="347" fill="#94a3b8" font-size="11" text-anchor="middle">impacchetta, minifica, toglie la telemetria</text>
+  <text x="185" y="364" fill="#94a3b8" font-size="11" text-anchor="middle">nomi firmati dal contenuto</text>
+  <path d="M185 380 L185 404" stroke="#475569" stroke-width="2" marker-end="url(#m)"/>
+
+  <rect x="60" y="408" width="250" height="56" rx="10" fill="#0b1020" stroke="#22c55e"/>
+  <text x="185" y="432" fill="#22c55e" font-size="13" text-anchor="middle" font-weight="700">app/dist/</text>
+  <text x="185" y="450" fill="#94a3b8" font-size="11" text-anchor="middle">il sito pronto, dentro il progetto</text>
+
+  <!-- COLONNA CONTROLLI -->
+  <path d="M318 292 L366 292" stroke="#facc15" stroke-width="2" marker-end="url(#n)"/>
+  <text x="374" y="106" fill="#facc15" font-size="14" font-weight="700">controlli automatici</text>
+  <rect x="374" y="120" width="250" height="344" rx="10" fill="#111a33" stroke="#facc15"/>
+  <text x="394" y="150" fill="#e2e8f0" font-size="12.5">✓ nessuno stile o script in linea</text>
+  <text x="394" y="168" fill="#64748b" font-size="11">    li vieta la CSP: romperebbero il sito</text>
+  <text x="394" y="198" fill="#e2e8f0" font-size="12.5">✓ nessun indirizzo esterno nei file</text>
+  <text x="394" y="216" fill="#64748b" font-size="11">    scansione generica, con una lista</text>
+  <text x="394" y="230" fill="#64748b" font-size="11">    breve di eccezioni innocue</text>
+  <text x="394" y="248" fill="#e2e8f0" font-size="12.5">✓ telemetria MediaPipe assente</text>
+  <text x="394" y="266" fill="#64748b" font-size="11">    odml.pa.googleapis.com non compare</text>
+  <text x="394" y="296" fill="#e2e8f0" font-size="12.5">✓ wasm e modello presenti in dist</text>
+  <text x="394" y="326" fill="#e2e8f0" font-size="12.5">✓ il servizio risponde dopo il riavvio</text>
+  <text x="394" y="356" fill="#e2e8f0" font-size="12.5">✓ la configurazione di Caddy è valida</text>
+  <text x="394" y="396" fill="#f87171" font-size="12" font-weight="700">Un controllo rosso ferma tutto:</text>
+  <text x="394" y="414" fill="#94a3b8" font-size="11.5">il sito online resta quello di prima,</text>
+  <text x="394" y="430" fill="#94a3b8" font-size="11.5">che funziona.</text>
+
+  <!-- COLONNA MESSA IN LINEA -->
+  <path d="M632 292 L680 292" stroke="#22c55e" stroke-width="2" marker-end="url(#o)"/>
+  <text x="688" y="106" fill="#22c55e" font-size="14" font-weight="700">messa in linea</text>
+
+  <rect x="688" y="120" width="240" height="70" rx="10" fill="#111a33" stroke="#22c55e"/>
+  <text x="808" y="146" fill="#e2e8f0" font-size="13" text-anchor="middle">systemctl restart mano</text>
+  <text x="808" y="166" fill="#94a3b8" font-size="11" text-anchor="middle">riavvia deploy/server.mjs</text>
+  <text x="808" y="182" fill="#94a3b8" font-size="11" text-anchor="middle">su 127.0.0.1:8791</text>
+  <path d="M808 194 L808 218" stroke="#475569" stroke-width="2" marker-end="url(#m)"/>
+
+  <rect x="688" y="222" width="240" height="70" rx="10" fill="#111a33" stroke="#22c55e"/>
+  <text x="808" y="248" fill="#e2e8f0" font-size="13" text-anchor="middle">Caddy inoltra il dominio</text>
+  <text x="808" y="268" fill="#94a3b8" font-size="11" text-anchor="middle">configurato una volta sola da</text>
+  <text x="808" y="284" fill="#94a3b8" font-size="11" text-anchor="middle">deploy/attiva-caddy.sh</text>
+  <path d="M808 296 L808 320" stroke="#475569" stroke-width="2" marker-end="url(#m)"/>
+
+  <rect x="688" y="324" width="240" height="64" rx="10" fill="#1e1b4b" stroke="#818cf8"/>
+  <text x="808" y="350" fill="#c7d2fe" font-size="13" text-anchor="middle" font-weight="700">mano.giuseppebosi.com</text>
+  <text x="808" y="370" fill="#94a3b8" font-size="11" text-anchor="middle">online dal 17/09/2026</text>
+
+  <rect x="688" y="404" width="240" height="60" rx="10" fill="#111a33" stroke="#334155"/>
+  <text x="808" y="428" fill="#e2e8f0" font-size="12.5" text-anchor="middle">npm run test:e2e</text>
+  <text x="808" y="448" fill="#94a3b8" font-size="11" text-anchor="middle">la prova finale: deve dire «E2E OK»</text>
+
+  <defs>
+    <marker id="m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/></marker>
+    <marker id="n" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#facc15"/></marker>
+    <marker id="o" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#22c55e"/></marker>
+  </defs>
+</svg>

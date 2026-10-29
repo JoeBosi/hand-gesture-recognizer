@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 440" width="900" height="440" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
+  <rect width="900" height="440" rx="14" fill="#0b1020"/>
+  <text x="28" y="40" fill="#e2e8f0" font-size="20" font-weight="700">Chi usa chi (gli import fra i moduli)</text>
+  <text x="28" y="64" fill="#94a3b8" font-size="13">Cinque file, nessun ciclo: main comanda, gli altri non sanno nulla l'uno dell'altro — tranne HAND_CONNECTIONS.</text>
+
+  <!-- main -->
+  <rect x="330" y="96" width="230" height="64" rx="12" fill="#1e1b4b" stroke="#818cf8" stroke-width="2"/>
+  <text x="445" y="122" fill="#c7d2fe" font-size="15" font-weight="700" text-anchor="middle">main.ts</text>
+  <text x="445" y="144" fill="#94a3b8" font-size="11.5" text-anchor="middle">stato della pagina, ciclo dei fotogrammi</text>
+
+  <!-- quattro moduli -->
+  <rect x="40" y="230" width="180" height="76" rx="12" fill="#111a33" stroke="#38bdf8"/>
+  <text x="130" y="256" fill="#38bdf8" font-size="14" font-weight="700" text-anchor="middle">camera.ts</text>
+  <text x="130" y="276" fill="#cbd5e1" font-size="11.5" text-anchor="middle">accende/spegne la webcam</text>
+  <text x="130" y="294" fill="#64748b" font-size="11" text-anchor="middle">nessuna dipendenza</text>
+
+  <rect x="240" y="230" width="180" height="76" rx="12" fill="#111a33" stroke="#38bdf8"/>
+  <text x="330" y="256" fill="#38bdf8" font-size="14" font-weight="700" text-anchor="middle">tracker.ts</text>
+  <text x="330" y="276" fill="#cbd5e1" font-size="11.5" text-anchor="middle">riconosce mano e gesto</text>
+  <text x="330" y="294" fill="#64748b" font-size="11" text-anchor="middle">@mediapipe/tasks-vision</text>
+
+  <rect x="440" y="230" width="180" height="76" rx="12" fill="#111a33" stroke="#38bdf8"/>
+  <text x="530" y="256" fill="#38bdf8" font-size="14" font-weight="700" text-anchor="middle">filter.ts</text>
+  <text x="530" y="276" fill="#cbd5e1" font-size="11.5" text-anchor="middle">toglie il tremolio</text>
+  <text x="530" y="294" fill="#64748b" font-size="11" text-anchor="middle">nessuna dipendenza</text>
+
+  <rect x="640" y="230" width="180" height="76" rx="12" fill="#111a33" stroke="#38bdf8"/>
+  <text x="730" y="256" fill="#38bdf8" font-size="14" font-weight="700" text-anchor="middle">hand3d.ts</text>
+  <text x="730" y="276" fill="#cbd5e1" font-size="11.5" text-anchor="middle">disegna la mano in 3D</text>
+  <text x="730" y="294" fill="#64748b" font-size="11" text-anchor="middle">three</text>
+
+  <path d="M380 166 L140 224" stroke="#818cf8" stroke-width="1.8" marker-end="url(#i)"/>
+  <path d="M420 166 L335 224" stroke="#818cf8" stroke-width="1.8" marker-end="url(#i)"/>
+  <path d="M470 166 L525 224" stroke="#818cf8" stroke-width="1.8" marker-end="url(#i)"/>
+  <path d="M510 166 L722 224" stroke="#818cf8" stroke-width="1.8" marker-end="url(#i)"/>
+
+  <path d="M640 268 L424 268" stroke="#facc15" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#j)"/>
+  <text x="532" y="332" fill="#facc15" font-size="11.5" text-anchor="middle">hand3d importa da tracker solo la tabella</text>
+  <text x="532" y="348" fill="#facc15" font-size="11.5" text-anchor="middle">HAND_CONNECTIONS (le 21 ossa)</text>
+
+  <rect x="40" y="366" width="820" height="52" rx="10" fill="#111a33" stroke="#334155"/>
+  <text x="62" y="390" fill="#cbd5e1" font-size="12">Perché questa divisione: ogni file ha una sola ragione per cambiare. Sostituire MediaPipe tocca solo tracker.ts,</text>
+  <text x="62" y="408" fill="#cbd5e1" font-size="12">cambiare l&#39;aspetto della mano solo hand3d.ts, e tutto ciò che riguarda la webcam sta in trenta righe di camera.ts.</text>
+
+  <defs>
+    <marker id="i" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#818cf8"/></marker>
+    <marker id="j" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#facc15"/></marker>
+  </defs>
+</svg>

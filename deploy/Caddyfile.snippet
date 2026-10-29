@@ -1,0 +1,53 @@
+# Recognizer-Mano — riproduzione 3D della mano dalla webcam. Sito statico.
+#
+# I file NON sono copiati fuori dal progetto: li serve il servizio `mano` (deploy/server.mjs,
+# unità systemd installata da deploy/attiva-caddy.sh) che legge app/dist dentro la cartella del
+# progetto e ascolta solo su 127.0.0.1:8791. Caddy gira come utente `caddy` e non può attraversare
+# /root, quindi il proxy è il modo per tenere tutto dentro la cartella (portabilità, regola R3).
+mano.giuseppebosi.com {
+    encode zstd gzip
+
+    # Nessuna password: dal 05/10/2026 il sito è aperto a chiunque conosca l'indirizzo (richiesta di
+    # Giuseppe; prima c'era `basic_auth` con utente e password `123`). Le immagini della camera non
+    # lasciano comunque il browser — è la CSP qui sotto a garantirlo, non l'accesso — ma ora le
+    # pagine sono raggiungibili e indicizzabili da chiunque. Per rimetterlo:
+    #     caddy hash-password --plaintext 'nuova-password'
+    # e si aggiunge qui un blocco   basic_auth { utente <impronta> }   (poi deploy/aggiorna-caddy.sh).
+
+    reverse_proxy 127.0.0.1:8791
+
+    header {
+        X-Content-Type-Options nosniff
+        X-Frame-Options DENY
+        Referrer-Policy no-referrer
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        -Server
+    }
+
+    # Le pagine dell'app (tutto tranne /scuola/): camera solo per questa origine, CSP stretta.
+    @app not path /scuola/*
+    header @app {
+        # La camera solo per questa origine; microfono e geolocalizzazione per nessuno.
+        Permissions-Policy "camera=(self), microphone=(), geolocation=()"
+
+        # connect-src 'self' e' la garanzia tecnica dietro "le immagini non lasciano il browser":
+        # la pagina puo' scaricare solo dal proprio dominio (wasm e modello) e non puo' inviare
+        # nulla altrove. 'wasm-unsafe-eval' serve a compilare il runtime WebAssembly di
+        # MediaPipe; non abilita eval() di JavaScript.
+        Content-Security-Policy "default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self'; worker-src 'self' blob:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+    }
+
+    # Il corso per la scuola (dal 11/10/2026, corso-scuola/ → /scuola/mkdocs/ e /scuola/quarto/):
+    # pagine di sola lettura, SENZA camera. I temi di MkDocs (Material) e Quarto mettono script e
+    # stili dentro la pagina, quindi qui 'unsafe-inline' è ammesso; tutto il resto resta chiuso
+    # come nell'app (niente CDN, connect-src 'self', camera vietata).
+    header /scuola/* {
+        Permissions-Policy "camera=(), microphone=(), geolocation=()"
+        Content-Security-Policy "default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+    }
+
+    # Nessun dato personale transita dal server, ma non serve nemmeno tenere log degli accessi.
+    log {
+        output discard
+    }
+}

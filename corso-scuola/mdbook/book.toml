@@ -1,0 +1,16 @@
+# Il corso «La mano al computer» — versione mdBook, da confrontare con MkDocs e Quarto.
+# Le pagine NON si scrivono qui: la fonte unica è corso-scuola/docs/ (formato MkDocs), tradotta da
+# corso-scuola/convertitore/converti.py. Costruire: corso-scuola/costruisci.sh
+[book]
+title = "La mano al computer"
+language = "it"
+src = "pagine"
+
+[output.html]
+site-url = "/scuola/mdbook/"
+additional-css = ["pagine/comune/accessi.css"]
+additional-js = ["pagine/comune/accessi.js"]
+no-section-label = true
+
+[output.html.search]
+enable = true

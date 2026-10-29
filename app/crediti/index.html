@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Le librerie, i modelli e gli strumenti con cui è costruito il sito Mano, con le loro licenze." />
+    <meta name="theme-color" content="#0b1020" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Crediti · Mano</title>
+    <link rel="canonical" href="https://mano.giuseppebosi.com/crediti/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Mano" />
+    <meta property="og:locale" content="it_IT" />
+    <meta property="og:title" content="Crediti · Mano" />
+    <meta property="og:description" content="Le librerie, i modelli e gli strumenti con cui è costruito il sito Mano, con le loro licenze." />
+    <meta property="og:url" content="https://mano.giuseppebosi.com/crediti/" />
+  </head>
+  <body>
+    <nav class="sitenav" aria-label="Pagine del sito">
+      <span class="brand">✋ Mano</span>
+      <a href="/">Mano</a>
+      <a href="/sfida/">Sfida</a>
+      <a href="/onda/">Onda</a>
+      <a href="/corpo/">Corpo</a>
+    </nav>
+    <main>
+      <header class="hero">
+        <p class="eyebrow">Crediti</p>
+        <h1>Con cosa è costruito questo sito</h1>
+        <p class="lede">
+          Il sito si appoggia a librerie e modelli aperti scritti da altri. Qui c'è l'elenco, con la
+          licenza di ognuno e il link alla fonte. Tutti i file sono serviti da questo sito: il browser
+          non scarica nulla da altri indirizzi.
+        </p>
+      </header>
+
+      <h2>Riconoscimento della mano, del corpo e del volto</h2>
+      <ul>
+        <li><a href="https://ai.google.dev/edge/mediapipe/solutions/vision/hand_landmarker/web_js">MediaPipe Tasks Vision</a> 1.0.1 di Google (licenza Apache 2.0): la libreria che, dentro il browser, trova i punti della mano, del corpo e del volto in ogni fotogramma.</li>
+        <li>I modelli di MediaPipe <code>hand_landmarker</code>, <code>gesture_recognizer</code>, <code>pose_landmarker_lite</code> e <code>face_landmarker</code> di Google (licenza Apache 2.0): le reti neurali già addestrate che la libreria usa. Le schede di ogni modello sono nella <a href="https://ai.google.dev/edge/mediapipe/solutions/guide">documentazione di MediaPipe</a>.</li>
+      </ul>
+
+      <h2>Grafica e costruzione delle pagine</h2>
+      <ul>
+        <li><a href="https://threejs.org/">three.js</a> 0.186 (licenza MIT): la mano e lo scheletro in 3D.</li>
+        <li><a href="https://vite.dev/">Vite</a> (licenza MIT) e <a href="https://www.typescriptlang.org/">TypeScript</a> (licenza Apache 2.0): compilano il codice delle pagine.</li>
+        <li><a href="https://nodejs.org/">Node.js</a> (licenza MIT): il piccolo server che consegna i file.</li>
+      </ul>
+
+      <h2>Il corso per la scuola</h2>
+      <ul>
+        <li><a href="https://p5js.org/">p5.js</a> (licenza LGPL 2.1) e il suo <a href="https://editor.p5js.org/">editor online</a>: l'ambiente in cui gli studenti scrivono il codice.</li>
+        <li><a href="https://ml5js.org/">ml5.js</a> 1.4.0 (licenza MIT), con il modello HandPose di Google: il riconoscimento della mano usato nelle lezioni.</li>
+        <li>Le tre versioni del sito del corso sono costruite con <a href="https://www.mkdocs.org/">MkDocs</a> 1.6.1 (licenza BSD 2) e il tema <a href="https://squidfunk.github.io/mkdocs-material/">Material for MkDocs</a> 9.7.7 (licenza MIT), con <a href="https://quarto.org/">Quarto</a> 1.10.19 (licenza MIT, con Bootstrap e Bootstrap Icons, licenza MIT) e con <a href="https://rust-lang.github.io/mdBook/">mdBook</a> 0.5.4 (licenza MPL 2.0, con i caratteri Open Sans e Source Code Pro, highlight.js e Font Awesome, ognuno con la sua licenza libera).</li>
+        <li>Le emoji del corso nella versione MkDocs sono <a href="https://github.com/jdecked/twemoji">Twemoji</a> (grafica con licenza CC BY 4.0).</li>
+      </ul>
+
+      <h2>Fonti</h2>
+      <ul>
+        <li>La numerazione dei 21 punti della mano e dei 33 punti del corpo è quella della documentazione di MediaPipe: <a href="https://ai.google.dev/edge/mediapipe/solutions/vision/hand_landmarker">mani</a>, <a href="https://ai.google.dev/edge/mediapipe/solutions/vision/pose_landmarker">corpo</a>.</li>
+        <li>Le regole sulla webcam nel browser vengono da MDN: <a href="https://developer.mozilla.org/it/docs/Web/API/MediaDevices/getUserMedia">getUserMedia</a>.</li>
+      </ul>
+
+      <h2>Licenze di questo sito</h2>
+      <p>
+        I testi sono pubblicati con licenza <a href="https://creativecommons.org/licenses/by/4.0/deed.it">Creative Commons Attribuzione 4.0</a>:
+        si possono copiare e modificare citando l'autore. Il codice è pubblicato con licenza
+        <a href="https://opensource.org/license/mit">MIT</a>.
+      </p>
+    </main>
+    <script type="module" src="/src/documento.ts"></script>
+  </body>
+</html>

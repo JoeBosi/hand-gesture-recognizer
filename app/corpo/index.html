@@ -1,0 +1,76 @@
+<!doctype html>
+<!--
+  corpo/index.html — la seconda demo: il corpo intero.
+
+  È la copia della pagina della mano con tre differenze: il titolo, i testi, e lo script che la
+  anima (`/src/corpo.ts` invece di `/src/main.ts`). Gli id degli elementi sono gli stessi apposta,
+  così i due file TypeScript si assomigliano riga per riga e il foglio di stile è uno solo.
+
+  Regola della CSP di produzione: niente <script> scritti qui dentro, niente attributi style="",
+  nessun indirizzo esterno.
+-->
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="La webcam guarda il tuo corpo e ne riproduce lo scheletro sullo schermo, tutto nel browser." />
+    <meta name="theme-color" content="#0b1020" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Corpo · Mano</title>
+    <link rel="canonical" href="https://mano.giuseppebosi.com/corpo/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Mano" />
+    <meta property="og:locale" content="it_IT" />
+    <meta property="og:title" content="Corpo · Mano" />
+    <meta property="og:description" content="La webcam guarda il tuo corpo e ne riproduce lo scheletro sullo schermo, tutto nel browser." />
+    <meta property="og:url" content="https://mano.giuseppebosi.com/corpo/" />
+  </head>
+
+  <body data-state="idle">
+    <canvas id="scene" aria-label="Riproduzione 3D dello scheletro del corpo"></canvas>
+
+    <header class="topbar">
+      <div class="brand">🕺 Corpo</div>
+      <nav class="nav" aria-label="Pagine del sito">
+        <a href="/">Mano</a>
+        <a href="/sfida/">Sfida</a>
+        <a href="/onda/">Onda</a>
+        <a href="/corpo/" aria-current="page">Corpo</a>
+      </nav>
+      <div class="destra">
+        <div class="status" id="status" role="status" aria-live="polite">Camera spenta</div>
+        <button type="button" class="icona" id="schermo-intero" aria-pressed="false">⛶ Schermo intero</button>
+      </div>
+    </header>
+
+    <section class="intro" id="intro">
+      <h1>Mettiti davanti alla webcam</h1>
+      <p>
+        Testa, braccia, busto e gambe vengono riprodotti qui come uno scheletro stilizzato.
+        Allontanati di un paio di metri: più corpo entra nell'inquadratura, più la figura è completa.
+      </p>
+      <button type="button" class="primary" id="start">Accendi la camera</button>
+      <p class="privacy">
+        Tutto avviene nel tuo browser: le immagini della camera non vengono inviate a nessun server
+        né salvate.
+      </p>
+      <p class="error" id="error" hidden></p>
+    </section>
+
+    <aside class="preview" id="preview" hidden>
+      <video id="video" autoplay muted playsinline></video>
+      <canvas id="overlay"></canvas>
+    </aside>
+
+    <footer class="hud" id="hud" hidden>
+      <div class="gestures" id="gestures"></div>
+      <div class="controls">
+        <span class="metric" id="fps">– fps</span>
+        <button type="button" id="toggle-preview" aria-pressed="true">Nascondi camera</button>
+        <button type="button" id="stop">Spegni camera</button>
+      </div>
+    </footer>
+
+    <script type="module" src="/src/corpo.ts"></script>
+  </body>
+</html>

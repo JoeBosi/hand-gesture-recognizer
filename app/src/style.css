@@ -1,0 +1,422 @@
+/*
+  style.css — l'aspetto della pagina.
+
+  Tutto scritto a mano, senza framework CSS (niente Tailwind, Bootstrap...): gli elementi da
+  vestire sono meno di dieci, e un framework aggiungerebbe un pacchetto, una fase di build in più
+  e migliaia di regole inutilizzate per risparmiare duecento righe.
+
+  Il criterio dell'impaginazione: la tela 3D occupa tutta la finestra, tutto il resto le galleggia
+  sopra in `position: fixed`. Così, quando la finestra cambia dimensione, non c'è nessun calcolo da
+  rifare: l'unico elemento che si ridimensiona davvero è il canvas, e se ne occupa hand3d.ts.
+*/
+
+/* Variabili di colore: definite una volta, usate ovunque. Cambiare tema vuol dire toccare
+   solo questo blocco. */
+:root {
+  /* Dice al browser che il sito è scuro: così anche i widget nativi (barre di scorrimento,
+     riquadri di messa a fuoco) usano la variante scura. */
+  color-scheme: dark;
+  --bg-1: #0b1020; /* blu notte, il fondo */
+  --bg-2: #1e1b4b; /* viola, l'alone al centro */
+  --text: #e2e8f0;
+  --muted: #a8b4c6; /* testo secondario (un tono più chiaro dal 08/10/2026: contrasto) */
+  --accent: #38bdf8; /* azzurro: lo stesso della mano destra in 3D */
+  --accent-2: #f472b6; /* rosa: lo stesso della mano sinistra */
+  --panel: rgb(15 23 42 / 0.72); /* fondo semitrasparente dei riquadri */
+  --border: rgb(148 163 184 / 0.22);
+  /* Font di sistema: nessun carattere da scaricare, quindi nessuna richiesta a Google Fonts
+     (vietata dalla CSP) e nessun ritardo prima che il testo compaia. */
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Le misure comprendono bordo e riempimento: evita sorprese con le larghezze in percentuale. */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  /* La pagina non scorre mai: è un'applicazione a schermo intero, non un documento. */
+  overflow: hidden;
+}
+
+body {
+  color: var(--text);
+  /* Sfumatura radiale: un alone di luce dietro la mano, per staccarla dallo sfondo. */
+  background: radial-gradient(ellipse at 50% 35%, var(--bg-2) 0%, var(--bg-1) 70%);
+}
+
+/* L'attributo `hidden` dell'HTML deve vincere anche sugli elementi che hanno `display: flex`.
+   È così che main.ts accende e spegne intro, anteprima e barra dei comandi. */
+[hidden] {
+  display: none !important;
+}
+
+/* La tela 3D: ancorata ai quattro lati della finestra, sotto a tutto il resto. */
+#scene {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block; /* un canvas è inline: senza questo resterebbe una riga di testo sotto */
+}
+
+/* --- Barra in alto: marchio a sinistra, stato della camera a destra --- */
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  /* I clic attraversano la barra e arrivano alla scena: è decorazione, non un comando. */
+  pointer-events: none;
+}
+
+.brand {
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 0.02em;
+}
+
+/* Navigazione fra le tre pagine (mano, corpo, tutorial). La barra che la contiene lascia passare
+   i clic, quindi qui vanno riattivati: altrimenti i link non si potrebbero cliccare. */
+.nav {
+  display: flex;
+  /* Con sei pagine i link non stanno più su una riga sola su schermo stretto: vanno a capo
+     invece di traboccare fuori dalla finestra. */
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  pointer-events: auto;
+}
+
+.nav a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.85rem;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+}
+
+.nav a:hover {
+  color: var(--text);
+  background: var(--panel);
+}
+
+/* La pagina aperta resta evidenziata: aria-current è insieme l'informazione per il lettore di
+   schermo e il gancio per lo stile, senza bisogno di una classe in più. */
+.nav a[aria-current="page"] {
+  color: var(--text);
+  background: var(--panel);
+  border-color: var(--border);
+}
+
+.status {
+  font-size: 0.85rem;
+  color: var(--muted);
+  padding: 4px 10px;
+  border-radius: 999px; /* pillola: un raggio enorme viene comunque limitato all'altezza */
+  background: var(--panel);
+  border: 1px solid var(--border);
+}
+
+/* Camera accesa: la scritta diventa rossa. È l'indicatore che qualcosa sta riprendendo. */
+.status.live {
+  color: #fecaca;
+  border-color: rgb(248 113 113 / 0.5);
+}
+
+/* --- Riquadro iniziale, al centro dello schermo --- */
+.intro {
+  position: fixed;
+  /* inset:0 + margin:auto + altezza "quanto basta" = centrato in verticale e orizzontale. */
+  inset: 0;
+  margin: auto;
+  /* Largo 460px sul desktop, ma sempre con 16px di respiro ai lati sul telefono. */
+  width: min(460px, calc(100% - 32px));
+  height: fit-content;
+  padding: 28px 24px;
+  text-align: center;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  backdrop-filter: blur(10px); /* sfoca ciò che c'è dietro: dà profondità al riquadro */
+}
+
+.intro h1 {
+  margin: 0 0 8px;
+  font-size: 1.5rem;
+}
+
+.intro p {
+  margin: 0 0 18px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.intro .privacy {
+  margin: 18px 0 0;
+  font-size: 0.82rem;
+}
+
+/* Riga d'errore: rosso chiaro. Gli !important superano le regole di `.intro p` qui sopra
+   senza dover scrivere un selettore più contorto. */
+.error {
+  margin: 14px 0 0 !important;
+  color: #fca5a5 !important;
+}
+
+/* --- Pulsanti --- */
+button {
+  font: inherit; /* i pulsanti non ereditano il font: va detto esplicitamente */
+  color: var(--text);
+  background: rgb(51 65 85 / 0.7);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: rgb(71 85 105 / 0.8);
+}
+
+/* focus-visible e non focus: il contorno compare a chi naviga da tastiera, non a ogni clic. */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Il pulsante principale: sfumatura dai due colori delle mani, testo scuro per il contrasto. */
+button.primary {
+  font-weight: 600;
+  font-size: 1.05rem;
+  padding: 12px 22px;
+  border: none;
+  color: #0b1020;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+}
+
+/* Durante il caricamento del modello main.ts disattiva il pulsante: il cursore lo dice. */
+button:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+/* --- Anteprima della webcam, in basso a destra --- */
+.preview {
+  position: fixed;
+  right: 16px;
+  bottom: 84px; /* sopra la barra dei comandi */
+  width: min(240px, 38vw);
+  aspect-ratio: 4 / 3; /* l'altezza segue la larghezza: niente calcoli in JavaScript */
+  border-radius: 14px;
+  overflow: hidden; /* ritaglia gli angoli del video, che di suo è rettangolare */
+  border: 1px solid var(--border);
+  background: #000;
+}
+
+/* Anteprima come uno specchio: video e disegno dei landmark specchiati insieme.
+   Il ribaltamento è solo visivo — i numeri che arrivano da MediaPipe restano quelli della
+   ripresa vera, ed è per questo che main.ts deve invertire destra e sinistra (vedi realSide). */
+.preview video,
+.preview canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* riempie il riquadro tagliando l'eccesso, senza deformare l'immagine */
+  transform: scaleX(-1);
+}
+
+/* --- Barra dei comandi in basso --- */
+.hud {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  display: flex;
+  flex-wrap: wrap; /* se non ci sta, i comandi vanno a capo invece di traboccare */
+  gap: 10px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  backdrop-filter: blur(10px);
+}
+
+/* Qui main.ts scrive i gesti riconosciuti, per esempio "✋ Mano aperta". */
+.gestures {
+  font-size: 1rem;
+}
+
+.controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.metric {
+  font-size: 0.8rem;
+  color: var(--muted);
+  /* Cifre tutte della stessa larghezza: il contatore dei fps non fa ballare i pulsanti
+     accanto ogni volta che cambia numero. */
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap; /* "24 fps" non va mai a capo in mezzo */
+}
+
+/* Telefono in verticale: i controlli vanno su due righe, l'anteprima sale sotto la barra.
+   Senza questa regola l'anteprima finiva sopra la barra dei comandi e la copriva. */
+@media (max-width: 600px) {
+  /* Su schermo stretto la barra in alto non ci sta in una riga: i link restano, ma più compatti
+     e senza il nome del sito accanto. */
+  .brand {
+    font-size: 0.95rem;
+  }
+  .nav a {
+    font-size: 0.78rem;
+    padding: 3px 8px;
+  }
+  .status {
+    font-size: 0.8rem;
+  }
+  .preview {
+    top: 58px;
+    bottom: auto;
+    right: 12px;
+    width: 34vw;
+  }
+  .hud {
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+  }
+  .controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+/* ============================================================================================
+   Schermo intero (dal 06/10/2026)
+   ============================================================================================
+   Il pulsante e lo stato stanno insieme a destra nella barra in alto. */
+.destra {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  /* La barra lascia passare i clic alla scena (`pointer-events: none`): qui vanno riattivati,
+     altrimenti il pulsante non si potrebbe premere. */
+  pointer-events: auto;
+}
+
+button.icona {
+  padding: 4px 10px;
+  font-size: 0.85rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* In schermo intero: via il menu e il marchio (restano lo stato e il pulsante per uscire), via i
+   margini attorno all'immagine. La classe la mette schermo-intero.ts sull'<html>.
+   Specificità: due classi, così vince sulle regole `.stage`/`.split`/`.hud` delle singole pagine. */
+.schermo-intero .nav,
+.schermo-intero .brand {
+  display: none;
+}
+
+.schermo-intero .topbar {
+  justify-content: flex-end;
+  padding: 6px 10px;
+}
+
+/* L'immagine prende TUTTO il monitor: palcoscenico e pannelli diventano `fixed` a tutta finestra, e
+   le due barre (in alto: stato e pulsante; in basso: i comandi) le galleggiano sopra, semitrasparenti.
+   Misurato sulla sfida a 1280×800: in finestra l'immagine era 1248×670, tenendo le barre nel
+   flusso a schermo intero diventava 1280×704 (solo +5%), con le barre sovrapposte occupa tutto. */
+.schermo-intero .stage,
+.schermo-intero .split {
+  position: fixed;
+  inset: 0;
+  margin: 0;
+}
+
+.schermo-intero .topbar {
+  position: fixed;
+  z-index: 20;
+  background: linear-gradient(rgb(11 16 32 / 0.65), transparent);
+}
+
+.schermo-intero .hud {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  margin: 0;
+  border-radius: 0;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 0;
+  background: rgb(15 23 42 / 0.72);
+}
+
+.schermo-intero .stage video,
+.schermo-intero .stage canvas {
+  border-radius: 0;
+}
+
+.schermo-intero .pane,
+.schermo-intero .preview {
+  border-radius: 0;
+}
+
+@media (max-width: 600px) {
+  button.icona {
+    padding: 3px 8px;
+    font-size: 0.75rem;
+  }
+}
+
+
+/* Telefono stretto (audit 08/10/2026): la barra in alto andava su tre righe. Del marchio restano
+   solo i simboli, il menu sta su una riga sola e scorre di lato se non ci sta. */
+@media (max-width: 480px) {
+  .topbar {
+    gap: 6px;
+    padding: 8px 10px;
+    min-width: 0; /* nelle pagine a griglia la barra è un elemento della griglia: senza, non si stringe */
+  }
+  .brand {
+    white-space: nowrap;
+    max-width: 4.2em;
+    overflow: hidden;
+  }
+  .nav {
+    flex: 1 1 auto;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    min-width: 0;
+    scrollbar-width: none;
+  }
+  .destra {
+    flex-shrink: 0;
+    gap: 4px;
+  }
+  button.icona .lungo {
+    display: none;
+  }
+  .status {
+    white-space: nowrap;
+  }
+}

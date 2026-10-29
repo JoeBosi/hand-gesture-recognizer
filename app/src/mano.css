@@ -1,0 +1,207 @@
+/*
+  mano.css — lo schermo diviso della pagina principale.
+
+  Qui c'è SOLO ciò che cambia rispetto a style.css, che resta il vestito comune del sito (barra in
+  alto, riquadro di avvio, pulsanti, barra dei comandi) ed è usato anche da /corpo/ e /sfida/.
+  Per questo le regole che riguardano l'impaginazione della vecchia anteprima (`.preview` come
+  riquadrino galleggiante) e della tela a schermo intero (`#scene`) vengono SOVRASCRITTE qui
+  invece che modificate là: /corpo/ usa ancora quelle originali, e cambiarle la romperebbe.
+
+  L'impaginazione è una griglia a tre righe — barra, contenuto, comandi —
+  invece di elementi `fixed` con le altezze scritte a mano. Motivo concreto: con sei voci nel menu
+  la barra in alto passa da 54 a 82 px su un telefono, e qualunque numero fissato a mano taglia
+  qualcosa. Con `auto 1fr auto` non c'è niente da indovinare.
+*/
+
+body {
+  display: grid;
+  grid-template-rows: auto 1fr auto; /* barra in alto · i due pannelli · barra dei comandi */
+  height: 100%;
+}
+
+/* Le due barre tornano nel flusso normale: è la griglia a metterle in cima e in fondo, e solo
+   così la riga centrale può misurare lo spazio che avanza. In style.css sono `fixed` perché lì
+   galleggiano sopra una tela a schermo intero. */
+.topbar,
+.hud {
+  position: static;
+}
+
+.hud {
+  margin: 0 16px 16px;
+}
+
+/* --- I due pannelli affiancati --- */
+/* `grid-auto-flow: column` + `grid-auto-columns: 1fr` invece di `grid-template-columns: 1fr 1fr`:
+   così le colonne le conta la griglia, una per ogni figlio VISIBILE. Quando l'utente nasconde la
+   camera il pannello sparisce (`hidden` → `display: none`) e ne resta una sola, quindi la mano 3D
+   si prende tutta la larghezza da sé. Con le colonne dichiarate a mano sarebbe rimasta metà
+   schermo vuota, e sarebbe servito un `:has()` per rimediare. */
+.split {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 14px;
+  min-height: 0; /* senza questo una riga `1fr` non scende sotto il suo contenuto */
+  margin: 0 16px;
+}
+
+.pane {
+  position: relative; /* è l'ancora dei figli in `position: absolute` */
+  min-width: 0;
+  min-height: 0;
+}
+
+/* La tela 3D riempie il suo pannello invece della finestra intera.
+   scene3d.ts misura già `canvas.clientWidth/clientHeight`, quindi si adatta da solo. */
+#scene {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block; /* un canvas è inline: senza questo resterebbe una riga di testo sotto */
+}
+
+/* --- Il pannello della camera --- */
+/* Annulla il riquadrino galleggiante di style.css: niente più posizione fissa, niente larghezza
+   di 240 px, niente proporzioni imposte. Il pannello è grande quanto la sua metà di schermo. */
+.preview {
+  position: relative;
+  right: auto;
+  bottom: auto;
+  top: auto;
+  width: auto;
+  aspect-ratio: auto;
+  overflow: visible;
+  /* Un fondo e un bordo leggeri: `object-fit: contain` lascia delle bande vuote quando le
+     proporzioni della webcam non coincidono con quelle del pannello, e senza niente attorno
+     l'immagine sembrava appoggiata sul nulla e l'avviso staccato da lei. Così il pannello si
+     legge come un oggetto solo. */
+  background: rgb(15 23 42 / 0.45);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+/* Video e tela: sovrapposti, stessa area, stesse proporzioni, specchiati INSIEME.
+   `object-fit: contain` mostra tutta l'immagine senza tagliarla: nel riquadrino piccolo si usava
+   `cover`, che ritagliava i bordi — accettabile per un'anteprima da 240 px, non più adesso che
+   quel pannello serve proprio a capire cosa resta fuori inquadratura. */
+.preview video,
+.preview canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform: scaleX(-1);
+  border-radius: 14px;
+}
+
+/* --- L'avviso "avvicinati" --- */
+/* Sta in basso nel pannello della camera, sopra l'immagine. Non è specchiato (è testo!), quindi
+   NON eredita il `transform` qui sopra: è figlio di `.preview`, non uno dei due elementi. */
+.avviso {
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 8px 16px;
+  max-width: calc(100% - 24px);
+  text-align: center;
+  /* Grande davvero: era 0,95rem e su metà schermo passava inosservato, che è il contrario di
+     quello che serve a un avviso. Chi sta a un braccio dalla webcam lo deve leggere senza
+     cercarlo. */
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #0b1020;
+  background: #fbbf24; /* ambra piena, non un velo scuro: è il colore che si stacca di più dal fondo */
+  border: none;
+  border-radius: 999px;
+  box-shadow: 0 6px 24px rgb(0 0 0 / 0.45);
+  animation: avviso-pulsa 1400ms ease-in-out infinite;
+}
+
+@keyframes avviso-pulsa {
+  0%,
+  100% {
+    transform: translateX(-50%) scale(1);
+  }
+  50% {
+    transform: translateX(-50%) scale(1.05);
+  }
+}
+
+/* --- La lettura: cosa sta vedendo il riconoscitore, sotto la mano 3D --- */
+/* Era una riga piccola e grigia nell'angolo della barra dei comandi. È invece l'informazione che
+   dice se il gioco sta funzionando, quindi sta sotto il pannello che si guarda ed è grande. */
+.lettura {
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 10px 22px;
+  max-width: calc(100% - 20px);
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--text);
+  background: rgb(15 23 42 / 0.9);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  backdrop-filter: blur(8px);
+}
+
+/* Quando non c'è nessuna mano il tono si abbassa: è uno stato normale, non un guasto.
+   La classe la mette main.ts. */
+.lettura.vuota {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+/* Telefono in verticale: i pannelli vanno uno sopra l'altro, camera sopra e mano 3D sotto. */
+/* Chi ha chiesto al sistema di ridurre le animazioni non deve vedere niente che pulsa: l'avviso
+   resta fermo, e si vede comunque perché è giallo pieno su fondo scuro. */
+@media (prefers-reduced-motion: reduce) {
+  .avviso {
+    animation: none;
+  }
+}
+
+@media (max-width: 860px) {
+  .split {
+    grid-auto-flow: row;
+    grid-auto-rows: 1fr;
+    gap: 10px;
+    margin: 0 10px;
+  }
+  .hud {
+    margin: 0 10px 10px;
+  }
+  .avviso {
+    font-size: 1rem;
+    padding: 8px 14px;
+  }
+  .lettura {
+    font-size: 1.05rem;
+    padding: 7px 14px;
+  }
+  .lettura.vuota {
+    font-size: 0.9rem;
+  }
+}
+
+/* A schermo intero la barra dei comandi galleggia sull'immagine: le due scritte in basso salgono
+   sopra di lei, altrimenti ci finirebbero sotto. */
+.schermo-intero .avviso,
+.schermo-intero .lettura {
+  bottom: 74px;
+}
+
+/* A camera spenta la lettura è vuota: niente pillola vuota in mezzo allo schermo (audit 08/10/2026). */
+.lettura:empty {
+  display: none;
+}

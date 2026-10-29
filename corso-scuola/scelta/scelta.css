@@ -1,0 +1,9 @@
+body { margin: 0; font: 1.1rem/1.5 system-ui, sans-serif; background: #f6f7fb; color: #1e293b; }
+main { max-width: 36rem; margin: 0 auto; padding: 3rem 16px; }
+ul { list-style: none; padding: 0; display: grid; gap: 12px; }
+a { display: block; padding: 16px 20px; background: #fff; border: 1px solid #cbd5e1; border-radius: 10px;
+    color: #3f51b5; font-weight: 600; text-decoration: none; }
+a:hover, a:focus-visible { border-color: #3f51b5; }
+footer { text-align: center; font-size: 0.85rem; color: #64748b; padding: 0 16px 40px; }
+footer p { margin: 4px 0; }
+footer a { display: inline; padding: 0; border: 0; background: none; color: inherit; font-weight: 400; text-decoration: underline; }

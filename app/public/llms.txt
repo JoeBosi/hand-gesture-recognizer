@@ -1,0 +1,25 @@
+# Mano
+
+> Sito didattico in italiano di Giuseppe Bosi, Dottore in Ingegneria Elettronica (V.O.), Professore di Scienze e Tecnologie Informatiche. La webcam riconosce mani, gesti e corpo con MediaPipe, tutto nel browser: le immagini non lasciano il computer. Ci sono quattro applicazioni da provare, un tutorial, un corso di TypeScript e un corso per la scuola con p5.js e ml5.js. Testi con licenza CC BY 4.0, codice con licenza MIT.
+
+## Applicazioni
+- [Mano](https://mano.giuseppebosi.com/): la webcam guarda la mano e la riproduce in 3D sullo schermo, riconoscendo i gesti.
+- [Sfida](https://mano.giuseppebosi.com/sfida/): sasso, carta, forbici fra due persone davanti alla webcam.
+- [Onda](https://mano.giuseppebosi.com/onda/): mani unite per 4 secondi caricano una palla di energia e lanciano un raggio.
+- [Corpo](https://mano.giuseppebosi.com/corpo/): i 33 punti del corpo e lo scheletro riprodotto sullo schermo.
+
+## Guide e corsi
+- [Tutorial](https://mano.giuseppebosi.com/tutorial/): come si programma da zero una web app che riconosce la mano dalla webcam.
+- [Corso di TypeScript](https://mano.giuseppebosi.com/corso/): 10 lezioni, dalla prima variabile alla mano che segue la webcam.
+- [La mano al computer, corso per la scuola](https://mano.giuseppebosi.com/scuola/): p5.js e ml5.js per chi conosce il C, in tre versioni (MkDocs, Quarto, mdBook).
+
+## Altri corsi dello stesso autore
+- [Giuseppe Bosi](https://www.giuseppebosi.com): sito dell'autore.
+- [LinkedIn di Giuseppe Bosi](https://www.linkedin.com/in/giuseppebosi): profilo dell'autore.
+- [Corso JSON & API](https://corso-api-json.giuseppebosi.com/)
+- [Corso pratico di llama.cpp](https://corso-llamacpp.giuseppebosi.com/)
+- [Costruisci la tua memoria AI](https://corso-rag.giuseppebosi.com/)
+
+## Optional
+- [Crediti](https://mano.giuseppebosi.com/crediti/): librerie, modelli e licenze.
+- [Privacy](https://mano.giuseppebosi.com/privacy/): cosa raccoglie il sito e dove va.

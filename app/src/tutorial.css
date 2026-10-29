@@ -1,0 +1,572 @@
+/*
+  tutorial.css — l'aspetto della pagina /tutorial/.
+
+  A differenza delle altre due pagine del sito (che sono applicazioni a schermo intero, con la
+  tela 3D sotto e i comandi che le galleggiano sopra) questa è un DOCUMENTO: si scorre, si legge,
+  si torna indietro. Quindi qui valgono regole tipografiche, non regole di interfaccia:
+
+    - una sola colonna di testo, larga al massimo 760px e centrata: oltre i 90 caratteri per riga
+      l'occhio fatica a ritrovare l'inizio della riga successiva;
+    - testo di 17px con interlinea 1.75: è un testo lungo, si legge per minuti, non per secondi;
+    - i blocchi di codice possono scorrere in orizzontale da soli, senza trascinare la pagina.
+
+  Vincoli imposti dalla Content-Security-Policy del sito (deploy/Caddyfile.snippet):
+  nessuno stile scritto dentro la pagina, nessun attributo style="", nessun carattere tipografico
+  scaricato da internet. Tutto sta qui dentro e usa i font già presenti sul computer di chi legge.
+*/
+
+/* --------------------------------------------------------------------------------------------
+   1. Variabili: gli stessi colori delle altre pagine, così il sito sembra una cosa sola.
+   -------------------------------------------------------------------------------------------- */
+:root {
+  /* Dice al browser che il sito è scuro: barre di scorrimento e riquadri di messa a fuoco
+     nativi si adeguano da soli. */
+  color-scheme: dark;
+
+  --bg-1: #0b1020; /* blu notte: il fondo della pagina */
+  --bg-2: #1e1b4b; /* viola: l'alone in cima, come sulle altre pagine */
+  --text: #e2e8f0;
+  --muted: #94a3b8; /* testo secondario: didascalie, note, numeri */
+  --accent: #38bdf8; /* azzurro: lo stesso della mano destra in 3D */
+  --accent-2: #f472b6; /* rosa: lo stesso della mano sinistra */
+  --panel: rgb(15 23 42 / 0.72); /* fondo semitrasparente dei riquadri */
+  --border: rgb(148 163 184 / 0.22);
+
+  /* Font di sistema: nessuna richiesta a Google Fonts (la CSP la bloccherebbe) e nessun
+     tremolio del testo che cambia carattere a metà caricamento. */
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+/* Le misure comprendono bordo e riempimento: niente sorprese con le larghezze in percentuale. */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  /* Cliccando una voce dell'indice la pagina scorre invece di saltare di colpo. */
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  /* 17px: un filo più del predefinito. Su un testo lungo si sente. */
+  font-size: 17px;
+  line-height: 1.75;
+  color: var(--text);
+  background: var(--bg-1);
+  /* L'alone viola in alto richiama lo sfondo delle altre pagine senza disturbare la lettura:
+     `no-repeat` più l'altezza fissa lo confinano alla prima schermata. */
+  background-image: radial-gradient(ellipse 120% 60% at 50% 0%, var(--bg-2) 0%, rgb(11 16 32 / 0) 70%);
+  background-repeat: no-repeat;
+  -webkit-text-size-adjust: 100%; /* iOS non deve reimpostare la dimensione del testo da solo */
+}
+
+/* Un elemento raggiunto da un'ancora non deve finire sotto la barra di navigazione fissa. */
+:target {
+  scroll-margin-top: 80px;
+}
+
+/* --------------------------------------------------------------------------------------------
+   2. La barra di navigazione fra le tre pagine del sito.
+   -------------------------------------------------------------------------------------------- */
+.sitenav {
+  position: sticky; /* resta in cima mentre si scorre: il tutorial è lungo */
+  top: 0;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  background: rgb(11 16 32 / 0.88);
+  backdrop-filter: blur(10px); /* sfoca il testo che passa sotto la barra */
+  border-bottom: 1px solid var(--border);
+}
+
+.sitenav .brand {
+  font-weight: 700;
+  margin-right: 8px;
+  letter-spacing: 0.02em;
+}
+
+.sitenav a,
+.sitenav .current {
+  padding: 5px 12px;
+  border-radius: 999px; /* pillola: un raggio enorme viene limitato all'altezza */
+  font-size: 0.92rem;
+  text-decoration: none;
+  color: var(--muted);
+  border: 1px solid transparent;
+}
+
+.sitenav a:hover {
+  color: var(--text);
+  background: var(--panel);
+  border-color: var(--border);
+}
+
+/* La pagina in cui ci si trova non è un link: è una voce spenta, ma evidenziata. */
+.sitenav .current {
+  color: var(--accent);
+  background: rgb(56 189 248 / 0.12);
+  border-color: rgb(56 189 248 / 0.35);
+}
+
+/* --------------------------------------------------------------------------------------------
+   3. La colonna di lettura.
+   -------------------------------------------------------------------------------------------- */
+main {
+  /* 760px di testo + 16px di respiro ai lati sul telefono. */
+  width: min(760px, 100%);
+  margin: 0 auto;
+  padding: 0 16px 96px;
+}
+
+/* --- Testata --- */
+.hero {
+  padding: 56px 0 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.hero .eyebrow {
+  margin: 0 0 8px;
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.hero h1 {
+  margin: 0 0 12px;
+  font-size: clamp(1.9rem, 6vw, 2.6rem); /* si adatta da solo fra telefono e desktop */
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.hero .lede {
+  margin: 0 0 18px;
+  font-size: 1.12rem;
+  color: var(--muted);
+}
+
+.hero .meta {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+/* --- Indice dei capitoli --- */
+.toc {
+  margin: 32px 0 8px;
+  padding: 20px 22px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.toc h2 {
+  margin: 0 0 12px;
+  font-size: 0.82rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.toc ol {
+  /* Numerazione scritta a mano perché parte da zero (il capitolo 0 è l'introduzione). */
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  counter-reset: toc -1;
+}
+
+.toc li {
+  counter-increment: toc;
+  margin: 2px 0;
+}
+
+.toc a {
+  display: flex;
+  gap: 12px;
+  padding: 5px 8px;
+  margin-left: -8px;
+  border-radius: 8px;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.toc a::before {
+  content: counter(toc);
+  flex: none;
+  width: 1.6em;
+  text-align: right;
+  font-family: var(--mono);
+  font-size: 0.9em;
+  color: var(--accent);
+}
+
+.toc a:hover {
+  background: rgb(56 189 248 / 0.1);
+}
+
+/* --------------------------------------------------------------------------------------------
+   4. I capitoli e i titoli.
+   -------------------------------------------------------------------------------------------- */
+.step {
+  padding-top: 48px;
+}
+
+.step > h2 {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin: 0 0 6px;
+  font-size: clamp(1.4rem, 4.5vw, 1.8rem);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+/* Il numero grande del passo: è il riferimento visivo quando si scorre cercando un capitolo. */
+.step > h2 .num {
+  flex: none;
+  min-width: 2.1em;
+  padding: 2px 0;
+  font-family: var(--mono);
+  font-size: 0.72em;
+  font-weight: 700;
+  text-align: center;
+  color: var(--bg-1);
+  background: var(--accent);
+  border-radius: 10px;
+}
+
+/* Il capitolo 0 e l'ultimo usano il rosa: sono l'apertura e la chiusura, non passi operativi. */
+.step.alt > h2 .num {
+  background: var(--accent-2);
+}
+
+.step > .sub {
+  margin: 0 0 20px;
+  color: var(--muted);
+  font-size: 1.02rem;
+}
+
+h3 {
+  margin: 34px 0 8px;
+  font-size: 1.12rem;
+  color: var(--accent);
+}
+
+h4 {
+  margin: 24px 0 6px;
+  font-size: 1rem;
+  color: var(--text);
+}
+
+p {
+  margin: 0 0 16px;
+}
+
+ul,
+ol {
+  margin: 0 0 16px;
+  padding-left: 1.4em;
+}
+
+li {
+  margin: 6px 0;
+}
+
+/* Il link della lettura (verso la documentazione ufficiale): sottolineato discreto. */
+a {
+  color: var(--accent);
+  text-decoration-color: rgb(56 189 248 / 0.4);
+  text-underline-offset: 3px;
+}
+
+a:hover {
+  text-decoration-color: var(--accent);
+}
+
+strong {
+  color: #f8fafc;
+}
+
+hr {
+  margin: 48px 0 0;
+  border: 0;
+  border-top: 1px solid var(--border);
+}
+
+/* --------------------------------------------------------------------------------------------
+   5. Codice.
+   -------------------------------------------------------------------------------------------- */
+
+/* Codice dentro una frase: `getUserMedia`, `npm run dev`... */
+code {
+  font-family: var(--mono);
+  font-size: 0.88em;
+  padding: 1px 5px;
+  border-radius: 5px;
+  background: rgb(148 163 184 / 0.14);
+  color: #f1f5f9;
+}
+
+figure.code {
+  margin: 20px 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgb(2 6 23 / 0.75);
+  overflow: hidden; /* gli angoli arrotondati devono tagliare anche la didascalia */
+}
+
+/* La didascalia dice sempre DOVE va il codice: è la domanda che ci si fa copiandolo. */
+figure.code figcaption {
+  padding: 8px 14px;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--muted);
+  background: rgb(148 163 184 / 0.08);
+  border-bottom: 1px solid var(--border);
+}
+
+figure.code figcaption .tag {
+  color: var(--accent-2);
+}
+
+pre {
+  margin: 0;
+  padding: 14px 16px;
+  /* Il blocco scorre da solo in orizzontale: senza questo, una riga lunga allargherebbe tutta
+     la pagina e sul telefono comparirebbe lo scorrimento orizzontale del documento. */
+  overflow-x: auto;
+  font-size: 0.85rem;
+  line-height: 1.65;
+  tab-size: 2;
+}
+
+pre code {
+  padding: 0;
+  background: none;
+  font-size: inherit;
+  color: #dbeafe;
+}
+
+/* Un blocco di codice fuori da una <figure> (esempi brevi, comandi di shell). */
+pre:not(figure.code pre) {
+  margin: 20px 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgb(2 6 23 / 0.75);
+}
+
+/* --------------------------------------------------------------------------------------------
+   6. Riquadri: il "perché", le avvertenze, le scorciatoie.
+   -------------------------------------------------------------------------------------------- */
+.callout {
+  margin: 22px 0;
+  padding: 14px 18px;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--muted);
+  border-radius: 0 12px 12px 0;
+  background: var(--panel);
+  font-size: 0.97rem;
+}
+
+.callout > :last-child {
+  margin-bottom: 0;
+}
+
+.callout .label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* "Perché si fa così": è il riquadro più frequente, ed è il motivo per cui esiste il tutorial. */
+.callout.why {
+  border-left-color: var(--accent);
+}
+
+.callout.why .label {
+  color: var(--accent);
+}
+
+/* "Attenzione": errori che costano ore. */
+.callout.warn {
+  border-left-color: var(--accent-2);
+}
+
+.callout.warn .label {
+  color: var(--accent-2);
+}
+
+/* "Prova tu": esercizi e verifiche. */
+.callout.try {
+  border-left-color: #a3e635;
+}
+
+.callout.try .label {
+  color: #a3e635;
+}
+
+/* --------------------------------------------------------------------------------------------
+   7. Tabelle.
+   -------------------------------------------------------------------------------------------- */
+.table-wrap {
+  margin: 22px 0;
+  overflow-x: auto; /* sul telefono la tabella scorre da sola, senza spezzare le parole */
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+th,
+td {
+  padding: 9px 14px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--border);
+}
+
+thead th {
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: rgb(148 163 184 / 0.08);
+  white-space: nowrap;
+}
+
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+td code {
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------------------------
+   8. Dettagli minori.
+   -------------------------------------------------------------------------------------------- */
+
+/* Una riga di "etichette" sotto il titolo di un capitolo (i file toccati, per esempio). */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 20px;
+  padding: 0;
+  list-style: none;
+}
+
+.chips li {
+  margin: 0;
+  padding: 3px 10px;
+  font-family: var(--mono);
+  font-size: 0.76rem;
+  color: var(--muted);
+  background: rgb(148 163 184 / 0.1);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+/* Il riquadro finale con i link alla documentazione ufficiale. */
+.links {
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.links li {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.links li:last-child {
+  border-bottom: 0;
+}
+
+.links .desc {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.pagefoot {
+  margin-top: 56px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+/* Torna all'indice: piccolo, in fondo a ogni capitolo lungo. */
+.uplink {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 0.82rem;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.uplink:hover {
+  color: var(--accent);
+}
+
+/* --------------------------------------------------------------------------------------------
+   9. Telefono. Una sola soglia, come nel resto del sito.
+   -------------------------------------------------------------------------------------------- */
+@media (max-width: 600px) {
+  body {
+    font-size: 16px; /* il minimo sotto cui un testo lungo diventa faticoso */
+    line-height: 1.7;
+  }
+
+  .hero {
+    padding-top: 36px;
+  }
+
+  .step {
+    padding-top: 36px;
+  }
+
+  .step > h2 {
+    /* Il numero va sopra il titolo: affiancati, su schermo stretto, lascerebbero titoli di due
+       parole per riga. */
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .step > h2 .num {
+    min-width: 0;
+    padding: 0 10px;
+    align-self: flex-start;
+  }
+
+  .toc {
+    padding: 16px;
+  }
+
+  pre {
+    font-size: 0.8rem;
+  }
+}
+
+/* Chi ha chiesto al sistema operativo meno animazioni non deve subire lo scorrimento morbido. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}

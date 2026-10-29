@@ -1,0 +1,28 @@
+<!doctype html>
+<!--
+  prova-scheletro.html — la pagina per guardare lo scheletro senza webcam.
+
+  Serve a una cosa sola: verificare la FORMA della figura 3D (proporzioni del cranio, gabbia
+  toracica, bacino, ossa delle mani) su una posa inventata e sempre uguale, senza dipendere da
+  quello che il riconoscitore decide di vedere in un filmato. Sul VPS non c'è una webcam, e anche
+  con la webcam finta la posa cambia a ogni fotogramma: qui invece si confrontano due schermate.
+
+  NON fa parte del sito: non è in `rollupOptions.input` di vite.config.ts, quindi `npm run build`
+  la ignora e non finisce mai in `dist/` né online. Esiste solo durante `npm run dev`:
+
+      cd app && npm run dev
+      http://localhost:5173/prova-scheletro.html          figura di fronte
+      http://localhost:5173/prova-scheletro.html?turn=42   testa girata di 42 gradi
+      http://localhost:5173/prova-scheletro.html?hands=0   senza le mani
+-->
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prova scheletro</title>
+  </head>
+  <body>
+    <canvas id="scene" aria-label="Scheletro disegnato su una posa di prova"></canvas>
+    <script type="module" src="/src/prova-scheletro.ts"></script>
+  </body>
+</html>

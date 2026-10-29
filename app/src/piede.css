@@ -1,0 +1,39 @@
+/* Il piè di pagina comune (piede.ts). Piccolo e discreto: nelle pagine con la camera sta sotto
+   l'applicazione, e a schermo intero sparisce come il contatore degli accessi. */
+.piede-sito {
+  margin: 0;
+  border: 0;
+  padding: 20px 16px 36px;
+  text-align: center;
+  font: 0.85rem/1.5 system-ui, sans-serif;
+  color: #64748b;
+}
+.piede-sito p {
+  margin: 4px auto;
+  max-width: 60rem;
+}
+.piede-sito a {
+  color: inherit;
+  text-decoration: underline;
+}
+.schermo-intero .piede-sito {
+  display: none;
+}
+
+/* Pagine con la camera (body[data-state]): tutto è `fixed` e la pagina non scorre, quindi il piè
+   va ancorato in basso; quando la camera parte (stato diverso da "idle") sparisce, per non coprire
+   la scena né la barra dei comandi. Su /corpo/ altrimenti finiva sotto la barra in alto. */
+body[data-state] .piede-sito {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 22px;
+  padding: 0 16px;
+  pointer-events: none;
+}
+body[data-state] .piede-sito a {
+  pointer-events: auto;
+}
+body[data-state]:not([data-state="idle"]) .piede-sito {
+  display: none;
+}

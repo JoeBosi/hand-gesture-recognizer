@@ -1,0 +1,91 @@
+<!doctype html>
+<!--
+  onda/index.html — l'onda energetica.
+
+  Si mettono le due mani unite davanti alla webcam, come per lanciare un'onda di energia: fra le
+  mani nasce una palla di luce che cresce. Se la posa viene tenuta per 4 secondi, parte il raggio.
+
+  Come funziona, in due righe: il riconoscimento delle mani è lo stesso di tutte le altre pagine
+  (21 punti per mano, nel browser); quello che cambia è il «giudice della posa» in src/onda.ts, che
+  guarda se i polsi sono vicini e le dita aperte (anche a ventaglio), e conta i secondi.
+
+  Gli effetti — palla, fulmini, raggio, scintille — sono disegnati a mano su una tela 2D
+  (src/onda-fx.ts): nessuna libreria in più, nessun file da scaricare.
+
+  Regola della CSP di produzione: niente <script> scritti qui dentro, niente attributi style="",
+  nessun indirizzo esterno.
+-->
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Unisci le mani davanti alla webcam: la palla di energia si carica e dopo 4 secondi parte il raggio. Tutto nel browser." />
+    <meta name="theme-color" content="#0b1020" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Onda energetica</title>
+    <link rel="canonical" href="https://mano.giuseppebosi.com/onda/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Mano" />
+    <meta property="og:locale" content="it_IT" />
+    <meta property="og:title" content="Onda energetica" />
+    <meta property="og:description" content="Unisci le mani davanti alla webcam: la palla di energia si carica e dopo 4 secondi parte il raggio. Tutto nel browser." />
+    <meta property="og:url" content="https://mano.giuseppebosi.com/onda/" />
+  </head>
+
+  <!-- data-state lo aggiorna onda.ts: idle | loading | running | error -->
+  <body data-state="idle">
+    <header class="topbar">
+      <div class="brand">⚡ Onda</div>
+      <nav class="nav" aria-label="Pagine del sito">
+        <a href="/">Mano</a>
+        <a href="/sfida/">Sfida</a>
+        <a href="/onda/" aria-current="page">Onda</a>
+        <a href="/corpo/">Corpo</a>
+      </nav>
+      <div class="destra">
+        <div class="status" id="status" role="status" aria-live="polite">Camera spenta</div>
+        <button type="button" class="icona" id="schermo-intero" aria-pressed="false">⛶ Schermo intero</button>
+      </div>
+    </header>
+
+    <main class="stage" id="stage" hidden>
+      <video id="video" autoplay muted playsinline></video>
+      <canvas id="overlay" aria-label="Le tue mani e gli effetti luminosi dell'onda energetica"></canvas>
+
+      <!-- La scritta grande che scandisce la carica. Sta nel DOM e non nella tela: la tela è
+           specchiata insieme al video, e un testo disegnato lì verrebbe a rovescio. -->
+      <p class="grido" id="grido" role="status" aria-live="polite"></p>
+
+      <!-- Che cosa fare adesso: «avvicina i polsi», «tieni la posa… 2,4 s». -->
+      <p class="suggerimento" id="suggerimento" aria-live="polite"></p>
+    </main>
+
+    <section class="intro" id="intro">
+      <h1>Onda energetica</h1>
+      <p class="sottotitolo">Unisci le mani, carica la palla di luce, <strong>tieni la posa 4 secondi</strong>: parte il raggio.</p>
+      <p class="luci" role="note">
+        ⚠️ <strong>Contiene lampi di luce intensi.</strong> Se sei sensibile alle luci lampeggianti, non usare questa pagina.
+      </p>
+      <p class="luci" role="note">
+        🔊 <strong>C'è il suono</strong>: cresce con la carica e lo sparo è forte. Abbassa il volume prima, o
+        spegnilo dal pulsante in basso.
+      </p>
+      <button type="button" class="primary" id="start">Accendi la camera e carica</button>
+      <p class="privacy">
+        Tutto avviene nel tuo browser: le immagini della camera non vengono inviate a nessun server
+        né salvate.
+      </p>
+      <p class="error" id="error" hidden></p>
+    </section>
+
+    <footer class="hud" id="hud" hidden>
+      <div class="controls">
+        <span class="metric" id="fps">– fps</span>
+        <button type="button" id="suono" aria-pressed="true">🔊 Suono</button>
+        <button type="button" id="stop">Spegni camera</button>
+      </div>
+    </footer>
+
+    <script type="module" src="/src/onda.ts"></script>
+  </body>
+</html>

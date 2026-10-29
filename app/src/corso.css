@@ -1,0 +1,591 @@
+/*
+  corso.css — l'aspetto della pagina /corso/, il programma del corso.
+
+  È un documento da leggere e da stampare, non un'applicazione: colonna larga, testo grande,
+  interlinea comoda. Gli stessi colori del resto del sito, così le quattro pagine si riconoscono
+  come parti della stessa cosa.
+*/
+
+:root {
+  color-scheme: dark;
+  --bg: #0b1020;
+  --bg-2: #111a33;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --faint: #64748b;
+  --accent: #38bdf8;
+  --accent-2: #f472b6;
+  --giallo: #facc15;
+  --verde: #22c55e;
+  --indaco: #a5b4fc;
+  --panel: rgb(15 23 42 / 0.72);
+  --border: rgb(148 163 184 / 0.22);
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+/* --- Barra di navigazione, come nelle altre pagine ------------------------------------------ */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 12px 20px;
+  background: rgb(11 16 32 / 0.92);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(10px);
+}
+
+.brand {
+  font-weight: 700;
+}
+
+.nav {
+  display: flex;
+  /* Con sei pagine i link non stanno più su una riga sola su schermo stretto: senza questo, a
+     390 px la barra traboccava (432 px di contenuto) e «Corso facile» finiva fuori dallo
+     schermo. La stessa regola sta in style.css: qui va ripetuta perché corso.css ridefinisce
+     `.nav` da capo. */
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.nav a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+}
+
+.nav a:hover {
+  color: var(--text);
+  background: var(--panel);
+}
+
+.nav a[aria-current="page"] {
+  color: var(--text);
+  background: var(--panel);
+  border-color: var(--border);
+}
+
+/* --- Impaginazione generale ----------------------------------------------------------------- */
+main {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 20px 100px;
+}
+
+.copertina {
+  padding: 56px 0 28px;
+  border-bottom: 1px solid var(--border);
+}
+
+.occhiello {
+  color: var(--accent);
+  font-size: 0.8rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+h1 {
+  font-size: 2.4rem;
+  line-height: 1.15;
+  margin: 10px 0 14px;
+}
+
+.sottotitolo {
+  font-size: 1.15rem;
+  color: var(--muted);
+  margin: 0 0 22px;
+}
+
+.scheda-corso {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+  margin-top: 26px;
+}
+
+.scheda-corso div {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+
+.scheda-corso dt,
+.scheda-corso .etichetta {
+  display: block;
+  color: var(--faint);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+h2 {
+  font-size: 1.6rem;
+  margin: 52px 0 14px;
+  line-height: 1.25;
+}
+
+h3 {
+  font-size: 1.15rem;
+  margin: 34px 0 10px;
+  color: var(--accent);
+}
+
+h4 {
+  font-size: 1rem;
+  margin: 22px 0 8px;
+}
+
+p {
+  margin: 0 0 16px;
+}
+
+a {
+  color: var(--accent);
+}
+
+ul,
+ol {
+  margin: 0 0 16px;
+  padding-left: 22px;
+}
+
+li {
+  margin-bottom: 7px;
+}
+
+strong {
+  color: #f1f5f9;
+}
+
+/* --- Indice del corso ----------------------------------------------------------------------- */
+.indice {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 22px 26px;
+  margin: 32px 0;
+}
+
+.indice ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  counter-reset: lezione;
+}
+
+.indice li {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+  padding: 7px 0;
+  border-bottom: 1px dashed rgb(148 163 184 / 0.14);
+}
+
+.indice li:last-child {
+  border-bottom: none;
+}
+
+.indice .num {
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  min-width: 2.2em;
+}
+
+.indice a {
+  text-decoration: none;
+  color: var(--text);
+}
+
+.indice a:hover {
+  color: var(--accent);
+}
+
+.indice .dove {
+  margin-left: auto;
+  color: var(--faint);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+/* --- Le lezioni ----------------------------------------------------------------------------- */
+.lezione {
+  border-top: 2px solid rgb(56 189 248 / 0.35);
+  margin-top: 64px;
+  padding-top: 8px;
+  /* La barra in alto è `sticky`: senza questo scarto, arrivando da un link dell'indice il titolo
+     della lezione finisce nascosto sotto la barra. */
+  scroll-margin-top: 72px;
+}
+
+/* Stesso motivo, per le sezioni finali e per ogni altro bersaglio di un link interno. */
+[id] {
+  scroll-margin-top: 72px;
+}
+
+.numero {
+  display: inline-block;
+  background: rgb(56 189 248 / 0.14);
+  color: var(--accent);
+  border: 1px solid rgb(56 189 248 / 0.35);
+  border-radius: 999px;
+  padding: 2px 12px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.lezione h2 {
+  margin: 12px 0 10px;
+}
+
+.sommario {
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+
+.meta {
+  list-style: none;
+  padding: 0;
+  margin: 18px 0 0;
+  display: grid;
+  gap: 8px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 0.92rem;
+}
+
+.meta li {
+  margin: 0;
+}
+
+.meta strong {
+  color: var(--indaco);
+}
+
+/* La scaletta dei 120 minuti */
+.tempi {
+  display: grid;
+  gap: 8px;
+  margin: 22px 0 8px;
+}
+
+.blocco {
+  display: flex;
+  gap: 14px;
+  align-items: baseline;
+  padding: 9px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-2);
+  font-size: 0.94rem;
+}
+
+.blocco .min {
+  font-family: var(--mono);
+  font-weight: 700;
+  min-width: 3.2em;
+}
+
+.blocco.teoria {
+  border-left: 4px solid var(--accent);
+}
+.blocco.teoria .min {
+  color: var(--accent);
+}
+.blocco.demo {
+  border-left: 4px solid var(--indaco);
+}
+.blocco.demo .min {
+  color: var(--indaco);
+}
+.blocco.lab {
+  border-left: 4px solid var(--verde);
+}
+.blocco.lab .min {
+  color: var(--verde);
+}
+.blocco.chiusura {
+  border-left: 4px solid var(--giallo);
+}
+.blocco.chiusura .min {
+  color: var(--giallo);
+}
+
+/* --- Codice --------------------------------------------------------------------------------- */
+pre {
+  background: #0a0f1f;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 0 0 18px;
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 0.88em;
+}
+
+p code,
+li code,
+td code {
+  background: rgb(56 189 248 / 0.12);
+  border: 1px solid rgb(56 189 248 / 0.2);
+  border-radius: 5px;
+  padding: 1px 5px;
+  color: #bae6fd;
+}
+
+pre code {
+  color: #dbeafe;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+/* --- Esercizi e soluzioni ------------------------------------------------------------------- */
+.esercizio {
+  background: rgb(34 197 94 / 0.06);
+  border: 1px solid rgb(34 197 94 / 0.3);
+  border-left: 4px solid var(--verde);
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin: 0 0 18px;
+}
+
+.esercizio h4 {
+  margin-top: 0;
+  color: #bbf7d0;
+}
+
+.livello {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-radius: 999px;
+  padding: 2px 9px;
+  margin-left: 8px;
+  vertical-align: middle;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.livello.base {
+  border-color: rgb(34 197 94 / 0.5);
+  color: #86efac;
+}
+.livello.medio {
+  border-color: rgb(250 204 21 / 0.5);
+  color: #fde68a;
+}
+.livello.sfida {
+  border-color: rgb(244 114 182 / 0.5);
+  color: #f9a8d4;
+}
+
+details {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  background: rgb(15 23 42 / 0.6);
+  margin-bottom: 12px;
+}
+
+summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--giallo);
+}
+
+details[open] summary {
+  margin-bottom: 10px;
+}
+
+/* --- Riquadri di richiamo ------------------------------------------------------------------- */
+.nota,
+.attenzione,
+.docente {
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin: 0 0 18px;
+  font-size: 0.96rem;
+}
+
+.nota {
+  background: rgb(56 189 248 / 0.08);
+  border: 1px solid rgb(56 189 248 / 0.3);
+}
+
+.attenzione {
+  background: rgb(250 204 21 / 0.08);
+  border: 1px solid rgb(250 204 21 / 0.35);
+}
+
+.docente {
+  background: rgb(165 180 252 / 0.08);
+  border: 1px solid rgb(165 180 252 / 0.3);
+}
+
+.nota strong:first-child,
+.attenzione strong:first-child,
+.docente strong:first-child {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.nota strong:first-child {
+  color: var(--accent);
+}
+.attenzione strong:first-child {
+  color: var(--giallo);
+}
+.docente strong:first-child {
+  color: var(--indaco);
+}
+
+/* --- Tabelle -------------------------------------------------------------------------------- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 20px;
+  font-size: 0.93rem;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+th {
+  color: var(--indaco);
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+tbody tr:hover {
+  background: rgb(148 163 184 / 0.05);
+}
+
+/* --- Piè di pagina -------------------------------------------------------------------------- */
+footer {
+  margin-top: 70px;
+  padding-top: 22px;
+  border-top: 1px solid var(--border);
+  color: var(--faint);
+  font-size: 0.88rem;
+}
+
+/* --- Telefono ------------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  body {
+    font-size: 16px;
+  }
+  main {
+    padding: 0 16px 70px;
+  }
+  h1 {
+    font-size: 1.8rem;
+  }
+  h2 {
+    font-size: 1.35rem;
+  }
+  .topbar {
+    gap: 10px;
+    padding: 10px 14px;
+  }
+  .brand {
+    display: none; /* sul telefono contano i link, non il nome */
+  }
+  .indice li {
+    flex-wrap: wrap;
+  }
+  .indice .dove {
+    margin-left: 34px;
+  }
+  /* Le tabelle (ambienti online, mappa del corso, valutazione) hanno colonne di testo che a
+     390px non ci stanno: senza questa regola a scorrere è l'intera pagina, ed è fastidioso.
+     `display: block` toglie alla tabella la larghezza imposta dalle colonne e le permette di
+     scorrere per conto suo, dentro il suo riquadro. */
+  table {
+    display: block;
+    overflow-x: auto;
+  }
+  /* Senza una larghezza minima le colonne si stringerebbero a una parola per riga; con questa
+     la tabella resta leggibile e si fa scorrere di lato solo quanto serve. */
+  th,
+  td {
+    min-width: 8em;
+  }
+  /* Un nome lungo dentro `code` (per esempio un percorso o una firma di funzione) può da solo
+     essere più largo dello schermo: qui si può spezzare dove capita, è codice, non prosa. */
+  p code,
+  li code {
+    overflow-wrap: anywhere;
+  }
+}
+
+/* --- Stampa: il docente porta in aula i fogli ----------------------------------------------- */
+@media print {
+  body {
+    background: #fff;
+    color: #111;
+    font-size: 11pt;
+  }
+  .topbar,
+  .nav {
+    display: none;
+  }
+  main {
+    max-width: none;
+  }
+  pre {
+    background: #f6f8fa;
+    border-color: #ccc;
+  }
+  pre code {
+    color: #111;
+  }
+  details {
+    background: none;
+  }
+  details[open] summary {
+    color: #555;
+  }
+  .lezione {
+    break-before: page;
+  }
+}

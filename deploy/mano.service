@@ -1,0 +1,22 @@
+# Modello: __PROGETTO__ viene sostituito con la cartella reale da deploy/attiva-caddy.sh.
+# Server statico di mano.giuseppebosi.com. Legge i file dentro la cartella del progetto:
+# niente copie in /opt o /srv, la cartella resta portabile.
+# Installazione e avvio: deploy/attiva-caddy.sh
+[Unit]
+Description=Recognizer-Mano - sito statico su 127.0.0.1:8791
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=__PROGETTO__
+Environment=PORT=8791
+ExecStart=/usr/bin/env node deploy/server.mjs
+Restart=on-failure
+RestartSec=2
+# Il processo serve solo file già pubblici: nessun privilegio in più del necessario.
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=full
+
+[Install]
+WantedBy=multi-user.target

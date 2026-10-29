@@ -1,0 +1,17 @@
+# Tutto il sito è pubblico: motori di ricerca e crawler delle IA sono i benvenuti.
+User-agent: *
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+Sitemap: https://mano.giuseppebosi.com/sitemap.xml

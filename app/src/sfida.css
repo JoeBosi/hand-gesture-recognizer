@@ -1,0 +1,289 @@
+/*
+  sfida.css — solo quello che cambia rispetto a style.css.
+
+  L'impaginazione è la stessa della pagina principale: una griglia a tre righe (barra, palcoscenico, comandi)
+  invece di elementi `fixed` con le altezze scritte a mano, perché con sette voci nel menu la barra
+  in alto cambia altezza a seconda della larghezza dello schermo e qualunque numero fissato a mano
+  finisce per tagliare qualcosa.
+
+  La differenza è che qui, sopra l'immagine della webcam, ci sono tre cose
+  sovrapposte: il tabellone dei punti in alto, il cartellone grande al centro, la riga di
+  istruzioni in basso. Stanno tutte dentro `.stage`, che è l'ancora di riferimento.
+*/
+
+body {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100%;
+}
+
+.topbar,
+.hud {
+  position: static;
+}
+
+.hud {
+  margin: 0 16px 16px;
+}
+
+.stage {
+  position: relative;
+  min-height: 0;
+  margin: 0 16px;
+}
+
+/* Video e tela: sovrapposti, stessa area, NON specchiati (dal 28/10/2026). Con lo specchio chi
+   guardava lo schermo vedeva il giocatore di sinistra a destra: qui lo schermo è un tabellone per
+   due giocatori e per chi guarda, non uno specchio per una persona sola. */
+.stage video,
+.stage canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* --- Il tabellone dei punti, in alto --- */
+.tabellone {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 20px;
+  background: rgb(15 23 42 / 0.82);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  backdrop-filter: blur(8px);
+  white-space: nowrap;
+}
+
+.giocatore {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.giocatore .nome {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* I due colori sono gli stessi con cui sfida.ts disegna le due mani: è così che si capisce
+   a colpo d'occhio quale mano è di chi. */
+.g1 .punti {
+  color: var(--accent);
+}
+
+.g2 .punti {
+  color: var(--accent-2);
+}
+
+.punti {
+  font-size: 1.6rem;
+  font-weight: 700;
+  /* Cifre della stessa larghezza: il tabellone non "salta" passando da 0 a 1. */
+  font-variant-numeric: tabular-nums;
+}
+
+.separatore {
+  color: var(--muted);
+}
+
+/* --- Il cartellone grande al centro --- */
+.cartello {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 14px 34px;
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.25;
+  /* `pre-line` fa valere gli a-capo scritti nel testo: l'esito del round è su due righe
+     («Punto al giocatore 2» sopra, la mossa vincente sotto) e senza questo finirebbe tutto
+     attaccato su una riga sola. */
+  white-space: pre-line;
+  max-width: calc(100% - 32px);
+  background: rgb(15 23 42 / 0.86);
+  border: 2px solid var(--border);
+  border-radius: 20px;
+  backdrop-filter: blur(8px);
+}
+
+/* Il conto alla rovescia: numeri enormi, perché si guardano da lontano — i giocatori stanno a
+   un paio di metri dallo schermo, non davanti alla tastiera. */
+.cartello.conto {
+  font-size: 5rem;
+  padding: 10px 46px;
+}
+
+.cartello.via {
+  font-size: 3.4rem;
+  color: #fde68a;
+  border-color: rgb(251 191 36 / 0.6);
+}
+
+.cartello.vince1 {
+  color: var(--accent);
+  border-color: rgb(56 189 248 / 0.6);
+}
+
+.cartello.vince2 {
+  color: var(--accent-2);
+  border-color: rgb(244 114 182 / 0.6);
+}
+
+.cartello.pari {
+  color: var(--muted);
+}
+
+.cartello.annullato {
+  font-size: 1.5rem;
+  color: #fca5a5;
+  border-color: rgb(248 113 113 / 0.5);
+}
+
+/* --- La riga di istruzioni, in basso --- */
+.istruzioni {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 6px 16px;
+  max-width: calc(100% - 24px);
+  text-align: center;
+  color: var(--muted);
+  background: rgb(15 23 42 / 0.75);
+  border-radius: 999px;
+}
+
+.istruzioni:empty {
+  display: none; /* senza questo resterebbe una pillola vuota sull'immagine */
+}
+
+/* --- Il pulsante di fine partita --- */
+.rigioca {
+  position: absolute;
+  bottom: 54px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+@media (max-width: 600px) {
+  .stage,
+  .hud {
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  .hud {
+    margin-bottom: 10px;
+  }
+  /* Su telefono il cartello copriva l'intera immagine e non si vedevano più le mani: qui conta
+     meno la spettacolarità e più poter controllare che il gioco abbia letto il gesto giusto. */
+  .cartello {
+    font-size: 1.05rem;
+    padding: 8px 14px;
+    max-width: calc(100% - 48px);
+  }
+  .cartello.conto {
+    font-size: 3.4rem;
+  }
+  .cartello.via {
+    font-size: 2.2rem;
+  }
+  .cartello.annullato {
+    font-size: 1.05rem;
+  }
+  .tabellone {
+    gap: 10px;
+    padding: 6px 14px;
+  }
+  .punti {
+    font-size: 1.3rem;
+  }
+  .istruzioni {
+    font-size: 0.85rem;
+  }
+}
+
+/* ============================================================================================
+   La festa finale
+   ============================================================================================ */
+
+/* La tela dei coriandoli sta sopra tutto. `pointer-events: none` è indispensabile: senza,
+   coprirebbe il pulsante "Un'altra partita" che le sta sotto e il clic non arriverebbe mai. */
+/* `.stage .coriandoli` e non `.coriandoli`: la regola `.stage canvas` qui sopra ha specificità
+   più alta (una classe + un elemento) e vincerebbe comunque, in qualunque ordine si scrivano.
+   Misurato: con il solo `.coriandoli` il `transform` calcolato restava `matrix(-1,0,0,1,0,0)`. */
+.stage .coriandoli {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 3;
+  /* NIENTE specchio, a differenza del video e della tela dei punti.
+     La regola `.stage video, .stage canvas` qui sopra prende TUTTE le tele del palcoscenico,
+     compresa questa: il risultato era che i coriandoli del vincitore di destra partivano da
+     sinistra. Visto in una schermata, non nel codice. */
+  transform: none;
+}
+
+/* La scritta del vincitore: più grande di tutto il resto e lampeggiante. */
+.cartello.trionfo {
+  font-size: 2.6rem;
+  animation: lampeggia 900ms ease-in-out infinite;
+}
+
+@keyframes lampeggia {
+  0%,
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.78;
+    transform: translate(-50%, -50%) scale(1.06);
+  }
+}
+
+/* Chi ha detto al sistema operativo di ridurre le animazioni non deve vedere niente che pulsa:
+   la scritta resta ferma e leggibile. I coriandoli sono decorazione e non danno informazione
+   che non sia già scritta, quindi si possono lasciare. */
+@media (prefers-reduced-motion: reduce) {
+  .cartello.trionfo {
+    animation: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .mosse {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  .mossa figcaption {
+    font-size: 0.72rem;
+  }
+  .regole-mano {
+    grid-template-columns: 1fr;
+  }
+  .cartello.trionfo {
+    font-size: 1.5rem;
+  }
+}
+
+/* A schermo intero la barra dei comandi galleggia sull'immagine (vedi style.css): le scritte in
+   basso salgono sopra di lei, altrimenti ci finirebbero sotto. */
+.schermo-intero .istruzioni {
+  bottom: 74px;
+}
+
+.schermo-intero .rigioca {
+  bottom: 116px;
+}

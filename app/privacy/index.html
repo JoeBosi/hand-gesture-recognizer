@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Cosa raccoglie il sito Mano e dove va: le immagini della webcam restano nel browser." />
+    <meta name="theme-color" content="#0b1020" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Privacy · Mano</title>
+    <link rel="canonical" href="https://mano.giuseppebosi.com/privacy/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Mano" />
+    <meta property="og:locale" content="it_IT" />
+    <meta property="og:title" content="Privacy · Mano" />
+    <meta property="og:description" content="Cosa raccoglie il sito Mano e dove va: le immagini della webcam restano nel browser." />
+    <meta property="og:url" content="https://mano.giuseppebosi.com/privacy/" />
+  </head>
+  <body>
+    <nav class="sitenav" aria-label="Pagine del sito">
+      <span class="brand">✋ Mano</span>
+      <a href="/">Mano</a>
+      <a href="/sfida/">Sfida</a>
+      <a href="/onda/">Onda</a>
+      <a href="/corpo/">Corpo</a>
+    </nav>
+    <main>
+      <header class="hero">
+        <p class="eyebrow">Privacy</p>
+        <h1>Cosa raccoglie il sito, e dove va</h1>
+        <p class="lede">
+          In breve: la tua immagine non lascia mai il tuo computer. Il sito conta soltanto quante
+          volte le pagine vengono aperte.
+        </p>
+      </header>
+
+      <h2>La webcam</h2>
+      <p>
+        La camera si accende solo quando premi il pulsante. Le immagini e i punti della mano, del
+        corpo e del volto vengono calcolati dentro il browser e lì restano: non vengono inviati,
+        registrati né salvati. Non è solo una promessa: le regole di sicurezza della pagina
+        (la <a href="https://developer.mozilla.org/it/docs/Web/HTTP/CSP">Content Security Policy</a>,
+        <code>connect-src 'self'</code>) impediscono al browser di spedire dati a qualunque altro
+        indirizzo. Quando lasci la pagina, la camera si spegne.
+      </p>
+
+      <h2>Cosa riceve il server</h2>
+      <ul>
+        <li><strong>Il contatore degli accessi.</strong> A ogni apertura di una pagina arriva una richiesta vuota: il server aggiunge uno al totale e salva solo quel numero.</li>
+        <li><strong>Le persone collegate insieme.</strong> Finché la camera è accesa, la pagina manda ogni 15 secondi un numero casuale, creato all'apertura e mai salvato, per contare quante persone usano il sito nello stesso momento. Quando esci il numero viene dimenticato.</li>
+        <li><strong>Niente registri.</strong> Il server web non tiene il registro delle visite: indirizzi IP e pagine visitate non vengono salvati.</li>
+      </ul>
+      <p>Nessun cookie, nessuna statistica, nessun servizio di terzi: tutti i file arrivano da questo sito.</p>
+
+      <h2>Il corso per la scuola</h2>
+      <p>
+        Le pagine del corso (<a href="/scuola/">/scuola/</a>) sono solo da leggere e non usano la
+        camera. Gli esercizi si svolgono nell'<a href="https://editor.p5js.org/">editor online di p5.js</a>,
+        un sito diverso con le sue regole: lì il riconoscimento della mano scarica la libreria ml5.js e
+        il modello di Google, ma anche in quel caso le immagini della webcam vengono elaborate dentro il
+        browser.
+      </p>
+    </main>
+    <script type="module" src="/src/documento.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,169 @@
+/*
+  onda.css — solo quello che cambia rispetto a style.css.
+
+  L'impaginazione è quella di /sfida/: una griglia a tre righe (barra, palcoscenico, comandi) invece
+  di elementi `fixed` con altezze scritte a mano, perché con sei voci nel menu la barra in alto
+  cambia altezza a seconda della larghezza dello schermo.
+
+  Dentro il palcoscenico, sopra video e tela, ci sono solo due scritte: il grido che scandisce la
+  carica e il suggerimento. Stanno nel DOM e non nella tela perché la tela è specchiata.
+*/
+
+body {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100%;
+}
+
+.topbar,
+.hud {
+  position: static;
+}
+
+.hud {
+  margin: 0 16px 16px;
+}
+
+.stage {
+  position: relative;
+  min-height: 0;
+  margin: 0 16px;
+  /* La scossa dello sparo sposta questo elemento (onda.ts imposta `transform`). `overflow: hidden`
+     fa sì che, spostandosi, non scopra i bordi della pagina né scorra. */
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+/* Video e tela: sovrapposti, stessa area, specchiati INSIEME dal CSS. Così i punti e gli effetti
+   restano incollati all'immagine senza invertire nessuna coordinata nel codice.
+   Attenzione alla specificità: questa regola prende TUTTE le tele del palcoscenico, e se un
+   giorno se ne aggiungesse un'altra non specchiata servirebbe `.stage .altra` (è già successo
+   ai coriandoli della sfida). */
+.stage video,
+.stage canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform: scaleX(-1);
+}
+
+/* --- Il grido che scandisce la carica --- */
+.grido {
+  position: absolute;
+  top: 6%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  max-width: calc(100% - 24px);
+  text-align: center;
+  white-space: nowrap;
+  /* La scritta è lunga (16–18 lettere): la misura segue la larghezza dello schermo (vw), così sta
+     sempre dentro. Con «HAAAAAA» bastava il doppio e a questa lunghezza usciva dal bordo. */
+  font-size: clamp(1.1rem, 5.2vw, 3.4rem);
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  color: #ffffff;
+  /* L'alone azzurro: due ombre sovrapposte, una stretta e una larga. */
+  text-shadow: 0 0 14px #38bdf8, 0 0 38px #0ea5e9, 0 2px 0 rgb(0 0 0 / 0.35);
+  pointer-events: none;
+}
+
+.grido:empty {
+  display: none;
+}
+
+.grido.urlo {
+  font-size: clamp(1.3rem, 5.6vw, 3.8rem);
+  animation: urlo 520ms ease-out both;
+}
+
+@keyframes urlo {
+  from {
+    transform: translateX(-50%) scale(0.6);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
+  }
+}
+
+/* --- Il suggerimento --- */
+.suggerimento {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 10px 22px;
+  max-width: calc(100% - 24px);
+  text-align: center;
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--text);
+  background: rgb(15 23 42 / 0.88);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  backdrop-filter: blur(8px);
+  pointer-events: none;
+}
+
+.suggerimento:empty {
+  display: none; /* senza questo resterebbe una pillola vuota sull'immagine */
+}
+
+/* La scheda iniziale: piccola e al centro (è lo stile di base di style.css). Tutte le istruzioni
+   lunghe e i disegni delle mani sono state tolte su richiesta di Giuseppe: restano il titolo, una
+   riga, l'avviso sulle luci, il pulsante e l'informativa. */
+.intro .sottotitolo {
+  margin-bottom: 14px;
+}
+
+/* L'avviso sulle luci: ambra, ben visibile, prima del pulsante. */
+.luci {
+  margin: 0 0 18px;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #fde68a;
+  background: rgb(120 53 15 / 0.35);
+  border: 1px solid rgb(251 191 36 / 0.5);
+  border-radius: 12px;
+}
+
+.intro .luci strong {
+  color: #fef3c7;
+}
+
+@media (max-width: 600px) {
+  .stage,
+  .hud {
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  .hud {
+    margin-bottom: 10px;
+  }
+  .suggerimento {
+    font-size: 1rem;
+    padding: 8px 14px;
+  }
+  .pose {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Chi ha chiesto di ridurre le animazioni non vede il grido «rimbalzare»: compare e basta. */
+@media (prefers-reduced-motion: reduce) {
+  .grido.urlo {
+    animation: none;
+  }
+}
+
+/* A schermo intero la barra dei comandi galleggia sull'immagine: il suggerimento sale sopra di lei. */
+.schermo-intero .suggerimento {
+  bottom: 76px;
+}

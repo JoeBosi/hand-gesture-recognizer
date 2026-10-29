@@ -1,0 +1,38 @@
+# Il corso «La mano al computer» — versione Quarto, da confrontare con quella MkDocs.
+# NON si scrive a mano nelle pagine di qui: la fonte unica è corso-scuola/docs/ (formato MkDocs);
+# corso-scuola/quarto/converti.py la traduce nella cartella di lavoro e questo file la configura.
+# Costruire: corso-scuola/costruisci.sh
+project:
+  type: website
+  output-dir: ../../site-quarto
+  resources: [comune/accessi.js, comune/accessi.css]
+
+lang: it
+
+website:
+  title: "La mano al computer"
+  site-url: https://mano.giuseppebosi.com/scuola/quarto/
+  search: true
+  page-navigation: true
+  # Link assoluti: Quarto riscrive quelli che iniziano con / come pagine del proprio progetto.
+  page-footer:
+    center: 'Giuseppe Bosi, Dottore in Ingegneria Elettronica (V.O.), Professore di Scienze e Tecnologie Informatiche<br>Testi <a href="https://creativecommons.org/licenses/by/4.0/deed.it">CC BY 4.0</a> · Codice <a href="https://opensource.org/license/mit">MIT</a> · <a href="https://mano.giuseppebosi.com/crediti/">Crediti</a> · <a href="https://mano.giuseppebosi.com/privacy/">Privacy</a>'
+  back-to-top-navigation: true
+  sidebar:
+    style: docked
+    contents:
+      - text: Indice del corso
+        href: index.md
+      - text: "Lezione 1 · I punti della mano"
+        href: lezioni/01-punti-della-mano.md
+
+format:
+  html:
+    theme: default      # cosmo e altri temi scaricano caratteri da Google Fonts: la CSP li blocca
+    toc: true
+    toc-title: In questa pagina
+    code-copy: true
+    anchor-sections: true
+    css: [comune/accessi.css, corso.css]
+    include-after-body:
+      text: '<script src="/comune/accessi.js"></script>'

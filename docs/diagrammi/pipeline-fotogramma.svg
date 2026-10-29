@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 520" width="980" height="520" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
+  <rect width="980" height="520" rx="14" fill="#0b1020"/>
+  <text x="28" y="40" fill="#e2e8f0" font-size="20" font-weight="700">Il giro di un fotogramma (funzione loop di main.ts)</text>
+  <text x="28" y="64" fill="#94a3b8" font-size="13">Circa 30 volte al secondo. Il disegno 3D invece gira sempre, anche quando non arriva un fotogramma nuovo.</text>
+
+  <!-- 1 video -->
+  <rect x="28" y="96" width="170" height="96" rx="12" fill="#111a33" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="113" y="124" fill="#38bdf8" font-size="14" font-weight="700" text-anchor="middle">1. &lt;video&gt;</text>
+  <text x="113" y="146" fill="#e2e8f0" font-size="12" text-anchor="middle">fotogramma 640×480</text>
+  <text x="113" y="164" fill="#94a3b8" font-size="11" text-anchor="middle">camera.ts</text>
+  <text x="113" y="181" fill="#64748b" font-size="10.5" text-anchor="middle">si analizza solo se currentTime</text>
+  <text x="113" y="193" fill="#64748b" font-size="10.5" text-anchor="middle">è cambiato</text>
+
+  <path d="M206 144 L246 144" stroke="#475569" stroke-width="2" marker-end="url(#f)"/>
+
+  <!-- 2 tracker -->
+  <rect x="254" y="96" width="190" height="96" rx="12" fill="#111a33" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="349" y="124" fill="#38bdf8" font-size="14" font-weight="700" text-anchor="middle">2. Riconoscimento</text>
+  <text x="349" y="146" fill="#e2e8f0" font-size="12" text-anchor="middle">tracker.detect(video, now)</text>
+  <text x="349" y="164" fill="#94a3b8" font-size="11" text-anchor="middle">tracker.ts · MediaPipe</text>
+  <text x="349" y="182" fill="#64748b" font-size="10.5" text-anchor="middle">esce: 21 punti · lato · gesto</text>
+
+  <path d="M452 144 L492 144" stroke="#475569" stroke-width="2" marker-end="url(#f)"/>
+
+  <!-- 3 conferma -->
+  <rect x="500" y="96" width="190" height="96" rx="12" fill="#111a33" stroke="#facc15" stroke-width="1.5"/>
+  <text x="595" y="124" fill="#facc15" font-size="14" font-weight="700" text-anchor="middle">3. Conferma</text>
+  <text x="595" y="146" fill="#e2e8f0" font-size="12" text-anchor="middle">3 fotogrammi di fila</text>
+  <text x="595" y="166" fill="#94a3b8" font-size="11" text-anchor="middle">taglia le «mani fantasma»</text>
+  <text x="595" y="183" fill="#64748b" font-size="10.5" text-anchor="middle">main.ts · CONFIRM_FRAMES</text>
+
+  <path d="M698 144 L738 144" stroke="#475569" stroke-width="2" marker-end="url(#f)"/>
+
+  <!-- 4 filtro -->
+  <rect x="746" y="96" width="206" height="96" rx="12" fill="#111a33" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="849" y="124" fill="#38bdf8" font-size="14" font-weight="700" text-anchor="middle">4. Filtro anti-tremolio</text>
+  <text x="849" y="146" fill="#e2e8f0" font-size="12" text-anchor="middle">One Euro, 63 filtri</text>
+  <text x="849" y="164" fill="#94a3b8" font-size="11" text-anchor="middle">filter.ts</text>
+  <text x="849" y="182" fill="#64748b" font-size="10.5" text-anchor="middle">forte da fermo, debole in corsa</text>
+
+  <!-- discesa -->
+  <path d="M849 200 L849 236 L500 236" stroke="#475569" stroke-width="2" fill="none"/>
+  <path d="M595 236 L595 272" stroke="#475569" stroke-width="2" marker-end="url(#f)"/>
+  <path d="M500 236 L349 236 L349 272" stroke="#475569" stroke-width="2" fill="none" marker-end="url(#f)"/>
+  <path d="M595 236 L849 236 L849 272" stroke="#475569" stroke-width="2" fill="none" marker-end="url(#f)"/>
+
+  <!-- uscite -->
+  <rect x="234" y="280" width="230" height="110" rx="12" fill="#111a33" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="349" y="308" fill="#38bdf8" font-size="14" font-weight="700" text-anchor="middle">5a. Mano 3D</text>
+  <text x="349" y="330" fill="#e2e8f0" font-size="12" text-anchor="middle">scene.update(lato, punti)</text>
+  <text x="349" y="348" fill="#94a3b8" font-size="11" text-anchor="middle">hand3d.ts · Three.js</text>
+  <text x="349" y="368" fill="#64748b" font-size="10.5" text-anchor="middle">21 sfere + 21 cilindri + palmo</text>
+  <text x="349" y="382" fill="#64748b" font-size="10.5" text-anchor="middle">punti FILTRATI</text>
+
+  <rect x="480" y="280" width="230" height="110" rx="12" fill="#111a33" stroke="#f472b6" stroke-width="1.5"/>
+  <text x="595" y="308" fill="#f472b6" font-size="14" font-weight="700" text-anchor="middle">5b. Anteprima 2D</text>
+  <text x="595" y="330" fill="#e2e8f0" font-size="12" text-anchor="middle">drawConnectors / drawLandmarks</text>
+  <text x="595" y="348" fill="#94a3b8" font-size="11" text-anchor="middle">DrawingUtils di MediaPipe</text>
+  <text x="595" y="368" fill="#64748b" font-size="10.5" text-anchor="middle">punti GREZZI: devono coincidere</text>
+  <text x="595" y="382" fill="#64748b" font-size="10.5" text-anchor="middle">con l'immagine sotto</text>
+
+  <rect x="726" y="280" width="226" height="110" rx="12" fill="#111a33" stroke="#facc15" stroke-width="1.5"/>
+  <text x="839" y="308" fill="#facc15" font-size="14" font-weight="700" text-anchor="middle">5c. Barra in basso</text>
+  <text x="839" y="330" fill="#e2e8f0" font-size="12" text-anchor="middle">«Destra: 👍 Pollice su»</text>
+  <text x="839" y="348" fill="#94a3b8" font-size="11" text-anchor="middle">nome del gesto + fps</text>
+  <text x="839" y="368" fill="#64748b" font-size="10.5" text-anchor="middle">con ?e2e anche i dati su data-*</text>
+  <text x="839" y="382" fill="#64748b" font-size="10.5" text-anchor="middle">per i test automatici</text>
+
+  <!-- render -->
+  <path d="M349 398 L349 424 L595 424" stroke="#475569" stroke-width="2" fill="none"/>
+  <path d="M839 398 L839 424 L595 424" stroke="#475569" stroke-width="2" fill="none"/>
+  <path d="M595 398 L595 434" stroke="#475569" stroke-width="2" marker-end="url(#f)"/>
+  <rect x="380" y="440" width="430" height="52" rx="12" fill="#1e1b4b" stroke="#818cf8"/>
+  <text x="595" y="464" fill="#c7d2fe" font-size="13" text-anchor="middle" font-weight="700">6. scene.render() — a ogni requestAnimationFrame</text>
+  <text x="595" y="483" fill="#94a3b8" font-size="11" text-anchor="middle">avanza le dissolvenze e ridisegna: gira anche senza fotogrammi nuovi</text>
+
+  <defs>
+    <marker id="f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+  </defs>
+</svg>

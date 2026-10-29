@@ -1,0 +1,21 @@
+/* Il contatore «Accessi: N» (accessi.ts). Un file a sé, importato da accessi.ts, perché lo usano
+   anche le pagine di prosa che non caricano style.css; e niente <style> creato dal codice: la CSP
+   (style-src 'self') lo bloccherebbe. In schermo intero si nasconde: lì conta solo l'immagine. */
+.accessi {
+  position: fixed;
+  right: 10px;
+  bottom: 4px;
+  z-index: 30;
+  font: 600 0.9rem system-ui, sans-serif;
+  color: #cbd5e1;
+  background: rgb(15 23 42 / 0.75);
+  border: 1px solid rgb(148 163 184 / 0.25);
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+
+.schermo-intero .accessi {
+  display: none;
+}

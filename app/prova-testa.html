@@ -1,0 +1,21 @@
+<!doctype html>
+<!--
+  prova-testa.html — strumento di diagnosi, SOLO per `npm run dev`.
+
+  Mette a confronto, sullo stesso fotogramma, quello che la posa del corpo dice della testa (naso,
+  occhi, orecchie) e quello che dice il modello del volto (478 punti), e scrive i numeri in
+  `document.body.dataset.esito` perché li legga uno script di prova. Serve a decidere a occhio e
+  con i numeri se la testa è posizionata bene, senza una webcam vera.
+
+  NON è in `rollupOptions.input` di vite.config.ts: la build la ignora, non finisce online.
+-->
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Prova testa</title>
+  </head>
+  <body>
+    <video id="video" autoplay muted playsinline width="320"></video>
+    <script type="module" src="/src/prova-testa.ts"></script>
+  </body>
+</html>

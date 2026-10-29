@@ -1,0 +1,15 @@
+/* Il contatore «Accessi: N» (accessi.js), uguale a quello delle pagine dell'app. */
+.accessi {
+  position: fixed;
+  right: 10px;
+  bottom: 4px;
+  z-index: 30;
+  font: 600 0.9rem system-ui, sans-serif;
+  color: #cbd5e1;
+  background: rgb(15 23 42 / 0.75);
+  border: 1px solid rgb(148 163 184 / 0.25);
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}

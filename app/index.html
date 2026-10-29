@@ -1,0 +1,111 @@
+<!doctype html>
+<!--
+  index.html — la pagina principale: la mano in 3D.
+
+  L'impaginazione è a SCHERMO DIVISO: da una parte quello che vede la webcam (con i punti
+  disegnati sopra), dall'altra la mano ricostruita in 3D. Prima la webcam era un riquadrino in
+  basso a destra, largo 240 px: si capiva a malapena cosa stesse guardando il riconoscitore. Ora i
+  due pannelli hanno la stessa importanza, ed è molto più facile accorgersi del perché la mano non
+  viene vista — fuori inquadratura, controluce, troppo lontana.
+
+  Su schermo largo i pannelli sono affiancati; su un telefono in verticale si mettono uno sopra
+  l'altro. Se ne occupa `.split` in src/mano.css.
+
+  Regola della CSP di produzione: niente <script> scritti qui dentro, niente attributi style="",
+  nessun indirizzo esterno. Sono vietati dal sito e lo script di pubblicazione li rifiuta.
+-->
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- viewport: obbligatorio perché su telefono la pagina non venga rimpicciolita come un sito desktop -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="La webcam guarda la tua mano e la riproduce sullo schermo, tutto nel browser." />
+    <!-- colore della barra del browser su mobile, uguale allo sfondo della pagina -->
+    <meta name="theme-color" content="#0b1020" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Mano</title>
+    <link rel="canonical" href="https://mano.giuseppebosi.com/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Mano" />
+    <meta property="og:locale" content="it_IT" />
+    <meta property="og:title" content="Mano" />
+    <meta property="og:description" content="La webcam guarda la tua mano e la riproduce sullo schermo, tutto nel browser." />
+    <meta property="og:url" content="https://mano.giuseppebosi.com/" />
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "Mano", "description": "La webcam guarda la tua mano e la riproduce sullo schermo, tutto nel browser.", "url": "https://mano.giuseppebosi.com/", "inLanguage": "it", "author": {"@type": "Person", "name": "Giuseppe Bosi", "honorificPrefix": "Prof.", "jobTitle": "Professore di Scienze e Tecnologie Informatiche", "url": "https://www.giuseppebosi.com", "sameAs": ["https://www.giuseppebosi.com", "https://www.linkedin.com/in/giuseppebosi"]}, "license": "https://creativecommons.org/licenses/by/4.0/"}</script>
+  </head>
+
+  <!-- data-state lo aggiorna main.ts: idle | loading | running | error -->
+  <body data-state="idle">
+    <header class="topbar">
+      <div class="brand">✋ Mano</div>
+      <!-- Le pagine del sito. aria-current dice qual è quella aperta, anche a chi usa un
+           lettore di schermo. -->
+      <nav class="nav" aria-label="Pagine del sito">
+        <a href="/" aria-current="page">Mano</a>
+        <a href="/sfida/">Sfida</a>
+        <a href="/onda/">Onda</a>
+        <a href="/corpo/">Corpo</a>
+      </nav>
+      <!-- role="status" + aria-live: i lettori di schermo annunciano il cambio di stato della
+           camera senza che l'utente debba andarlo a cercare -->
+      <div class="destra">
+        <div class="status" id="status" role="status" aria-live="polite">Camera spenta</div>
+        <button type="button" class="icona" id="schermo-intero" aria-pressed="false">⛶ Schermo intero</button>
+      </div>
+    </header>
+
+    <!-- I due pannelli. Quello della camera si può nascondere dal pulsante in basso: quando
+         sparisce, la mano 3D si prende tutto lo spazio. -->
+    <main class="split">
+      <!-- Pannello della camera: cosa vede davvero il riconoscitore.
+           - muted e playsinline: senza questi iOS rifiuta di riprodurre il video in pagina
+           - autoplay: il flusso parte appena viene collegato
+           - video e tela sono specchiati insieme dal CSS (vedi src/mano.css) -->
+      <section class="pane preview" id="preview" hidden>
+        <video id="video" autoplay muted playsinline></video>
+        <canvas id="overlay"></canvas>
+        <!-- Avviso "sei troppo lontano": lo accende main.ts misurando quanto è grande la mano
+             nell'immagine. role="status" perché venga annunciato anche da un lettore di schermo. -->
+        <p class="avviso" id="avviso" role="status" aria-live="polite" hidden></p>
+      </section>
+
+      <!-- Pannello della mano ricostruita. aria-label descrive la tela a chi usa un lettore di
+           schermo, che altrimenti troverebbe un elemento muto. -->
+      <section class="pane">
+        <canvas id="scene" aria-label="Riproduzione 3D della mano"></canvas>
+        <!-- Cosa sta leggendo il riconoscitore, in grande, sotto la mano ricostruita: era una
+             riga piccola nell'angolo in basso a sinistra della barra dei comandi e non si
+             notava. È l'informazione più importante della pagina, sta dove si sta guardando. -->
+        <p class="lettura" id="gestures" role="status" aria-live="polite"></p>
+      </section>
+    </main>
+
+    <!-- Schermata iniziale, sovrapposta al centro. La camera si accende solo da qui: è una scelta
+         esplicita dell'utente, mai un effetto collaterale dell'apertura della pagina. -->
+    <section class="intro" id="intro">
+      <h1>Muovi la mano davanti alla webcam</h1>
+      <p>Da una parte quello che vede la camera, dall'altra la mano ricostruita in tempo reale.</p>
+      <button type="button" class="primary" id="start">Accendi la camera</button>
+      <p class="privacy">
+        Tutto avviene nel tuo browser: le immagini della camera non vengono inviate a nessun server
+        né salvate.
+      </p>
+      <!-- Riga d'errore: normalmente nascosta, la riempie main.ts con un messaggio comprensibile -->
+      <p class="error" id="error" hidden></p>
+    </section>
+
+    <!-- Barra dei comandi, visibile solo mentre la camera è accesa -->
+    <footer class="hud" id="hud" hidden>
+      <div class="controls">
+        <span class="metric" id="fps">– fps</span>
+        <!-- aria-pressed: il pulsante è un interruttore, e il suo stato è leggibile anche dal codice -->
+        <button type="button" id="toggle-preview" aria-pressed="true">Nascondi camera</button>
+        <button type="button" id="stop">Spegni camera</button>
+      </div>
+    </footer>
+
+    <!-- L'unico script della pagina. type="module" permette gli import; in produzione Vite lo
+         sostituisce con il file compilato e firmato dal contenuto. -->
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

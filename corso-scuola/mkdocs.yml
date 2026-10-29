@@ -1,0 +1,47 @@
+# Il corso «La mano al computer» — sito costruito con MkDocs + tema Material.
+# Costruire:  .venv/bin/mkdocs build -f corso-scuola/mkdocs.yml
+# Anteprima:  .venv/bin/mkdocs serve -f corso-scuola/mkdocs.yml
+site_name: La mano al computer
+site_description: Riconoscere la mano dalla webcam in poche righe di codice — corso per chi conosce il C
+site_url: https://mano.giuseppebosi.com/scuola/mkdocs/
+docs_dir: docs
+copyright: 'Giuseppe Bosi, Dottore in Ingegneria Elettronica (V.O.), Professore di Scienze e Tecnologie Informatiche<br>Testi <a href="https://creativecommons.org/licenses/by/4.0/deed.it">CC BY 4.0</a> · Codice <a href="https://opensource.org/license/mit">MIT</a> · <a href="/crediti/">Crediti</a> · <a href="/privacy/">Privacy</a>'
+site_dir: site
+
+theme:
+  name: material
+  language: it
+  font: false          # niente Google Fonts: caratteri del sistema, nessuna richiesta esterna
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: pink
+  features:
+    - navigation.footer
+    - navigation.top
+    - content.code.copy
+    - content.code.annotate
+
+extra_css: [comune/accessi.css]
+extra_javascript: [comune/accessi.js]
+
+nav:
+  - Indice del corso: index.md
+  - "Lezione 1 · I punti della mano": lezioni/01-punti-della-mano.md
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.snippets:
+      base_path: [corso-scuola/docs, docs]
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg

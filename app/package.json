@@ -1,0 +1,23 @@
+{
+  "name": "recognizer-mano",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "assets": "node scripts/prepare-assets.mjs",
+    "dev": "npm run assets && vite",
+    "build": "npm run assets && tsc && vite build",
+    "preview": "vite preview",
+    "test:e2e": "node tests/e2e/run.mjs"
+  },
+  "devDependencies": {
+    "@types/three": "0.186.0",
+    "playwright": "1.63.0",
+    "typescript": "~6.0.2",
+    "vite": "^8.3.0"
+  },
+  "dependencies": {
+    "@mediapipe/tasks-vision": "1.0.1",
+    "three": "0.186.0"
+  }
+}

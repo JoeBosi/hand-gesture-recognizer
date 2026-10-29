@@ -1,0 +1,13 @@
+<!doctype html>
+<!--
+  prova-suono.html — strumento di sviluppo, SOLO per `npm run dev`. Non è in `rollupOptions.input`:
+  la build lo ignora e non finisce online.
+
+  Renderizza il suono dell'onda energetica con un `OfflineAudioContext` (senza altoparlanti, quindi
+  in modo ripetibile e anche su un server) lungo l'intera sequenza — carica, sparo, raggio che si
+  sposta da sinistra a destra, e una seconda carica strappata a metà — e mette i campioni in
+  `document.body.dataset.esito` come base64, perché uno script li analizzi (picchi, volumi,
+  spettrogramma). Così il suono si può misurare anche se nessuno lo sta ascoltando.
+-->
+<html lang="it"><head><meta charset="UTF-8" /><title>Prova suono</title></head>
+<body><script type="module" src="/src/prova-suono.ts"></script></body></html>
