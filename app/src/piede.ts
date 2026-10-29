@@ -30,6 +30,8 @@ function piede(): void {
     link("Crediti", "/crediti/"),
     " · ",
     link("Privacy", "/privacy/"),
+    " · ",
+    link("Source code on GitHub", "https://github.com/JoeBosi/hand-gesture-recognizer"),
   );
   const altri = document.createElement("p");
   altri.append(
