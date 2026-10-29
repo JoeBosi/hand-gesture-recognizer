@@ -22,6 +22,7 @@
  *    qualcosa nella pagina. Il gioco comincia dal pulsante «Accendi la camera», quindi la regola
  *    è già soddisfatta.
  */
+import { lingua, locale } from "./i18n";
 
 const disponibile = typeof window !== "undefined" && "speechSynthesis" in window && typeof SpeechSynthesisUtterance !== "undefined";
 
@@ -31,12 +32,12 @@ let voceScelta: SpeechSynthesisVoice | null = null;
 let ultimaFrase = "";
 
 /**
- * Sceglie la voce italiana migliore fra quelle disponibili: prima una locale, poi una qualsiasi.
+ * Sceglie la voce migliore nella lingua della pagina (italiano o inglese) fra quelle disponibili: prima una locale, poi una qualsiasi.
  * Le voci arrivano in ritardo (il browser le carica da solo): si ritenta a ogni `voiceschanged`.
  */
 function scegliVoce(): void {
   if (!disponibile) return;
-  const italiane = speechSynthesis.getVoices().filter((v) => v.lang.toLowerCase().replace("_", "-").startsWith("it"));
+  const italiane = speechSynthesis.getVoices().filter((v) => v.lang.toLowerCase().replace("_", "-").startsWith(lingua));
   voceScelta = italiane.find((v) => v.localService) ?? italiane[0] ?? null;
 }
 
@@ -57,7 +58,7 @@ export function parla(frase: string, urgente = false): void {
   if (!disponibile || !attiva) return;
   if (urgente) speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(frase);
-  u.lang = "it-IT";
+  u.lang = locale;
   if (voceScelta) u.voice = voceScelta;
   u.rate = 1.08; // appena più svelta del normale: un conto alla rovescia lento non è un conto
   speechSynthesis.speak(u);

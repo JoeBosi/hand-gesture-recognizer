@@ -1,0 +1,11 @@
+{
+ "corpo.avvio": "Starting…",
+ "corpo.testa": "Head",
+ "corpo.braccia": "Arms",
+ "corpo.busto": "Torso",
+ "corpo.gambe": "Legs",
+ "corpo.mani": "Hands",
+ "corpo.mano": "Hand",
+ "corpo.parziale": "Person partly in frame",
+ "corpo.nessuna": "No person in frame"
+}

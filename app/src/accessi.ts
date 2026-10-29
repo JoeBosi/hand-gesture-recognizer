@@ -10,6 +10,7 @@
  * gonfiano il numero.
  */
 import "./accessi.css";
+import { locale, t } from "./i18n";
 
 async function mostraAccessi(): Promise<void> {
   try {
@@ -21,7 +22,7 @@ async function mostraAccessi(): Promise<void> {
     if (typeof accessi !== "number") return;
     const el = document.createElement("div");
     el.className = "accessi";
-    el.textContent = `Accessi: ${accessi.toLocaleString("it-IT")}`;
+    el.textContent = t("accessi", { n: accessi.toLocaleString(locale) });
     document.body.append(el);
   } catch {
     /* contatore non raggiungibile: niente riquadro */

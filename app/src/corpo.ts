@@ -25,6 +25,7 @@
 import "./accessi";
 import "./piede";
 import "./style.css";
+import { t } from "./i18n";
 import { DrawingUtils, type HandLandmarkerResult, type NormalizedLandmark } from "@mediapipe/tasks-vision";
 import { BodyScene, type HandPoints, type PosePoint } from "./body3d";
 import { CameraError, startCamera, stopCamera } from "./camera";
@@ -77,10 +78,10 @@ const E2E = new URLSearchParams(location.search).has("e2e");
  * punti elencati: bastano quelli, non serve l'elenco completo.
  */
 const PARTS: ReadonlyArray<{ nome: string; punti: readonly number[] }> = [
-  { nome: "Testa", punti: [POSE.NOSE] },
-  { nome: "Braccia", punti: [POSE.LEFT_ELBOW, POSE.RIGHT_ELBOW, POSE.LEFT_WRIST, POSE.RIGHT_WRIST] },
-  { nome: "Busto", punti: [POSE.LEFT_SHOULDER, POSE.RIGHT_SHOULDER, POSE.LEFT_HIP, POSE.RIGHT_HIP] },
-  { nome: "Gambe", punti: [POSE.LEFT_KNEE, POSE.RIGHT_KNEE, POSE.LEFT_ANKLE, POSE.RIGHT_ANKLE] },
+  { nome: t("corpo.testa"), punti: [POSE.NOSE] },
+  { nome: t("corpo.braccia"), punti: [POSE.LEFT_ELBOW, POSE.RIGHT_ELBOW, POSE.LEFT_WRIST, POSE.RIGHT_WRIST] },
+  { nome: t("corpo.busto"), punti: [POSE.LEFT_SHOULDER, POSE.RIGHT_SHOULDER, POSE.LEFT_HIP, POSE.RIGHT_HIP] },
+  { nome: t("corpo.gambe"), punti: [POSE.LEFT_KNEE, POSE.RIGHT_KNEE, POSE.LEFT_ANKLE, POSE.RIGHT_ANKLE] },
 ];
 const MIN_VISIBILITY = 0.5;
 
@@ -101,7 +102,7 @@ function setState(state: State, status: string): void {
   ui.hud.hidden = state !== "running";
   ui.preview.hidden = state !== "running" || ui.togglePreview.getAttribute("aria-pressed") !== "true";
   ui.start.disabled = state === "loading";
-  ui.start.textContent = state === "loading" ? "Avvio in corso…" : "Accendi la camera";
+  ui.start.textContent = state === "loading" ? t("cam.avvio") : t("cam.accendi");
 }
 
 // --- Una persona sola, e umana (dal 08/10/2026) ------------------------------------------------
@@ -227,8 +228,8 @@ function loop(): void {
       // 4) quali parti del corpo il modello sta vedendo davvero
       const visible = PARTS.filter((p) => p.punti.every((i) => (landmarks[i]?.visibility ?? 0) >= MIN_VISIBILITY));
       const etichette = visible.map((p) => `${p.nome} ✓`);
-      if (hands.length) etichette.push(`${hands.length === 2 ? "Mani" : "Mano"} ✓`);
-      ui.parts.textContent = etichette.length ? etichette.join("   ·   ") : "Persona inquadrata parzialmente";
+      if (hands.length) etichette.push(`${hands.length === 2 ? t("corpo.mani") : t("corpo.mano")} ✓`);
+      ui.parts.textContent = etichette.length ? etichette.join("   ·   ") : t("corpo.parziale");
 
       if (E2E) {
         document.body.dataset.bodies = "1";
@@ -248,7 +249,7 @@ function loop(): void {
       smoother = null;
       handSmoothers.left = handSmoothers.right = null;
       faceTracker?.reset();
-      ui.parts.textContent = "Nessuna persona inquadrata";
+      ui.parts.textContent = t("corpo.nessuna");
       azzeraDatiE2E();
     }
 
@@ -401,7 +402,7 @@ async function fallbackToCpuIfSlow(): Promise<void> {
 }
 
 // --- I posti (al massimo cinque persone insieme: vedi presenza.ts) -------------------------------
-const ETICHETTA_AVVIO = ui.start.textContent ?? "Accendi la camera";
+const ETICHETTA_AVVIO = ui.start.textContent ?? t("cam.accendi");
 /** Un clic durante l'attesa la annulla; `attesaGen` fa morire i cicli di attesa rimasti indietro. */
 let inAttesa = false;
 let attesaGen = 0;
@@ -411,7 +412,7 @@ function mostraAttesa(testo: string | null): void {
   if (testo) {
     ui.error.textContent = testo;
     ui.error.hidden = false;
-    ui.start.textContent = "Annulla attesa";
+    ui.start.textContent = t("presenza.annulla");
     ui.start.disabled = false;
   } else {
     ui.error.hidden = true;
@@ -422,7 +423,7 @@ function mostraAttesa(testo: string | null): void {
 /** Il posto è scaduto e nel frattempo il sito si è riempito: la camera si spegne e lo si dice. */
 function postoPerso(): void {
   stop();
-  ui.error.textContent = "Il tuo posto è scaduto e nel frattempo il sito si è riempito. Riprova fra poco.";
+  ui.error.textContent = t("presenza.perso");
   ui.error.hidden = false;
 }
 
@@ -445,7 +446,7 @@ async function start(): Promise<void> {
     libera();
     return;
   }
-  setState("loading", "Avvio…");
+  setState("loading", t("corpo.avvio"));
   try {
     // I due modelli si creano **uno dopo l'altro**, mai con `Promise.all`: la libreria passa la
     // funzione che costruisce il modulo WebAssembly attraverso una variabile globale che azzera
@@ -463,15 +464,15 @@ async function start(): Promise<void> {
 
     scene.setFrameAspect(ui.video.videoWidth / ui.video.videoHeight);
     lastVideoTime = -1;
-    setState("running", "● Camera accesa");
+    setState("running", t("cam.accesa"));
     mantieni(postoPerso);
     cancelAnimationFrame(rafId);
     loop();
   } catch (e) {
     stop();
-    ui.error.textContent = e instanceof CameraError ? e.message : `Errore durante l'avvio: ${(e as Error).message ?? e}`;
+    ui.error.textContent = e instanceof CameraError ? e.message : t("cam.errore", { msg: String((e as Error).message ?? e) });
     ui.error.hidden = false;
-    setState("error", "Camera spenta");
+    setState("error", t("cam.spenta"));
   }
 }
 
@@ -493,7 +494,7 @@ function stop(): void {
     if (--n > 0) requestAnimationFrame(fadeOut);
   };
   fadeOut();
-  setState("idle", "Camera spenta");
+  setState("idle", t("cam.spenta"));
 }
 
 ui.start.addEventListener("click", () => void start());
@@ -502,7 +503,7 @@ ui.stop.addEventListener("click", stop);
 ui.togglePreview.addEventListener("click", () => {
   const show = ui.togglePreview.getAttribute("aria-pressed") !== "true";
   ui.togglePreview.setAttribute("aria-pressed", String(show));
-  ui.togglePreview.textContent = show ? "Nascondi camera" : "Mostra camera";
+  ui.togglePreview.textContent = show ? t("cam.nascondi") : t("cam.mostra");
   ui.preview.hidden = !show;
 });
 

@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="What the Mano site collects and where it goes: the webcam images stay in the browser." />
+    <meta name="theme-color" content="#0b1020" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Privacy · Mano</title>
+    <link rel="canonical" href="https://mano.giuseppebosi.com/en/privacy/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Mano" />
+    <meta property="og:locale" content="en_GB" />
+    <meta property="og:title" content="Privacy · Mano" />
+    <meta property="og:description" content="What the Mano site collects and where it goes: the webcam images stay in the browser." />
+    <meta property="og:url" content="https://mano.giuseppebosi.com/en/privacy/" />
+    <link rel="alternate" hreflang="it" href="https://mano.giuseppebosi.com/privacy/" />
+    <link rel="alternate" hreflang="en" href="https://mano.giuseppebosi.com/en/privacy/" />
+    <link rel="alternate" hreflang="x-default" href="https://mano.giuseppebosi.com/privacy/" />
+  </head>
+  <body>
+    <nav class="sitenav" aria-label="Site pages">
+      <span class="brand">✋ Mano</span>
+      <a href="/en/">Mano</a>
+      <a href="/en/sfida/">Duel</a>
+      <a href="/en/onda/">Energy Wave</a>
+      <a href="/en/corpo/">Body</a>
+    </nav>
+    <main>
+      <header class="hero">
+        <p class="eyebrow">Privacy</p>
+        <h1>What the site collects, and where it goes</h1>
+        <p class="lede">
+          In short: your image never leaves your computer. The site only counts how many
+          times the pages are opened.
+        </p>
+      </header>
+
+      <h2>The webcam</h2>
+      <p>
+        The camera turns on only when you press the button. The images and the landmarks of the hand,
+        body and face are computed inside the browser and stay there: they are not sent,
+        recorded or saved. It is not just a promise: the security rules of the page
+        (the <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP">Content Security Policy</a>,
+        <code>connect-src 'self'</code>) prevent the browser from sending data to any other
+        address. When you leave the page, the camera turns off.
+      </p>
+
+      <h2>What the server receives</h2>
+      <ul>
+        <li><strong>The visit counter.</strong> Each time a page is opened, an empty request arrives: the server adds one to the total and saves only that number.</li>
+        <li><strong>People connected at the same time.</strong> While the camera is on, every 15 seconds the page sends a random number, created when the page opens and never saved, to count how many people are using the site at the same moment. When you leave, the number is forgotten.</li>
+        <li><strong>No logs.</strong> The web server keeps no log of visits: IP addresses and visited pages are not saved.</li>
+      </ul>
+      <p>No cookies, no statistics, no third-party services: all files come from this site.</p>
+
+      <h2>The school course</h2>
+      <p>
+        The course pages (<a href="/scuola/mkdocs/en/">/scuola/</a>) are read-only and do not use the
+        camera. The exercises are done in the <a href="https://editor.p5js.org/">p5.js web editor</a>,
+        a different site with its own rules: there, hand recognition downloads the ml5.js library and
+        Google's model, but in that case too the webcam images are processed inside the
+        browser.
+      </p>
+    </main>
+    <script type="module" src="/src/documento.ts"></script>
+  </body>
+</html>

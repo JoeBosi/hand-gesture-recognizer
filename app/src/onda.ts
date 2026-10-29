@@ -39,6 +39,7 @@ import "./accessi";
 import "./piede";
 import "./style.css";
 import "./onda.css";
+import { t as testoI18n } from "./i18n";
 import { DrawingUtils, type NormalizedLandmark } from "@mediapipe/tasks-vision";
 import { CameraError, startCamera, stopCamera } from "./camera";
 import { entra, libera, mantieni } from "./presenza";
@@ -222,11 +223,11 @@ function inPosa(a: Analisi, dentro: boolean): boolean {
 
 /** Che cosa dire a chi non ci riesce: la prima cosa che non va, in parole. */
 function consiglio(a: Analisi): string {
-  if (a.numMani === 0) return "Alza le due mani davanti alla camera";
-  if (a.numMani === 1) return "Serve anche l'altra mano";
-  if (a.polsi > POLSI_ENTRA) return "Avvicina i polsi, uno contro l'altro";
-  if (a.dita < DITA_ENTRA) return "Apri le dita";
-  if (a.angolo > ANGOLO_ENTRA) return "Le mani non devono puntare in versi opposti";
+  if (a.numMani === 0) return testoI18n("onda.alzaMani");
+  if (a.numMani === 1) return testoI18n("onda.altraMano");
+  if (a.polsi > POLSI_ENTRA) return testoI18n("onda.avvicinaPolsi");
+  if (a.dita < DITA_ENTRA) return testoI18n("onda.apriDita");
+  if (a.angolo > ANGOLO_ENTRA) return testoI18n("onda.versi");
   return "";
 }
 
@@ -323,7 +324,7 @@ function setState(state: State, status: string): void {
   ui.stage.hidden = state !== "running";
   ui.hud.hidden = state !== "running";
   ui.start.disabled = state === "loading";
-  ui.start.textContent = state === "loading" ? "Avvio in corso…" : "Accendi la camera e carica";
+  ui.start.textContent = state === "loading" ? testoI18n("cam.avvio") : testoI18n("onda.start");
 }
 
 /** Scrive nel DOM solo se il testo è cambiato: a 60 fotogrammi al secondo conta. */
@@ -336,9 +337,9 @@ function testo(el: HTMLElement, valore: string, classe = ""): void {
 }
 
 /** La scritta che si completa durante la carica, cinque passi sui quattro secondi. */
-const GRIDO = ["ON…", "ONDA…", "ONDA ENER…", "ONDA ENERGE…", "ONDA ENERGETICA…"];
+const GRIDO = [testoI18n("onda.grido1"), testoI18n("onda.grido2"), testoI18n("onda.grido3"), testoI18n("onda.grido4"), testoI18n("onda.grido5")];
 /** La scritta allo sparo. */
-const GRIDO_SPARO = "ONDA ENERGETICA!!!";
+const GRIDO_SPARO = testoI18n("onda.gridoSparo");
 
 /** Un dato per i test, solo con `?e2e`. Scrive solo se cambia (vedi `testo`). */
 function dato(chiave: string, valore: string): void {
@@ -568,10 +569,10 @@ function disegna(ora: number, dt: number, dtReale: number): void {
     testo(ui.suggerimento, "");
   } else if (fase === "riposo") {
     testo(ui.grido, "");
-    testo(ui.suggerimento, "Sciogli le mani per ricaricare");
+    testo(ui.suggerimento, testoI18n("onda.sciogli"));
   } else {
     testo(ui.grido, "");
-    testo(ui.suggerimento, consiglio(ultimaAnalisi) || "Tieni la posa…");
+    testo(ui.suggerimento, consiglio(ultimaAnalisi) || testoI18n("onda.tieni"));
   }
 
   dato("fase", fase);
@@ -689,7 +690,7 @@ function azzeraStato(): void {
 }
 
 // --- I posti (al massimo cinque persone insieme: vedi presenza.ts) -------------------------------
-const ETICHETTA_AVVIO = ui.start.textContent ?? "Accendi la camera";
+const ETICHETTA_AVVIO = ui.start.textContent ?? testoI18n("cam.accendi");
 /** Un clic durante l'attesa la annulla; `attesaGen` fa morire i cicli di attesa rimasti indietro. */
 let inAttesa = false;
 let attesaGen = 0;
@@ -699,7 +700,7 @@ function mostraAttesa(testo: string | null): void {
   if (testo) {
     ui.error.textContent = testo;
     ui.error.hidden = false;
-    ui.start.textContent = "Annulla attesa";
+    ui.start.textContent = testoI18n("presenza.annulla");
     ui.start.disabled = false;
   } else {
     ui.error.hidden = true;
@@ -710,7 +711,7 @@ function mostraAttesa(testo: string | null): void {
 /** Il posto è scaduto e nel frattempo il sito si è riempito: la camera si spegne e lo si dice. */
 function postoPerso(): void {
   stop();
-  ui.error.textContent = "Il tuo posto è scaduto e nel frattempo il sito si è riempito. Riprova fra poco.";
+  ui.error.textContent = testoI18n("presenza.perso");
   ui.error.hidden = false;
 }
 
@@ -737,7 +738,7 @@ async function start(): Promise<void> {
     libera();
     return;
   }
-  setState("loading", "Avvio…");
+  setState("loading", testoI18n("onda.avvio"));
   try {
     tracker ??= await HandTracker.create();
     stream = await startCamera(ui.video, stop); // `stop` anche se la camera si spegne da sola
@@ -747,15 +748,15 @@ async function start(): Promise<void> {
     }
     lastVideoTime = -1;
     azzeraStato();
-    setState("running", "● Camera accesa");
+    setState("running", testoI18n("cam.accesa"));
     mantieni(postoPerso);
     cancelAnimationFrame(rafId);
     loop();
   } catch (e) {
     stop();
-    ui.error.textContent = e instanceof CameraError ? e.message : `Errore durante l'avvio: ${(e as Error).message ?? e}`;
+    ui.error.textContent = e instanceof CameraError ? e.message : testoI18n("cam.errore", { msg: String((e as Error).message ?? e) });
     ui.error.hidden = false;
-    setState("error", "Camera spenta");
+    setState("error", testoI18n("cam.spenta"));
   }
 }
 
@@ -781,7 +782,7 @@ function stop(): void {
   testo(ui.suggerimento, "");
   azzeraStato();
   azzeraDati();
-  setState("idle", "Camera spenta");
+  setState("idle", testoI18n("cam.spenta"));
 }
 
 ui.start.addEventListener("click", () => void start());
@@ -792,7 +793,7 @@ ui.suono.addEventListener("click", () => {
   suonoMuto = !suonoMuto;
   audio?.impostaMuto(suonoMuto);
   ui.suono.setAttribute("aria-pressed", String(!suonoMuto));
-  ui.suono.textContent = suonoMuto ? "🔇 Suono spento" : "🔊 Suono";
+  ui.suono.textContent = suonoMuto ? testoI18n("onda.suonoSpento") : testoI18n("onda.suono");
 });
 
 document.addEventListener("visibilitychange", () => {

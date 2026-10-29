@@ -24,6 +24,7 @@ import { iniziaSchermoIntero } from "./schermo-intero";
 import { LandmarkSmoother } from "./filter";
 import { HandScene, type Side } from "./hand3d";
 import { GESTURE_LABELS, HAND_CONNECTIONS, HandTracker } from "./tracker";
+import { t } from "./i18n";
 
 /**
  * Scorciatoia per prendere un elemento dall'HTML.
@@ -73,7 +74,7 @@ const drawing = new DrawingUtils(overlayCtx);
 const smoothers: Record<Side, LandmarkSmoother | null> = { Right: null, Left: null };
 
 /** Etichette mostrate all'utente. Il codice ragiona in inglese, l'interfaccia parla italiano. */
-const SIDE_IT: Record<Side, string> = { Right: "Destra", Left: "Sinistra" };
+const SIDE_IT: Record<Side, string> = { Right: t("lato.Right"), Left: t("lato.Left") };
 
 /**
  * Con `?e2e` nell'indirizzo la pagina espone nel DOM il suo stato (quante mani, quale gesto, dove
@@ -171,7 +172,7 @@ function aggiornaAvviso(ciSonoMani: boolean, palmo: number): void {
 function mostraAvviso(acceso: boolean): void {
   if (acceso === avvisoAcceso) return; // niente scritture inutili nel DOM a ogni fotogramma
   avvisoAcceso = acceso;
-  ui.avviso.textContent = acceso ? "✋ Avvicina la mano alla camera" : "";
+  ui.avviso.textContent = acceso ? t("mano.avvicina") : "";
   ui.avviso.hidden = !acceso;
 }
 
@@ -197,7 +198,7 @@ function setState(state: State, status: string): void {
   // L'anteprima torna visibile solo se l'utente non l'aveva nascosta con il pulsante.
   ui.preview.hidden = state !== "running" || ui.togglePreview.getAttribute("aria-pressed") !== "true";
   ui.start.disabled = state === "loading";
-  ui.start.textContent = state === "loading" ? "Avvio in corso…" : "Accendi la camera";
+  ui.start.textContent = state === "loading" ? t("cam.avvio") : t("cam.accendi");
 }
 
 /**
@@ -299,7 +300,7 @@ function loop(): void {
 
     // La lettura, grande sotto la mano 3D. Quando non c'è nessuna mano il tono si abbassa
     // (classe `vuota`): è uno stato normale, non un guasto, e non deve gridare come un avviso.
-    ui.gestures.textContent = labels.length ? labels.join("   ·   ") : "Nessuna mano inquadrata";
+    ui.gestures.textContent = labels.length ? labels.join("   ·   ") : t("mano.nessuna");
     ui.gestures.classList.toggle("vuota", labels.length === 0);
 
     // Fotogrammi analizzati nell'ultimo secondo: è la velocità del riconoscimento, non quella del
@@ -350,7 +351,7 @@ async function fallbackToCpuIfSlow(): Promise<void> {
  * non si tiene la camera accesa per secondi mentre si scarica il modello.
  */
 // --- I posti (al massimo cinque persone insieme: vedi presenza.ts) -------------------------------
-const ETICHETTA_AVVIO = ui.start.textContent ?? "Accendi la camera";
+const ETICHETTA_AVVIO = ui.start.textContent ?? t("cam.accendi");
 /** Un clic durante l'attesa la annulla; `attesaGen` fa morire i cicli di attesa rimasti indietro. */
 let inAttesa = false;
 let attesaGen = 0;
@@ -360,7 +361,7 @@ function mostraAttesa(testo: string | null): void {
   if (testo) {
     ui.error.textContent = testo;
     ui.error.hidden = false;
-    ui.start.textContent = "Annulla attesa";
+    ui.start.textContent = t("presenza.annulla");
     ui.start.disabled = false;
   } else {
     ui.error.hidden = true;
@@ -371,7 +372,7 @@ function mostraAttesa(testo: string | null): void {
 /** Il posto è scaduto e nel frattempo il sito si è riempito: la camera si spegne e lo si dice. */
 function postoPerso(): void {
   stop();
-  ui.error.textContent = "Il tuo posto è scaduto e nel frattempo il sito si è riempito. Riprova fra poco.";
+  ui.error.textContent = t("presenza.perso");
   ui.error.hidden = false;
 }
 
@@ -411,7 +412,7 @@ async function start(): Promise<void> {
     // 4:3, 16:9 o un formato verticale sul telefono).
     scene.setFrameAspect(ui.video.videoWidth / ui.video.videoHeight);
     lastVideoTime = -1;
-    setState("running", "● Camera accesa");
+    setState("running", t("cam.accesa"));
     mantieni(postoPerso);
     cancelAnimationFrame(rafId); // per sicurezza: mai due cicli in parallelo
     loop();
@@ -419,9 +420,9 @@ async function start(): Promise<void> {
     stop();
     // CameraError porta già un messaggio comprensibile (permesso negato, camera occupata…);
     // per tutto il resto si mostra l'errore tecnico, meglio di un fallimento muto.
-    ui.error.textContent = e instanceof CameraError ? e.message : `Errore durante l'avvio: ${(e as Error).message ?? e}`;
+    ui.error.textContent = e instanceof CameraError ? e.message : t("cam.errore", { msg: String((e as Error).message ?? e) });
     ui.error.hidden = false;
-    setState("error", "Camera spenta");
+    setState("error", t("cam.spenta"));
   }
 }
 
@@ -467,7 +468,7 @@ function stop(): void {
     if (--n > 0) requestAnimationFrame(fade);
   };
   fade();
-  setState("idle", "Camera spenta");
+  setState("idle", t("cam.spenta"));
 }
 
 // --- Collegamenti con i comandi della pagina -----------------------------------------------
@@ -479,7 +480,7 @@ ui.togglePreview.addEventListener("click", () => {
   // `aria-pressed` è insieme lo stato del pulsante e l'informazione per i lettori di schermo.
   const show = ui.togglePreview.getAttribute("aria-pressed") !== "true";
   ui.togglePreview.setAttribute("aria-pressed", String(show));
-  ui.togglePreview.textContent = show ? "Nascondi camera" : "Mostra camera";
+  ui.togglePreview.textContent = show ? t("cam.nascondi") : t("cam.mostra");
   ui.preview.hidden = !show;
 });
 

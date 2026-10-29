@@ -16,6 +16,11 @@ MDBOOK=$(ls -d strumenti/mdbook-*/mdbook 2>/dev/null | tail -1 || true)
   echo "mancano gli strumenti del corso: corso-scuola/installa-strumenti.sh" >&2; exit 1; }
 
 "$MKDOCS" build -s -q -f corso-scuola/mkdocs.yml
+# Il selettore di lingua di Material scarica sitemap.xml dalla cartella di OGNI link hreflang della
+# pagina (quindi anche da /en/ e dalle cartelle delle lezioni): senza una copia lì, 404 in console.
+find corso-scuola/site -name index.html -exec dirname {} \; | while read -r d; do
+  [ -e "$d/sitemap.xml" ] || cp corso-scuola/site/sitemap.xml "$d/sitemap.xml"
+done
 
 LAVORO=corso-scuola/quarto-lavoro
 rm -rf "$LAVORO" corso-scuola/site-quarto

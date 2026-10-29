@@ -61,7 +61,7 @@ fi
 # Ogni URL assoluto nel bundle deve essere uno di quelli noti e innocui (namespace, citazioni,
 # identificatori protobuf). Un indirizzo nuovo va capito prima di pubblicare.
 # creativecommons.org e opensource.org: i link alle licenze nel piè di pagina (app/src/piede.ts).
-NOTI='^https?://(www\.w3\.org/|jcgt\.org/|type\.googleapis\.com/|creativecommons\.org/licenses/by/4\.0/deed\.it$|opensource\.org/license/mit$|www\.giuseppebosi\.com$|www\.linkedin\.com/in/giuseppebosi$|github\.com/JoeBosi/hand-gesture-recognizer$|corso-(api-json|llamacpp|rag)\.giuseppebosi\.com/$)'
+NOTI='^https?://(www\.w3\.org/|jcgt\.org/|type\.googleapis\.com/|creativecommons\.org/licenses/by/4\.0/(deed\.it)?$|opensource\.org/license/mit$|www\.giuseppebosi\.com(/en/)?$|www\.linkedin\.com/in/giuseppebosi$|github\.com/JoeBosi/hand-gesture-recognizer$|corso-(api-json|llamacpp|rag)\.giuseppebosi\.com/$)'
 IGNOTI=$(grep -ohE 'https?://[a-zA-Z0-9.-]+[^"'"'"'` )]*' "$DIST"/assets/*.js | grep -vE "$NOTI" | sort -u || true)
 if [ -n "$IGNOTI" ]; then
   echo "   KO: URL non previsti nel bundle:" >&2; echo "$IGNOTI" | sed 's/^/       /' >&2; exit 1
@@ -85,6 +85,7 @@ done
 # Le pagine devono esserci tutte: se una manca, vuol dire che è sparita da rollupOptions.input
 # in app/vite.config.ts e il sito andrebbe online monco.
 for p in index.html sfida/index.html onda/index.html corpo/index.html tutorial/index.html corso/index.html crediti/index.html privacy/index.html \
+         en/index.html en/sfida/index.html en/onda/index.html en/corpo/index.html en/tutorial/index.html en/corso/index.html en/crediti/index.html en/privacy/index.html scuola/mkdocs/en/index.html \
          scuola/index.html scuola/mkdocs/index.html scuola/quarto/index.html scuola/mdbook/index.html; do
   [ -s "$DIST/$p" ] || { echo "   KO: manca la pagina $p" >&2; exit 1; }
 done

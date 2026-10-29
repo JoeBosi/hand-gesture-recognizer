@@ -23,3 +23,14 @@
 ## Optional
 - [Crediti](https://mano.giuseppebosi.com/crediti/): librerie, modelli e licenze.
 - [Privacy](https://mano.giuseppebosi.com/privacy/): cosa raccoglie il sito e dove va.
+
+## English
+The whole site is also in English under /en/ (by Prof. Giuseppe Bosi, Master's-level degree in Electronic Engineering (5-year Italian Laurea, pre-reform, EQF level 7); author site https://www.giuseppebosi.com/en/).
+- [Mano](https://mano.giuseppebosi.com/en/): the webcam watches your hand and reproduces it in 3D, recognizing gestures.
+- [Duel](https://mano.giuseppebosi.com/en/sfida/): rock, paper, scissors for two people in front of one webcam.
+- [Energy Wave](https://mano.giuseppebosi.com/en/onda/): hands together for 4 seconds charge an energy ball and fire a beam.
+- [Body](https://mano.giuseppebosi.com/en/corpo/): the 33 body landmarks and the skeleton on screen.
+- [Tutorial](https://mano.giuseppebosi.com/en/tutorial/): how to build a web app that recognizes the hand from the webcam, from scratch.
+- [TypeScript Course](https://mano.giuseppebosi.com/en/corso/): 10 lessons, from the first variable to a hand that follows the webcam.
+- [The Hand on the Computer](https://mano.giuseppebosi.com/scuola/mkdocs/en/): school course with p5.js and ml5.js for students who know C.
+- [Credits](https://mano.giuseppebosi.com/en/crediti/) · [Privacy](https://mano.giuseppebosi.com/en/privacy/)

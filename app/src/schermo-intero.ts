@@ -19,9 +19,10 @@
  * Dove non si può (l'iPhone non ha la Fullscreen API per le pagine web) il pulsante si nasconde:
  * un pulsante che non fa niente è peggio di nessun pulsante.
  */
+import { t } from "./i18n";
 // Il testo dopo il simbolo sta in uno <span> che su telefono si nasconde (style.css): resta il simbolo.
-const ETICHETTA_ENTRA = '⛶<span class="lungo"> Schermo intero</span>';
-const ETICHETTA_ESCI = '✕<span class="lungo"> Esci da schermo intero</span>';
+const ETICHETTA_ENTRA = `⛶<span class="lungo"> ${t("schermo.entra")}</span>`;
+const ETICHETTA_ESCI = `✕<span class="lungo"> ${t("schermo.esci")}</span>`;
 
 export function iniziaSchermoIntero(): void {
   const bottone = document.getElementById("schermo-intero") as HTMLButtonElement | null;
@@ -38,7 +39,7 @@ export function iniziaSchermoIntero(): void {
     const dentro = document.fullscreenElement !== null;
     radice.classList.toggle("schermo-intero", dentro);
     bottone.innerHTML = dentro ? ETICHETTA_ESCI : ETICHETTA_ENTRA;
-    bottone.title = dentro ? "Esci da schermo intero" : "Schermo intero";
+    bottone.title = dentro ? t("schermo.esci") : t("schermo.entra");
     bottone.setAttribute("aria-label", bottone.title);
     bottone.setAttribute("aria-pressed", String(dentro));
   };

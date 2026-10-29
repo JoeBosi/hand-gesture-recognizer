@@ -35,3 +35,4 @@ the topic (rules R2/R4 in `CLAUDE.md`).
 | 2026-09-18 | (nessuna nuova) | R1: cercate skill per MediaPipe pose — le candidate (kinemotion/mediapipe-pose-detection, liuchiawei/mediapipe-usage) non riguardano l'uso nel browser | pagina /corpo/ |
 | 2026-09-19 | (nessuna nuova) | R1: cercata una skill per la progettazione di corsi — la candidata migliore (travisjneuman@course-material-creator) non pubblica il SKILL.md, quindi non installata (R7: non si installa ciò che non si può leggere) | pagina /corso/ |
 - [2026-10-11 ml5 handPose + p5.js per la scuola](2026-10-11-ml5-handpose-p5-scuola.md) — versioni, API minima, prova con webcam finta
+- [2026-10-29 Sito bilingue](2026-10-29-sito-bilingue.md) — mkdocs-static-i18n, hreflang, pagine /en/

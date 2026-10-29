@@ -35,6 +35,7 @@ import { entra, libera, mantieni } from "./presenza";
 import { iniziaSchermoIntero } from "./schermo-intero";
 import { HAND_CONNECTIONS, HandsTracker } from "./hands";
 import { riconosciMossa, type Mossa } from "./mosse";
+import { t } from "./i18n";
 import { ultimaFraseDetta, impostaVoce, parla, voceAttiva, voceDisponibile, zittisci } from "./voce";
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
@@ -81,8 +82,8 @@ const PUNTI_PER_VINCERE = 2;
  * cartellino con scritto "1", ma sinistra e destra sono evidenti a chiunque guardi lo schermo.
  * L'ordine è quello di `maniOrdinate`: indice 0 = più a sinistra sullo schermo.
  */
-const LATO = ["di SINISTRA", "di DESTRA"];
-const LATO_BREVE = ["Sinistra", "Destra"];
+const LATO = [t("sfida.lato.sinistra"), t("sfida.lato.destra")];
+const LATO_BREVE = [t("sfida.latoBreve.sinistra"), t("sfida.latoBreve.destra")];
 
 // --- I tempi del round (millisecondi) ---------------------------------------------------------
 
@@ -128,7 +129,7 @@ let inizioAnnunciato = false;
 let pugniDa = 0;
 let ultimoNumero = -1;
 /** Le cifre del punteggio, a parole: il sintetizzatore le legge meglio che come cifre. */
-const NUM = ["zero", "uno", "due", "tre"];
+const NUM = [t("sfida.num.0"), t("sfida.num.1"), t("sfida.num.2"), t("sfida.num.3")];
 
 const ctx = ui.overlay.getContext("2d")!;
 const drawing = new DrawingUtils(ctx);
@@ -152,7 +153,7 @@ function setState(state: State, status: string): void {
   ui.stage.hidden = state !== "running";
   ui.hud.hidden = state !== "running";
   ui.start.disabled = state === "loading";
-  ui.start.textContent = state === "loading" ? "Avvio in corso…" : "Accendi la camera";
+  ui.start.textContent = state === "loading" ? t("cam.avvio") : t("cam.accendi");
 }
 
 /** Il cartellone al centro. `tipo` decide solo il colore (vedi sfida.css). */
@@ -252,7 +253,7 @@ function loop(): void {
   ui.gestures.textContent =
     mani.length >= 2
       ? mani.slice(0, 2).map((m, i) => `${LATO_BREVE[i]}: ${etichetta(m.mossa)}`).join("   ·   ")
-      : `${mani.length} mano in campo: ne servono due`;
+      : t("sfida.unaMano", { n: mani.length });
 
   if (E2E) {
     document.body.dataset.fase = fase;
@@ -299,14 +300,18 @@ function disegnaMosseLive(mani: ManoInQuadro[], ora: number): void {
     ctx.fillText(testo, x, y);
     if (!nascosta && !m.mossa) {
       ctx.font = `600 ${Math.round(px * 0.3)}px system-ui, sans-serif`;
-      ctx.fillText("non chiara", x, y - px);
+      ctx.fillText(t("sfida.nonChiara"), x, y - px);
     }
   });
   ctx.restore();
 }
 
+function nomeMossa(m: Mossa): string {
+  return t(`sfida.mossa.${m}`);
+}
+
 function etichetta(m: Mossa | null): string {
-  return m ? `${EMOJI[m]} ${m}` : "—";
+  return m ? `${EMOJI[m]} ${nomeMossa(m)}` : "—";
 }
 
 /**
@@ -321,19 +326,19 @@ function arbitro(mani: ManoInQuadro[], ora: number): void {
       if (!dueMani) {
         faseDa = ora; // il conto dei "pronti" riparte da capo appena una mano esce
         cartello("");
-        ui.istruzioni.textContent = "Mettetevi in due davanti alla camera, una mano a testa.";
+        ui.istruzioni.textContent = t("sfida.mettetevi");
         return;
       }
-      ui.istruzioni.textContent = "Pronti…";
+      ui.istruzioni.textContent = t("sfida.pronti");
       // Due mani stabili per mezzo secondo: solo allora si parte.
       if (ora - faseDa >= MS_PRONTI) {
         raccolta = [[], []];
         if (!inizioAnnunciato) {
           // Prima volta della partita: l'annuncio, poi il primo conto alla rovescia.
           inizioAnnunciato = true;
-          cartello(`Si comincia!\nVince chi arriva a ${PUNTI_PER_VINCERE} punti`, "via");
+          cartello(t("sfida.siComincia", { n: PUNTI_PER_VINCERE }), "via");
           ui.istruzioni.textContent = "";
-          parla(`Si comincia! Vince chi arriva a ${NUM[PUNTI_PER_VINCERE]} punti.`, true);
+          parla(t("sfida.siCominciaVoce", { n: NUM[PUNTI_PER_VINCERE] }), true);
           vaiA("intro", ora);
         } else {
           vaiA("conto", ora);
@@ -357,8 +362,8 @@ function arbitro(mani: ManoInQuadro[], ora: number): void {
       // Se una mano esce di scena il round si annulla: meglio ricominciare che assegnare
       // un punto a un giocatore che non c'è.
       if (!dueMani) {
-        cartello("Round annullato", "annullato");
-        ui.istruzioni.textContent = "Servono due mani in campo.";
+        cartello(t("sfida.annullato"), "annullato");
+        ui.istruzioni.textContent = t("sfida.servonoDue");
         vaiA("attesa", ora);
         return;
       }
@@ -366,16 +371,16 @@ function arbitro(mani: ManoInQuadro[], ora: number): void {
       const numero = 3 - Math.floor(passato / MS_PER_NUMERO);
       if (numero >= 1) {
         cartello(String(numero), "conto");
-        ui.istruzioni.textContent = "Sasso… carta… forbici…";
+        ui.istruzioni.textContent = t("sfida.sassoCartaForbici");
         // Il numero si dice una volta sola, quando compare, e interrompe quello che sta dicendo:
         // un «due» che arriva con il tabellone già su «uno» è peggio del silenzio.
         if (numero !== ultimoNumero) {
           ultimoNumero = numero;
-          parla(["", "uno", "due", "tre"][numero], true);
+          parla(["", NUM[1], NUM[2], NUM[3]][numero], true);
         }
       } else {
-        cartello("VIA!", "via");
-        parla("Via!", true);
+        cartello(t("sfida.via"), "via");
+        parla(t("sfida.viaVoce"), true);
         ultimoNumero = -1;
         vaiA("rivelazione", ora);
       }
@@ -383,24 +388,24 @@ function arbitro(mani: ManoInQuadro[], ora: number): void {
     }
 
     case "rivelazione": {
-      const t = ora - faseDa;
+      const dt = ora - faseDa;
       // 1) Dopo il «via!» si aspetta: chi tira ha bisogno di un momento per formare la mossa, e
       //    guardare le mani mentre cambiano forma vorrebbe dire leggerle a metà strada.
-      if (t < MS_ATTESA_MOSSA) {
-        if (t > 900) cartello("Mostrate la mossa!", "via");
+      if (dt < MS_ATTESA_MOSSA) {
+        if (dt > 900) cartello(t("sfida.mostrate"), "via");
         return;
       }
       // 2) Poi si registra, per una breve finestra, quello che fanno le due mani.
-      if (t < MS_ATTESA_MOSSA + MS_RIVELAZIONE) {
-        cartello("Fermi così!", "via");
+      if (dt < MS_ATTESA_MOSSA + MS_RIVELAZIONE) {
+        cartello(t("sfida.fermi"), "via");
         if (dueMani) {
           raccolta[0].push(mani[0].mossa);
           raccolta[1].push(mani[1].mossa);
         } else {
           // Una mano sparita proprio durante la lettura: non si può giudicare, si rifà.
-          cartello("Mano uscita: si rifà", "annullato");
-          ui.istruzioni.textContent = "Tenete la mano ferma davanti alla camera fino all'esito.";
-          parla("Mano uscita. Si rifà.", true);
+          cartello(t("sfida.manoUscita"), "annullato");
+          ui.istruzioni.textContent = t("sfida.teneteFerma");
+          parla(t("sfida.manoUscitaVoce"), true);
           vaiA("esito", ora);
         }
         return;
@@ -412,19 +417,19 @@ function arbitro(mani: ManoInQuadro[], ora: number): void {
       if (!m1 || !m2) {
         // Almeno uno dei due non ha fatto una mossa valida (pollice su, mano a mezz'aria,
         // uscita dal campo): si ripete, senza assegnare niente.
-        const chi = !m1 && !m2 ? "Nessuno dei due" : `Il giocatore ${!m1 ? LATO[0] : LATO[1]}`;
-        cartello(`${chi}: mossa non chiara`, "annullato");
-        ui.istruzioni.textContent = "Si rifà. Mano ferma e ben aperta verso la camera: sasso ✊, carta ✋ o forbici ✌️.";
-        parla(`Mossa non chiara. Si rifà.`, true);
+        const chi = !m1 && !m2 ? t("sfida.nessuno") : t("sfida.ilGiocatore", { lato: !m1 ? LATO[0] : LATO[1] });
+        cartello(t("sfida.mossaNonChiara", { chi }), "annullato");
+        ui.istruzioni.textContent = t("sfida.siRifaIstruzioni");
+        parla(t("sfida.mossaNonChiaraVoce"), true);
         vaiA("esito", ora);
         return;
       }
 
       const vincitore = chiVince(m1, m2);
       if (vincitore === null) {
-        cartello(`Pareggio — ${EMOJI[m1]} ${m1} contro ${EMOJI[m2]} ${m2}`, "pari");
-        ui.istruzioni.textContent = "Nessun punto: si rifà.";
-        parla("Pareggio. Si rifà.", true);
+        cartello(t("sfida.pareggio", { a: etichetta(m1), b: etichetta(m2) }), "pari");
+        ui.istruzioni.textContent = t("sfida.nessunPunto");
+        parla(t("sfida.pareggioVoce"), true);
       } else {
         // Prima la mossa che VINCE, poi quella che perde: scritto nell'ordine dei giocatori
         // («forbici contro sasso» accanto a «punto al giocatore 2») sembrava dire il contrario.
@@ -432,14 +437,14 @@ function arbitro(mani: ManoInQuadro[], ora: number): void {
         punti[vincitore]++;
         mostraPunti();
         cartello(
-          `Punto al giocatore ${LATO[vincitore]}\n${EMOJI[vinta]} ${vinta} batte ${EMOJI[persa]} ${persa}`,
+          t("sfida.punto", { lato: LATO[vincitore], a: etichetta(vinta), b: etichetta(persa) }),
           vincitore === 0 ? "vince1" : "vince2",
         );
-        ui.istruzioni.textContent = `${punti[0]} a ${punti[1]}`;
+        ui.istruzioni.textContent = t("sfida.punteggio", { a: punti[0], b: punti[1] });
         // Se questo punto chiude la partita non si dice niente adesso: tocca alla frase del
         // vincitore, che comprende il punteggio, e due frasi una sopra l'altra si tagliano.
         if (punti[vincitore] < PUNTI_PER_VINCERE) {
-          parla(`Punto al giocatore ${LATO[vincitore].toLowerCase()}. ${NUM[punti[0]]} a ${NUM[punti[1]]}.`, true);
+          parla(t("sfida.puntoVoce", { lato: LATO[vincitore].toLowerCase(), a: NUM[punti[0]], b: NUM[punti[1]] }), true);
         }
       }
       vaiA("esito", ora);
@@ -449,11 +454,11 @@ function arbitro(mani: ManoInQuadro[], ora: number): void {
     case "esito": {
       if (punti[0] >= PUNTI_PER_VINCERE || punti[1] >= PUNTI_PER_VINCERE) {
         const chi = punti[0] > punti[1] ? 0 : 1;
-        cartello(`🏆 HA VINTO\nil giocatore ${LATO[chi]}!`, `${chi === 0 ? "vince1" : "vince2"} trionfo`);
-        ui.istruzioni.textContent = `Partita finita: ${punti[0]} a ${punti[1]}.`;
+        cartello(t("sfida.haVinto", { lato: LATO[chi] }), `${chi === 0 ? "vince1" : "vince2"} trionfo`);
+        ui.istruzioni.textContent = t("sfida.finita", { a: punti[0], b: punti[1] });
         ui.rigioca.hidden = false;
         lanciaCoriandoli(chi);
-        parla(`Ha vinto il giocatore ${LATO[chi].toLowerCase()}! ${NUM[punti[0]]} a ${NUM[punti[1]]}.`, true);
+        parla(t("sfida.haVintoVoce", { lato: LATO[chi].toLowerCase(), a: NUM[punti[0]], b: NUM[punti[1]] }), true);
         vaiA("fine", ora);
         return;
       }
@@ -471,11 +476,11 @@ function arbitro(mani: ManoInQuadro[], ora: number): void {
       const pugni = dueMani && mani[0].mossa === "sasso" && mani[1].mossa === "sasso";
       if (!pugni) {
         pugniDa = 0;
-        ui.istruzioni.textContent = `Partita finita: ${punti[0]} a ${punti[1]}. Rivincita? Fate tutti e due il pugno ✊ ✊`;
+        ui.istruzioni.textContent = t("sfida.rivincita", { a: punti[0], b: punti[1] });
         return;
       }
       pugniDa ||= ora;
-      ui.istruzioni.textContent = "Rivincita in arrivo… tenete il pugno!";
+      ui.istruzioni.textContent = t("sfida.rivincitaArrivo");
       if (ora - pugniDa >= 2000) {
         pugniDa = 0;
         nuovaPartita();
@@ -616,7 +621,7 @@ async function fallbackToCpuIfSlow(): Promise<void> {
 }
 
 // --- I posti (al massimo cinque persone insieme: vedi presenza.ts) -------------------------------
-const ETICHETTA_AVVIO = ui.start.textContent ?? "Accendi la camera";
+const ETICHETTA_AVVIO = ui.start.textContent ?? t("cam.accendi");
 /** Un clic durante l'attesa la annulla; `attesaGen` fa morire i cicli di attesa rimasti indietro. */
 let inAttesa = false;
 let attesaGen = 0;
@@ -626,7 +631,7 @@ function mostraAttesa(testo: string | null): void {
   if (testo) {
     ui.error.textContent = testo;
     ui.error.hidden = false;
-    ui.start.textContent = "Annulla attesa";
+    ui.start.textContent = t("presenza.annulla");
     ui.start.disabled = false;
   } else {
     ui.error.hidden = true;
@@ -637,7 +642,7 @@ function mostraAttesa(testo: string | null): void {
 /** Il posto è scaduto e nel frattempo il sito si è riempito: la camera si spegne e lo si dice. */
 function postoPerso(): void {
   stop();
-  ui.error.textContent = "Il tuo posto è scaduto e nel frattempo il sito si è riempito. Riprova fra poco.";
+  ui.error.textContent = t("presenza.perso");
   ui.error.hidden = false;
 }
 
@@ -660,7 +665,7 @@ async function start(): Promise<void> {
     libera();
     return;
   }
-  setState("loading", "Avvio…");
+  setState("loading", t("sfida.avvio"));
   try {
     tracker ??= await HandsTracker.create();
     stream = await startCamera(ui.video, stop); // `stop` anche se la camera si spegne da sola
@@ -670,15 +675,15 @@ async function start(): Promise<void> {
     }
     lastVideoTime = -1;
     nuovaPartita();
-    setState("running", "● Camera accesa");
+    setState("running", t("cam.accesa"));
     mantieni(postoPerso);
     cancelAnimationFrame(rafId);
     loop();
   } catch (e) {
     stop();
-    ui.error.textContent = e instanceof CameraError ? e.message : `Errore durante l'avvio: ${(e as Error).message ?? e}`;
+    ui.error.textContent = e instanceof CameraError ? e.message : t("cam.errore", { msg: String((e as Error).message ?? e) });
     ui.error.hidden = false;
-    setState("error", "Camera spenta");
+    setState("error", t("cam.spenta"));
   }
 }
 
@@ -713,7 +718,7 @@ function stop(): void {
     document.body.dataset.parlato = "";
   }
 
-  setState("idle", "Camera spenta");
+  setState("idle", t("cam.spenta"));
 }
 
 ui.start.addEventListener("click", () => void start());
@@ -726,7 +731,7 @@ ui.ricomincia.addEventListener("click", nuovaPartita);
 ui.voce.addEventListener("click", () => {
   impostaVoce(!voceAttiva());
   ui.voce.setAttribute("aria-pressed", String(voceAttiva()));
-  ui.voce.textContent = voceAttiva() ? "🔊 Voce" : "🔇 Voce spenta";
+  ui.voce.textContent = voceAttiva() ? t("sfida.voce") : t("sfida.voceSpenta");
 });
 
 document.addEventListener("visibilitychange", () => {

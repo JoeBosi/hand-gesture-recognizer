@@ -11,7 +11,8 @@
     if (typeof accessi !== "number") return;
     const el = document.createElement("div");
     el.className = "accessi";
-    el.textContent = "Accessi: " + accessi.toLocaleString("it-IT");
+    const en = document.documentElement.lang.startsWith("en");
+    el.textContent = (en ? "Visits: " : "Accessi: ") + accessi.toLocaleString(en ? "en-GB" : "it-IT");
     document.body.append(el);
   } catch (e) {
     /* contatore non raggiungibile (anteprima locale): niente riquadro */

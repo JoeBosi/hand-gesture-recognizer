@@ -18,6 +18,7 @@
  */
 import { FilesetResolver, GestureRecognizer, type GestureRecognizerResult } from "@mediapipe/tasks-vision";
 import { filtraRisultato } from "./vicinanza";
+import { t } from "./i18n";
 
 /**
  * Runtime e modello sono serviti dal sito stesso, non da una CDN. Due motivi:
@@ -126,13 +127,13 @@ export class HandTracker {
  * Il nono valore possibile è "None" (nessun gesto riconosciuto) e non compare qui apposta.
  */
 export const GESTURE_LABELS: Record<string, string> = {
-  Closed_Fist: "✊ Pugno",
-  Open_Palm: "🖐️ Mano aperta",
-  Pointing_Up: "☝️ Indice in su",
-  Thumb_Down: "👎 Pollice giù",
-  Thumb_Up: "👍 Pollice su",
-  Victory: "✌️ Vittoria",
-  ILoveYou: "🤟 Ti voglio bene",
+  Closed_Fist: t("gesto.Closed_Fist"),
+  Open_Palm: t("gesto.Open_Palm"),
+  Pointing_Up: t("gesto.Pointing_Up"),
+  Thumb_Down: t("gesto.Thumb_Down"),
+  Thumb_Up: t("gesto.Thumb_Up"),
+  Victory: t("gesto.Victory"),
+  ILoveYou: t("gesto.ILoveYou"),
 };
 
 /**

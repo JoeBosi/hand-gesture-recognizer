@@ -1,0 +1,2641 @@
+<!doctype html>
+<!--
+  tutorial/index.html — la terza pagina del sito: come si programma da zero un'applicazione che
+  guarda la mano dalla webcam e la riproduce sullo schermo.
+
+  È un documento da leggere, non un'applicazione: nessuno script proprio, solo testo, codice e
+  stile. L'unico file JavaScript collegato serve a Vite per includere il foglio di stile.
+
+  Regole della CSP di produzione (deploy/Caddyfile.snippet), rispettate qui:
+    - nessun elemento script con codice scritto dentro la pagina;
+    - nessun attributo style e nessun blocco di stile in linea;
+    - nessuna risorsa esterna (font, CDN, immagini remote). Solo link testuali alla documentazione.
+-->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Tutorial: how to program from scratch a web app that recognizes the hand from the webcam and animates it in 3D in the browser."
+    />
+    <meta name="theme-color" content="#0b1020" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Tutorial · Mano</title>
+    <link rel="canonical" href="https://mano.giuseppebosi.com/en/tutorial/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Mano" />
+    <meta property="og:locale" content="en_GB" />
+    <meta property="og:title" content="Tutorial · Mano" />
+    <meta property="og:description" content="Tutorial: how to program from scratch a web app that recognizes the hand from the webcam and animates it in 3D in the browser." />
+    <meta property="og:url" content="https://mano.giuseppebosi.com/en/tutorial/" />
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Course", "name": "Tutorial · Mano", "description": "Tutorial: how to program from scratch a web app that recognizes the hand from the webcam and animates it in 3D in the browser.", "url": "https://mano.giuseppebosi.com/en/tutorial/", "inLanguage": "en", "author": {"@type": "Person", "name": "Giuseppe Bosi", "honorificPrefix": "Prof.", "jobTitle": "Professor of Computer Science and Technology", "url": "https://www.giuseppebosi.com/en/", "sameAs": ["https://www.giuseppebosi.com", "https://www.linkedin.com/in/giuseppebosi"]}, "provider": {"@type": "Person", "name": "Giuseppe Bosi", "honorificPrefix": "Prof.", "jobTitle": "Professor of Computer Science and Technology", "url": "https://www.giuseppebosi.com/en/", "sameAs": ["https://www.giuseppebosi.com", "https://www.linkedin.com/in/giuseppebosi"]}, "isAccessibleForFree": true, "license": "https://creativecommons.org/licenses/by/4.0/"}</script>
+    <link rel="alternate" hreflang="it" href="https://mano.giuseppebosi.com/tutorial/" />
+    <link rel="alternate" hreflang="en" href="https://mano.giuseppebosi.com/en/tutorial/" />
+    <link rel="alternate" hreflang="x-default" href="https://mano.giuseppebosi.com/tutorial/" />
+  </head>
+
+  <body>
+    <!-- Barra comune alle tre pagine del sito. La voce corrente non è un link: non si va dove si è già. -->
+    <nav class="sitenav" aria-label="Site pages">
+      <span class="brand">✋ Mano</span>
+      <a href="/en/">Mano</a>
+      <a href="/en/sfida/">Duel</a>
+      <a href="/en/onda/">Energy Wave</a>
+      <a href="/en/corpo/">Body</a>
+    </nav>
+
+    <main>
+      <header class="hero">
+        <p class="eyebrow">Tutorial</p>
+        <h1>From the webcam to an animated hand on the screen</h1>
+        <p class="lede">
+          Together, from scratch, we build the application that runs on this site: the browser turns on the
+          webcam, recognizes your hand thirty times a second and draws a stylized copy of it in
+          three dimensions. All inside the page: no server, no image leaving your
+          computer.
+        </p>
+        <p class="meta">
+          Eleven chapters · real code, the code that actually runs here · you need a bit of JavaScript and
+          nothing else
+        </p>
+      </header>
+
+      <nav class="toc" id="indice" aria-label="Chapter index">
+        <h2>Contents</h2>
+        <ol>
+          <li><a href="#cap0">What we build, and what you need to know</a></li>
+          <li><a href="#cap1">Setting up the project</a></li>
+          <li><a href="#cap2">Turning on the webcam</a></li>
+          <li><a href="#cap3">Recognizing the hand</a></li>
+          <li><a href="#cap4">The frame loop</a></li>
+          <li><a href="#cap5">Drawing: first in 2D, then in 3D</a></li>
+          <li><a href="#cap6">Making it look smooth</a></li>
+          <li><a href="#cap7">Going online</a></li>
+          <li><a href="#cap8">Testing without a webcam</a></li>
+          <li><a href="#cap9">The mistakes you will make</a></li>
+          <li><a href="#cap10">Where to go next</a></li>
+        </ol>
+      </nav>
+
+      <!-- ====================================================================================
+           CAPITOLO 0
+           ==================================================================================== -->
+      <section class="step alt" id="cap0">
+        <h2><span class="num">0</span> What we build, and what you need to know</h2>
+        <p class="sub">
+          Before writing a line, let's get the result clear, and the chain of pieces that
+          produces it. Once this chain is clear, every chapter that follows is just "now let's make
+          this piece work".
+        </p>
+
+        <h3>The result</h3>
+        <p>
+          A web page. You reach it with an address, press a button, and the browser asks for
+          permission to use the camera. From then on you move your hand in front of the webcam and a
+          stylized hand appears on the screen — spheres at the joints, sticks for the bones, a
+          translucent palm — that follows yours, fingers included. At the bottom, the name of the gesture
+          appears when it recognizes one: fist, thumb up, victory.
+        </p>
+        <p>
+          No installation for the viewer, no account, no server processing
+          anything. The server does one thing only: deliver files. Everything else happens inside the browser.
+        </p>
+
+        <h3>The chain, in five links</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Link</th>
+                <th>What goes in</th>
+                <th>What comes out</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>Webcam</td>
+                <td>the user's permission</td>
+                <td>a video stream inside a <code>&lt;video&gt;</code> element</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>Recognizer</td>
+                <td>a frame</td>
+                <td>21 landmarks for each hand, plus the name of the gesture</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>Filter</td>
+                <td>21 jittery landmarks</td>
+                <td>21 stable landmarks, with no noticeable delay</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>3D scene</td>
+                <td>21 landmarks</td>
+                <td>spheres and cylinders placed and rotated</td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>Loop</td>
+                <td>the screen's heartbeat</td>
+                <td>repeats steps 1-4 sixty times a second</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout why">
+          <span class="label">Why the order matters</span>
+          <p>
+            Each link has one job only and knows nothing about the others. The recognizer does not know
+            a 3D scene exists, the 3D scene does not know the landmarks come from a webcam. That is why,
+            in chapter 10, replacing "hand" with "whole body" will take half an hour and not a
+            rewrite: only one link changes.
+          </p>
+        </div>
+
+        <h3>What you need to know already</h3>
+        <ul>
+          <li>
+            <strong>Basic JavaScript</strong>: functions, <code>const</code>, objects, arrays,
+            <code>async</code>/<code>await</code>. If you know what a <em>Promise</em> does, you are fine.
+          </li>
+          <li>
+            <strong>A little HTML and CSS</strong>: knowing that a <code>&lt;button&gt;</code> exists and
+            that you can look it up by <code>id</code>.
+          </li>
+          <li>
+            <strong>The terminal</strong>: moving into a folder and running <code>npm</code>.
+          </li>
+        </ul>
+        <p>
+          You need to know nothing about artificial intelligence, WebGL, rotation matrices or
+          servers. The three least obvious things — the maths of the filter, the rotation of the cylinders and the
+          configuration of the reverse proxy — I explain line by line when they come up.
+        </p>
+
+        <h3>What you need installed</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>What</th>
+                <th>Version</th>
+                <th>Why</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Node.js</strong></td>
+                <td>20 or later</td>
+                <td>
+                  runs the development tools (Vite) and, at the end, the small server that
+                  publishes the site. It includes <code>npm</code>.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>An editor</strong></td>
+                <td>any</td>
+                <td>
+                  VS Code has the advantage of understanding TypeScript on its own and flagging errors
+                  while you type.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>A recent browser</strong></td>
+                <td>Chrome, Edge, Firefox, Safari 16+</td>
+                <td>
+                  you need WebAssembly (for the model) and WebGL (for 3D). They have all had them for years.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>A webcam</strong></td>
+                <td>—</td>
+                <td>
+                  the laptop's built-in one is fine. In chapter 8 we will see how to work
+                  <em>without</em> one, with a fake camera.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>Check that you have Node:</p>
+        <pre><code>node --version
+# v20.x o superiore. Se il comando non esiste: nodejs.org</code></pre>
+
+        <div class="callout try">
+          <span class="label">Try it</span>
+          <p>
+            Before reading on, open <a href="/en/">the Mano page</a> of this site and turn on the
+            camera. You will want the result in your head while you build the pieces: it is much
+            easier to understand why an anti-jitter filter is needed once you have seen the hand still and stable.
+          </p>
+        </div>
+
+        <a class="uplink" href="#indice">↑ Contents</a>
+      </section>
+      <hr />
+
+      <!-- ====================================================================================
+           CAPITOLO 1
+           ==================================================================================== -->
+      <section class="step" id="cap1">
+        <h2><span class="num">1</span> Setting up the project</h2>
+        <p class="sub">Ten minutes of scaffolding, and then you never think about it again.</p>
+        <ul class="chips">
+          <li>package.json</li>
+          <li>vite.config.ts</li>
+          <li>index.html</li>
+          <li>src/main.ts</li>
+        </ul>
+
+        <h3>Creating the skeleton</h3>
+        <pre><code># Crea un progetto Vite con TypeScript, senza framework
+npm create vite@latest mano -- --template vanilla-ts
+
+cd mano
+npm install
+npm run dev
+# → il terminale stampa: Local: http://localhost:5173/</code></pre>
+        <p>
+          Open that address: there is a sample page. From now on every file you save
+          reloads in the browser in under a second.
+        </p>
+
+        <div class="callout why">
+          <span class="label">Why Vite, and why "vanilla"</span>
+          <p>
+            <strong>Vite</strong> does two jobs. In development it serves the files to the browser without
+            rebuilding the whole project at every save: you edit, save, see. In production it
+            builds a static, minified site, with file names signed by their content
+            (<code>index-a1b2c3.js</code>): if the content changes the name changes, so they can be
+            cached forever without ever serving an old version.
+          </p>
+          <p>
+            <strong>No React, Vue or Svelte.</strong> The interface of this application is made
+            of nine elements that change state all together, in a single place in the code. A
+            framework would add a package, a build step and one more mental model
+            to save twenty lines. The same goes for the CSS: no Tailwind, two hundred
+            lines written by hand.
+          </p>
+          <p>
+            <strong>TypeScript, though, yes.</strong> This code is full of coordinates, indices and
+            arrays of 21 elements. With types, a typo becomes a compile
+            error instead of a crooked hand on the screen that you cannot explain.
+          </p>
+        </div>
+
+        <h3>The structure we will end up with</h3>
+        <pre><code>mano/
+├── index.html              la pagina (una sola)
+├── package.json            dipendenze e comandi
+├── vite.config.ts          configurazione della build
+├── scripts/
+│   └── prepare-assets.mjs  scarica il modello e copia il runtime (capitolo 3)
+├── public/                 file serviti così come sono, senza passare dal bundler
+│   ├── favicon.svg
+│   └── mediapipe/          wasm + modello (generati: non si toccano a mano)
+└── src/
+    ├── main.ts             il regista: stato della pagina e ciclo dei fotogrammi
+    ├── camera.ts           accensione e spegnimento della webcam
+    ├── tracker.ts          MediaPipe: dai pixel ai 21 punti
+    ├── filter.ts           il filtro anti-tremolio
+    ├── hand3d.ts           la mano 3D con Three.js
+    └── style.css           l'aspetto</code></pre>
+
+        <div class="callout why">
+          <span class="label">Why five files and not one</span>
+          <p>
+            It is not fussiness: <code>camera.ts</code> is the part that touches the most sensitive data (the
+            images of a person). Keeping it alone in thirty lines means that anyone, in
+            ten seconds, can check that there is no <code>fetch</code>, no
+            <code>MediaRecorder</code>, no saving in there. In a thousand-line file the same
+            check is an act of faith.
+          </p>
+        </div>
+
+        <h3>The page</h3>
+        <p>
+          Replace <code>index.html</code> with this. The structure is: a full-screen canvas for
+          the 3D, and on top of it four floating panels.
+        </p>
+        <figure class="code">
+          <figcaption><span class="tag">index.html</span></figcaption>
+          <pre><code>&lt;!doctype html&gt;
+&lt;html lang="it"&gt;
+  &lt;head&gt;
+    &lt;meta charset="UTF-8" /&gt;
+    &lt;!-- senza questo, sul telefono la pagina viene rimpicciolita come un sito desktop --&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt;
+    &lt;title&gt;Mano&lt;/title&gt;
+  &lt;/head&gt;
+
+  &lt;!-- data-state lo aggiorna main.ts: idle | loading | running | error --&gt;
+  &lt;body data-state="idle"&gt;
+    &lt;canvas id="scene" aria-label="Riproduzione 3D della mano"&gt;&lt;/canvas&gt;
+
+    &lt;header class="topbar"&gt;
+      &lt;div class="brand"&gt;✋ Mano&lt;/div&gt;
+      &lt;div class="status" id="status" role="status" aria-live="polite"&gt;Camera spenta&lt;/div&gt;
+    &lt;/header&gt;
+
+    &lt;!-- La camera si accende SOLO da qui: è una scelta esplicita di chi guarda,
+         mai un effetto collaterale dell'apertura della pagina. --&gt;
+    &lt;section class="intro" id="intro"&gt;
+      &lt;h1&gt;Muovi la mano davanti alla webcam&lt;/h1&gt;
+      &lt;button type="button" class="primary" id="start"&gt;Accendi la camera&lt;/button&gt;
+      &lt;p class="privacy"&gt;Tutto avviene nel tuo browser: le immagini non vengono inviate
+         a nessun server né salvate.&lt;/p&gt;
+      &lt;p class="error" id="error" hidden&gt;&lt;/p&gt;
+    &lt;/section&gt;
+
+    &lt;!-- Anteprima della webcam con i puntini sopra: serve a capire cosa "vede" il modello.
+         muted e playsinline: senza, iOS si rifiuta di riprodurre il video dentro la pagina. --&gt;
+    &lt;aside class="preview" id="preview" hidden&gt;
+      &lt;video id="video" autoplay muted playsinline&gt;&lt;/video&gt;
+      &lt;canvas id="overlay"&gt;&lt;/canvas&gt;
+    &lt;/aside&gt;
+
+    &lt;footer class="hud" id="hud" hidden&gt;
+      &lt;div class="gestures" id="gestures"&gt;&lt;/div&gt;
+      &lt;div class="controls"&gt;
+        &lt;span class="metric" id="fps"&gt;– fps&lt;/span&gt;
+        &lt;button type="button" id="toggle-preview" aria-pressed="true"&gt;Nascondi camera&lt;/button&gt;
+        &lt;button type="button" id="stop"&gt;Spegni camera&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/footer&gt;
+
+    &lt;!-- L'unico script della pagina. type="module" permette gli import; in produzione
+         Vite lo sostituisce con il file compilato. --&gt;
+    &lt;script type="module" src="/src/main.ts"&gt;&lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        </figure>
+
+        <div class="callout warn">
+          <span class="label">Watch out</span>
+          <p>
+            Note that there is <em>no</em> <code>&lt;script&gt;</code> with code written inside the
+            page, and no <code>style=&quot;…&quot;</code> attribute. In chapter 7 we will turn on a security
+            rule (the CSP) that forbids them: if you get into the habit now, you will not have to rewrite
+            anything later.
+          </p>
+        </div>
+
+        <h3>The first <code>main.ts</code></h3>
+        <p>
+          For now it is enough to gather the page elements in a single place and wire up the
+          button. The rest comes in the following chapters.
+        </p>
+        <figure class="code">
+          <figcaption><span class="tag">src/main.ts</span></figcaption>
+          <pre><code>import "./style.css";
+
+/**
+ * Scorciatoia per prendere un elemento dall'HTML.
+ * Il `as T` è una promessa fatta a TypeScript ("fidati, esiste ed è di questo tipo"):
+ * qui è lecita perché gli id sono scritti a mano in index.html e non cambiano.
+ */
+const $ = &lt;T extends HTMLElement&gt;(id: string) =&gt; document.getElementById(id) as T;
+
+/** Tutti i nodi della pagina in un posto solo: se cambia un id, si corregge qui. */
+const ui = {
+  scene: $&lt;HTMLCanvasElement&gt;("scene"),
+  intro: $("intro"),
+  start: $&lt;HTMLButtonElement&gt;("start"),
+  error: $("error"),
+  status: $("status"),
+  preview: $("preview"),
+  video: $&lt;HTMLVideoElement&gt;("video"),
+  overlay: $&lt;HTMLCanvasElement&gt;("overlay"),
+  hud: $("hud"),
+  gestures: $("gestures"),
+  fps: $("fps"),
+  togglePreview: $&lt;HTMLButtonElement&gt;("toggle-preview"),
+  stop: $&lt;HTMLButtonElement&gt;("stop"),
+};
+
+ui.start.addEventListener("click", () =&gt; console.log("via!"));</code></pre>
+        </figure>
+
+        <div class="callout why">
+          <span class="label">Why gather the elements in an object</span>
+          <p>
+            Because <code>document.getElementById("start")</code> scattered in ten places in the code
+            means ten places to fix the day you rename an id — and nine of them you only find
+            when something stops working, at runtime. Here you see the error at once, in one
+            place.
+          </p>
+        </div>
+
+        <a class="uplink" href="#indice">↑ Contents</a>
+      </section>
+      <hr />
+
+      <!-- ====================================================================================
+           CAPITOLO 2
+           ==================================================================================== -->
+      <section class="step" id="cap2">
+        <h2><span class="num">2</span> Turning on the webcam</h2>
+        <p class="sub">
+          Thirty lines, and almost all of them handle the cases where something goes wrong. That is normal:
+          the webcam is someone else's hardware, and it can say no in five different ways.
+        </p>
+        <ul class="chips">
+          <li>src/camera.ts</li>
+        </ul>
+
+        <h3>The line that matters</h3>
+        <pre><code>const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+video.srcObject = stream;
+await video.play();</code></pre>
+        <p>
+          That's it: you ask for a stream, attach it to a <code>&lt;video&gt;</code> element, and
+          play it. The rest of the chapter is about the four things that can go wrong.
+        </p>
+
+        <h3>The secure context: HTTPS or localhost</h3>
+        <p>
+          Browsers give access to the camera <strong>only</strong> in a "secure context": a
+          page served over <code>https://</code>, or from <code>localhost</code>. On any plain
+          <code>http://</code>, <code>navigator.mediaDevices</code> simply
+          <em>does not exist</em>, and your code fails with an obscure
+          <code>Cannot read properties of undefined</code>.
+        </p>
+        <figure class="code">
+          <figcaption><span class="tag">src/camera.ts</span></figcaption>
+          <pre><code>if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
+  throw new CameraError("La camera funziona solo su una pagina HTTPS.");
+}</code></pre>
+        </figure>
+        <div class="callout warn">
+          <span class="label">Practical consequence</span>
+          <p>
+            In development everything works, because <code>npm run dev</code> serves the page on
+            <code>localhost</code>. The day you publish it on a bare IP address or on a
+            domain without a certificate, the camera simply does not start. That is why this
+            project needed a real domain from day one: we deal with it in
+            chapter 7.
+          </p>
+        </div>
+
+        <h3>Constraints: what to ask the camera for</h3>
+        <figure class="code">
+          <figcaption><span class="tag">src/camera.ts</span></figcaption>
+          <pre><code>stream = await navigator.mediaDevices.getUserMedia({
+  video: {
+    facingMode: "user",     // camera frontale sui telefoni
+    width: { ideal: 640 },
+    height: { ideal: 480 },
+  },
+  audio: false,             // il microfono non serve: non va nemmeno chiesto
+});</code></pre>
+        </figure>
+        <div class="callout why">
+          <span class="label">Why <code>ideal</code> and not <code>exact</code></span>
+          <p>
+            With <code>exact</code>, a webcam that does not do exactly 640×480 makes the request fail
+            with <code>OverconstrainedError</code>. With <code>ideal</code> the browser picks the
+            closest format it has. Practically always what you want.
+          </p>
+          <p>
+            <strong>And why 640×480 exactly?</strong> Because the recognizer of chapter 3 does not
+            get more accurate with bigger images — it resizes them internally anyway — but
+            it gets slower. Asking for Full HD here only heats up the processor.
+          </p>
+          <p>
+            <strong><code>audio: false</code></strong> is not a formality: if you ask for audio, the
+            browser asks the user for permission for the microphone <em>too</em>, and the matching
+            indicator light turns on. Do not ask for what you do not need.
+          </p>
+        </div>
+
+        <h3>Errors, translated into useful sentences</h3>
+        <p>
+          When <code>getUserMedia</code> fails, it throws a <code>DOMException</code> with a standard
+          name. Showing that name to the user is useless; translating it takes five lines.
+        </p>
+        <figure class="code">
+          <figcaption><span class="tag">src/camera.ts</span></figcaption>
+          <pre><code>/** Errore "previsto", con un messaggio già scritto per l'utente. Lo distingue da un bug vero. */
+export class CameraError extends Error {}
+
+const MESSAGES: Record&lt;string, string&gt; = {
+  NotAllowedError: "Permesso negato: consenti l'uso della camera dalle impostazioni del browser e riprova.",
+  NotFoundError: "Nessuna webcam trovata su questo dispositivo.",
+  NotReadableError: "La webcam è occupata da un'altra applicazione.",
+  OverconstrainedError: "La webcam non supporta la risoluzione richiesta.",
+};
+
+// ...
+
+} catch (e) {
+  const name = e instanceof DOMException ? e.name : "";
+  throw new CameraError(MESSAGES[name] ?? "Impossibile accendere la camera.");
+}</code></pre>
+        </figure>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Error</th>
+                <th>What really happened</th>
+                <th>What the user can do</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>NotAllowedError</code></td>
+                <td>they pressed "Block", or permission was already denied for this site</td>
+                <td>re-enable it from the padlock icon in the address bar</td>
+              </tr>
+              <tr>
+                <td><code>NotFoundError</code></td>
+                <td>no camera connected</td>
+                <td>connect one</td>
+              </tr>
+              <tr>
+                <td><code>NotReadableError</code></td>
+                <td>the webcam is already in use by Zoom, Teams, another tab…</td>
+                <td>close the other application</td>
+              </tr>
+              <tr>
+                <td><code>OverconstrainedError</code></td>
+                <td>the requested constraints are impossible for that camera</td>
+                <td>nothing: it is your fault, use <code>ideal</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout why">
+          <span class="label">Why a <code>CameraError</code> class of its own</span>
+          <p>
+            Because higher up, in <code>main.ts</code>, you want to tell apart two very
+            different situations: an <em>expected</em> problem, with a ready-made message to show, and a bug
+            in your code, for which it is better to show the technical text. One line:
+            <code>e instanceof CameraError ? e.message : `Errore durante l'avvio: …`</code>.
+          </p>
+        </div>
+
+        <h3>A detail that bites: the dimensions arrive later</h3>
+        <figure class="code">
+          <figcaption><span class="tag">src/camera.ts</span></figcaption>
+          <pre><code>video.srcObject = stream;
+await video.play();
+
+// Subito dopo play() le dimensioni possono essere ancora 0. A noi servono, per dare alla
+// scena 3D le proporzioni giuste: quindi si aspetta l'evento che le annuncia.
+if (video.videoWidth === 0) {
+  await new Promise&lt;void&gt;((resolve) =&gt;
+    video.addEventListener("loadedmetadata", () =&gt; resolve(), { once: true }),
+  );
+}</code></pre>
+        </figure>
+        <p>
+          Without this wait you end up, now and then and only on some machines, with a 3D scene with
+          <code>NaN</code> proportions. The classic bug that does not reproduce on your computer.
+        </p>
+
+        <h3>Turning off the camera <em>for real</em></h3>
+        <div class="callout warn">
+          <span class="label">Mistake number one</span>
+          <p>
+            Stopping the <code>&lt;video&gt;</code> element does <strong>not</strong> turn off the camera. The
+            stream stays open and the laptop's green light stays on: from the point of view of whoever
+            uses the site, you are still filming them. Every single track must be stopped.
+          </p>
+        </div>
+        <figure class="code">
+          <figcaption><span class="tag">src/camera.ts</span></figcaption>
+          <pre><code>export function stopCamera(video: HTMLVideoElement, stream: MediaStream | null): void {
+  stream?.getTracks().forEach((t) =&gt; t.stop());  // ← questa è la riga che spegne la spia
+  video.pause();
+  video.srcObject = null;
+}</code></pre>
+
+        <h3>The three precautions almost nobody takes</h3>
+        <p>
+          A "turn off" button is not enough. There are three moments when the camera must turn off
+          on its own, and you only discover them if you think about it on purpose:
+        </p>
+        <figure class="code">
+          <figcaption><span class="tag">src/main.ts</span></figcaption>
+          <pre><code>// 1. L'utente ha cambiato scheda MENTRE si accendeva la camera: non deve restare accesa.
+if (document.hidden) { stop(); return; }
+
+// 2. L'utente cambia scheda a camera accesa.
+document.addEventListener("visibilitychange", () =&gt; {
+  if (document.hidden &amp;&amp; stream) stop();
+});
+
+// 3. L'utente lascia la pagina: si libera anche il riconoscitore (memoria e contesto grafico).
+window.addEventListener("pagehide", () =&gt; {
+  stop();
+  tracker?.close();
+  tracker = null;
+});</code></pre>
+        </figure>
+        <p>
+          The first case is the one that does not come to mind: between the moment the user grants
+          permission and the moment the stream arrives, hundreds of milliseconds pass, and in that
+          time they may well have moved on to something else.
+        </p>
+
+        <div class="callout try">
+          <span class="label">Try it</span>
+          <p>
+            Turn on the camera, switch tab, come back: the light must have gone off and the page
+            must be back in its initial state. Then turn on the camera and open Zoom: you should
+            see <code>NotReadableError</code> translated into your sentence.
+          </p>
+        </div>
+
+        <a class="uplink" href="#indice">↑ Contents</a>
+      </section>
+      <hr />
+
+      <!-- ====================================================================================
+           CAPITOLO 3
+           ==================================================================================== -->
+      <section class="step" id="cap3">
+        <h2><span class="num">3</span> Recognizing the hand</h2>
+        <p class="sub">
+          This is where the magic happens, and it is twenty lines. Google has already done all the hard work:
+          we load a model and pass it frames.
+        </p>
+        <ul class="chips">
+          <li>src/tracker.ts</li>
+          <li>scripts/prepare-assets.mjs</li>
+        </ul>
+
+        <h3>The library</h3>
+        <pre><code>npm install @mediapipe/tasks-vision@1.0.1</code></pre>
+
+        <div class="callout why">
+          <span class="label">Why MediaPipe, and why the version is pinned exactly</span>
+          <p>
+            <strong>MediaPipe Tasks Vision</strong> is the library Google uses to run its own
+            vision models <em>inside the browser</em>, compiled to WebAssembly. A single model
+            gives both the 21 hand landmarks and the name of eight gestures. The alternatives — TensorFlow.js
+            with handpose, or an ONNX model on onnxruntime-web — are slower or require you to
+            write the gesture recognition by hand.
+          </p>
+          <p>
+            <strong><code>1.0.1</code> and not <code>^1.0.1</code></strong>: the runtime and the model
+            file must match, and (we will see this in chapter 7) a security patch relies
+            on an exact string in the compiled file. An automatic update would break the
+            build — and that is exactly what we want: better a build that stops than a
+            behaviour that changes silently.
+          </p>
+        </div>
+
+        <h3>The 21 landmarks</h3>
+        <p>
+          For each hand it sees, the model returns an array of 21 objects. They are always in the
+          same order, and it is that order that gives meaning to the numbers:
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Indices</th>
+                <th>Part</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>0</td>
+                <td>wrist</td>
+              </tr>
+              <tr>
+                <td>1 · 2 · 3 · 4</td>
+                <td>thumb, from base to tip</td>
+              </tr>
+              <tr>
+                <td>5 · 6 · 7 · 8</td>
+                <td>index (5 = knuckle, 8 = tip)</td>
+              </tr>
+              <tr>
+                <td>9 · 10 · 11 · 12</td>
+                <td>middle</td>
+              </tr>
+              <tr>
+                <td>13 · 14 · 15 · 16</td>
+                <td>ring</td>
+              </tr>
+              <tr>
+                <td>17 · 18 · 19 · 20</td>
+                <td>little finger</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Each landmark has three numbers:</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <th>Meaning</th>
+                <th>Range</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>x</code></td>
+                <td>horizontal position on the image</td>
+                <td>0 (left edge) … 1 (right edge)</td>
+              </tr>
+              <tr>
+                <td><code>y</code></td>
+                <td>vertical position</td>
+                <td>0 (top) … 1 (bottom)</td>
+              </tr>
+              <tr>
+                <td><code>z</code></td>
+                <td>depth <strong>relative to the wrist</strong></td>
+                <td>same scale as <code>x</code>; negative = closer to the camera</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          Two important things. First: the coordinates are <strong>normalized</strong>, that is, they are not
+          pixels. If the webcam changes resolution, the numbers do not change — great news for the
+          code that uses them. Second: <code>z</code> is the least reliable of the three, because it is
+          estimated from a single camera. It is enough to tell that a finger points forward; do not trust it
+          to measure distances.
+        </p>
+
+        <div class="callout why">
+          <span class="label">Why <code>y</code> grows downwards</span>
+          <p>
+            Because it is the convention of <em>images</em>: the origin is the top-left corner,
+            as for an HTML canvas. In 3D graphics, instead, <code>y</code> grows upwards.
+            Between the two worlds there is a conversion, and we will do it in chapter 5. Make a note of it: it is the source
+            of half the "the hand is upside down" bugs.
+          </p>
+        </div>
+
+        <h3>Loading the model</h3>
+        <figure class="code">
+          <figcaption><span class="tag">src/tracker.ts</span></figcaption>
+          <pre><code>import { FilesetResolver, GestureRecognizer, type GestureRecognizerResult } from "@mediapipe/tasks-vision";
+
+const WASM_PATH = "/mediapipe/wasm";
+const MODEL_PATH = "/mediapipe/gesture_recognizer.task";
+
+// FilesetResolver guarda se il browser supporta le istruzioni SIMD del processore e sceglie
+// da solo fra vision_wasm_internal.* e la variante "nosimd". Entrambe devono essere presenti.
+const vision = await FilesetResolver.forVisionTasks(WASM_PATH);
+
+const recognizer = await GestureRecognizer.createFromOptions(vision, {
+  baseOptions: { modelAssetPath: MODEL_PATH, delegate: "GPU" },
+  runningMode: "VIDEO",             // "IMAGE" ripartirebbe da zero a ogni fotogramma
+  numHands: 2,
+  minHandDetectionConfidence: 0.5,  // per accorgersi che c'è una mano
+  minHandPresenceConfidence: 0.5,   // per dire che c'è ancora
+  minTrackingConfidence: 0.5,       // per continuare a seguirla senza ricercarla da capo
+});</code></pre>
+        </figure>
+        <p>
+          <code>FilesetResolver</code> is the piece that throws everyone the first time: it does not load the
+          model, it loads the <em>engine</em>. It is the WebAssembly runtime that can run MediaPipe's
+          neural networks; the model (the <code>.task</code> file) is the "content" that engine
+          runs. They are two separate downloads: about 11 MB the first, about 8 MB the second, and then
+          they stay in the browser cache.
+        </p>
+
+        <div class="callout why">
+          <span class="label">
+            Why <code>runningMode: "VIDEO"</code> changes everything
+          </span>
+          <p>
+            In <code>IMAGE</code> mode every frame is analysed from scratch: the model looks for
+            the hand in the whole image, every time. In <code>VIDEO</code> mode the model knows that
+            the frames are consecutive and <strong>tracks</strong> the hand from one frame
+            to the next, looking for it only where it expects to find it. Result: faster, more
+            stable, fewer "jumps".
+          </p>
+          <p>
+            The 0.5 thresholds are the ones Google recommends. Raising them reduces false positives, but the
+            hand gets "lost" more often — and a hand that disappears and reappears is much more annoying
+            than a slightly imprecise hand.
+          </p>
+        </div>
+
+        <h3>Analysing a frame</h3>
+        <figure class="code">
+          <figcaption><span class="tag">src/tracker.ts</span></figcaption>
+          <pre><code>detect(video: HTMLVideoElement, now: number): GestureRecognizerResult {
+  // MediaPipe in modalità VIDEO usa l'istante per capire quanto tempo è passato dal
+  // fotogramma precedente, e INTERROMPE CON UN ERRORE se riceve un tempo uguale o
+  // minore dell'ultimo. Con performance.now() non dovrebbe mai capitare, ma il "+1"
+  // di sicurezza costa nulla ed evita un errore fatale dove non te lo aspetti.
+  const ts = now &gt; this.lastTimestamp ? now : this.lastTimestamp + 1;
+  this.lastTimestamp = ts;
+
+  return this.recognizer.recognizeForVideo(video, ts);
+}</code></pre>
+        </figure>
+        <p>
+          Note something counter-intuitive: <code>recognizeForVideo</code> is <strong>synchronous</strong>.
+          It does not return a Promise: it does the computation at once and blocks the main thread for its
+          duration — a few milliseconds with the graphics card. That is why, in chapter 4, you will not
+          find any <code>await</code> inside the frame loop.
+        </p>
+        <p>The result you get:</p>
+        <figure class="code">
+          <figcaption><span class="tag">shape of the result</span></figcaption>
+          <pre><code>{
+  landmarks:   [ [ {x,y,z} × 21 ], … ],   // un array per mano vista
+  worldLandmarks: [ … ],                  // gli stessi punti in metri, origine al centro della mano
+  handedness:  [ [ { categoryName: "Left" | "Right", score } ], … ],
+  gestures:    [ [ { categoryName: "Thumb_Up", score } ], … ],
+}</code></pre>
+        </figure>
+
+        <h3>The eight gestures</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Name from the model</th>
+                <th>Label shown</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><code>Closed_Fist</code></td><td>✊ Fist</td></tr>
+              <tr><td><code>Open_Palm</code></td><td>🖐️ Open hand</td></tr>
+              <tr><td><code>Pointing_Up</code></td><td>☝️ Index up</td></tr>
+              <tr><td><code>Thumb_Down</code></td><td>👎 Thumb down</td></tr>
+              <tr><td><code>Thumb_Up</code></td><td>👍 Thumb up</td></tr>
+              <tr><td><code>Victory</code></td><td>✌️ Victory</td></tr>
+              <tr><td><code>ILoveYou</code></td><td>🤟 I love you</td></tr>
+              <tr><td><code>None</code></td><td>none of the above → only ✋ is shown</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <figure class="code">
+          <figcaption><span class="tag">src/tracker.ts</span></figcaption>
+          <pre><code>/** Il codice ragiona in inglese, l'interfaccia parla italiano. */
+export const GESTURE_LABELS: Record&lt;string, string&gt; = {
+  Closed_Fist: "✊ Pugno",
+  Open_Palm: "🖐️ Mano aperta",
+  Pointing_Up: "☝️ Indice in su",
+  Thumb_Down: "👎 Pollice giù",
+  Thumb_Up: "👍 Pollice su",
+  Victory: "✌️ Vittoria",
+  ILoveYou: "🤟 Ti voglio bene",
+};</code></pre>
+        </figure>
+
+        <h3>Graphics card or processor: the automatic fallback</h3>
+        <p>
+          <code>delegate: "GPU"</code> tells MediaPipe to do the maths on the graphics card. As a
+          rule it is the right choice. On some configurations, though, the opposite happens — and
+          spectacularly: inside a browser without a real graphics card (for example in an automated
+          test on a server) the emulated GPU can take <strong>3-5 seconds per
+          frame</strong>, while the CPU does 4-6 per second.
+        </p>
+        <figure class="code">
+          <figcaption><span class="tag">src/tracker.ts</span> — creation with fallback</figcaption>
+          <pre><code>static async create(onlyCpu = false): Promise&lt;HandTracker&gt; {
+  // `?delegate=cpu` nell'indirizzo forza la CPU: utile per diagnosticare senza toccare il codice.
+  const forceCpu = onlyCpu || new URLSearchParams(location.search).get("delegate")?.toLowerCase() === "cpu";
+  const vision = await FilesetResolver.forVisionTasks(WASM_PATH);
+
+  const options = (delegate: "GPU" | "CPU") =&gt; ({ /* …come sopra… */ });
+
+  if (forceCpu) return new HandTracker(await GestureRecognizer.createFromOptions(vision, options("CPU")), "CPU");
+  try {
+    return new HandTracker(await GestureRecognizer.createFromOptions(vision, options("GPU")), "GPU");
+  } catch {
+    // Niente WebGL utilizzabile: la CPU è più lenta ma funziona ovunque,
+    // ed è meglio di una pagina che non parte.
+    return new HandTracker(await GestureRecognizer.createFromOptions(vision, options("CPU")), "CPU");
+  }
+}</code></pre>
+        </figure>
+        <p>
+          The <code>try/catch</code> covers the "there is no WebGL" case. It does not cover the "WebGL is there but is
+          extremely slow" case: that one has to be measured. We keep the average duration of a detection…
+        </p>
+        <figure class="code">
+          <figcaption><span class="tag">src/tracker.ts</span> — timing</figcaption>
+          <pre><code>const t0 = performance.now();
+const result = this.recognizer.recognizeForVideo(video, ts);
+const ms = performance.now() - t0;
+
+// Media mobile esponenziale: pesa di più le misure recenti e non richiede di tenere
+// uno storico. Due variabili invece di un array.
+this.detections++;
+this.avgDetectMs = this.detections === 1 ? ms : this.avgDetectMs * 0.8 + ms * 0.2;</code></pre>
+        </figure>
+        <p>…and, if the average breaks the threshold, we recreate the recognizer on the CPU:</p>
+        <figure class="code">
+          <figcaption><span class="tag">src/main.ts</span> — safety net</figcaption>
+          <pre><code>async function fallbackToCpuIfSlow(): Promise&lt;void&gt; {
+  if (!tracker || switching || tracker.delegate !== "GPU" ||
+      tracker.detections &lt; 8 || tracker.avgDetectMs &lt; 150) return;
+
+  switching = true;
+  const slow = tracker;
+  tracker = null;                              // il ciclo salta le rilevazioni finché non è pronto
+  try {
+    tracker = await HandTracker.create(true);  // true = solo CPU
+    slow.close();                              // il vecchio va chiuso: tiene memoria e contesto grafico
+    console.info(`GPU troppo lenta (${Math.round(slow.avgDetectMs)} ms): passo alla CPU`);
+  } catch {
+    tracker = slow;                            // se fallisce, si continua con quello di prima
+  } finally {
+    switching = false;
+  }
+}</code></pre>
+        </figure>
+        <p>
+          <code>detections &lt; 8</code> avoids judging on the first frames, which are always
+          slow (shader compilation, cold caches). The 150 ms threshold means fewer than 7
+          frames per second: below that figure the application is already unusable, so it is worth
+          risking a switch.
+        </p>
+
+        <h3>Runtime and model: from your site, not from a CDN</h3>
+        <p>
+          The official MediaPipe documentation has you load the wasm and the model from a CDN, with an
+          address containing <code>@latest</code>. For an example that is perfectly fine. For a real site
+          there are two good reasons not to:
+        </p>
+        <ol>
+          <li>
+            <strong>Privacy.</strong> In chapter 7 we will set a rule that lets the
+            page contact <em>only its own domain</em>. It is that rule that makes the sentence
+            "the images do not leave your browser" verifiable. If the model came
+            from a CDN, the rule would have to be widened.
+          </li>
+          <li>
+            <strong>Stability.</strong> <code>@latest</code> means "today's version". The
+            day a new one comes out, your site changes on its own, perhaps breaking, without you
+            having touched anything.
+          </li>
+        </ol>
+        <p>
+          The solution is a script that runs before every build: it copies the runtime from
+          <code>node_modules</code> (so the same version as the package) and downloads the model
+          <strong>verifying its checksum</strong>.
+        </p>
+        <figure class="code">
+          <figcaption><span class="tag">scripts/prepare-assets.mjs</span></figcaption>
+          <pre><code>import { createHash } from "node:crypto";
+import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
+// I moduli ES non hanno __dirname: si ricava dall'indirizzo del file stesso.
+const root = join(dirname(fileURLToPath(import.meta.url)), "..");
+const out = join(root, "public", "mediapipe");
+
+// Le due varianti del runtime: SIMD (più veloce) e nosimd (ripiego). Sceglie MediaPipe
+// quale usare, ma deve trovarle entrambe nella cartella.
+const WASM_FILES = [
+  "vision_wasm_internal.js",
+  "vision_wasm_internal.wasm",
+  "vision_wasm_nosimd_internal.js",
+  "vision_wasm_nosimd_internal.wasm",
+];
+const wasmSrc = join(root, "node_modules", "@mediapipe", "tasks-vision", "wasm");
+mkdirSync(join(out, "wasm"), { recursive: true });
+for (const f of WASM_FILES) copyFileSync(join(wasmSrc, f), join(out, "wasm", f));
+
+// Il modello (~8 MB). L'indirizzo punta alla versione "1", non a "latest".
+const MODEL = {
+  url: "https://storage.googleapis.com/mediapipe-models/gesture_recognizer/gesture_recognizer/float16/1/gesture_recognizer.task",
+  file: join(out, "gesture_recognizer.task"),
+  sha256: "97952348cf6a6a4915c2ea1496b4b37ebabc50cbbf80571435643c455f2b0482",
+};
+const sha = (buf) =&gt; createHash("sha256").update(buf).digest("hex");
+
+if (!existsSync(MODEL.file) || sha(readFileSync(MODEL.file)) !== MODEL.sha256) {
+  const res = await fetch(MODEL.url);
+  if (!res.ok) throw new Error(`download del modello fallito: HTTP ${res.status}`);
+  const buf = Buffer.from(await res.arrayBuffer());
+  // Se il contenuto non è quello atteso la build si ferma: meglio un errore chiaro adesso
+  // che un file sbagliato pubblicato sul sito.
+  if (sha(buf) !== MODEL.sha256) throw new Error("checksum del modello diverso da quello atteso");
+  writeFileSync(MODEL.file, buf);
+}
+
+console.log("asset MediaPipe pronti in public/mediapipe/");</code></pre>
+        </figure>
+        <p>Then you hook it into the commands, so you never have to remember it again:</p>
+        <figure class="code">
+          <figcaption><span class="tag">package.json</span></figcaption>
+          <pre><code>"scripts": {
+  "assets": "node scripts/prepare-assets.mjs",
+  "dev": "npm run assets &amp;&amp; vite",
+  "build": "npm run assets &amp;&amp; tsc &amp;&amp; vite build",
+  "test:e2e": "node tests/e2e/run.mjs"
+}</code></pre>
+        </figure>
+        <div class="callout why">
+          <span class="label">Why <code>public/</code></span>
+          <p>
+            Everything in <code>public/</code> ends up in the build <em>as it is</em>, without
+            going through the bundler and without its name changing. That is exactly what you need for files that
+            must be reachable at a fixed address, like
+            <code>/mediapipe/gesture_recognizer.task</code>.
+          </p>
+        </div>
+
+        <a class="uplink" href="#indice">↑ Contents</a>
+      </section>
+      <hr />
+
+      <!-- ====================================================================================
+           CAPITOLO 4
+           ==================================================================================== -->
+      <section class="step" id="cap4">
+        <h2><span class="num">4</span> The frame loop</h2>
+        <p class="sub">
+          Twelve lines that decide whether the application is smooth or heats up the laptop.
+        </p>
+        <ul class="chips">
+          <li>src/main.ts</li>
+        </ul>
+
+        <figure class="code">
+          <figcaption><span class="tag">src/main.ts</span></figcaption>
+          <pre><code>let rafId = 0;           // id dell'ultimo requestAnimationFrame, per poterlo annullare
+let lastVideoTime = -1;  // istante dell'ultimo fotogramma già analizzato
+
+function loop(): void {
+  rafId = requestAnimationFrame(loop);   // richiamami prima del prossimo ridisegno
+  const video = ui.video;
+
+  // readyState &gt;= 2 significa "ci sono dati per il fotogramma corrente".
+  if (tracker &amp;&amp; video.readyState &gt;= 2 &amp;&amp; video.currentTime !== lastVideoTime) {
+    lastVideoTime = video.currentTime;
+    const now = performance.now();
+
+    const result = tracker.detect(video, now);   // ← il riconoscimento
+    // …qui useremo i punti: filtro, scena 3D, anteprima 2D…
+  }
+
+  scene.render();        // ← il disegno, SEMPRE, anche senza fotogrammi nuovi
+}</code></pre>
+        </figure>
+
+        <h3>Three details that look trivial and are not</h3>
+
+        <h4><code>requestAnimationFrame</code> and not <code>setInterval</code></h4>
+        <p>
+          The browser calls <code>loop</code> just <em>before</em> redrawing the screen. Three
+          consequences, all good:
+        </p>
+        <ul>
+          <li>
+            drawing is synchronized with the monitor: no images "torn" halfway through an
+            update;
+          </li>
+          <li>
+            if the monitor runs at 120 Hz the loop follows on its own, without you changing a constant;
+          </li>
+          <li>
+            if the tab goes into the background the browser <strong>pauses</strong> the loop,
+            instead of letting it drain the battery in secret. <code>setInterval</code> would keep
+            running, piling up frames nobody is watching.
+          </li>
+        </ul>
+
+        <h4>Skipping the frame already analysed</h4>
+        <p>
+          The screen refreshes 60 times a second, the webcam produces 30 frames a second:
+          <strong>half the turns of the loop would find the very same frame</strong>.
+          Analysing it twice is wasted work — and anyway MediaPipe, in video mode, refuses
+          two analyses with the same timestamp (chapter 3).
+        </p>
+        <p>
+          The trick is <code>video.currentTime</code>: it changes only when a new frame arrives.
+          Comparing it with the previous value costs one comparison and halves the work.
+        </p>
+
+        <h4>Drawing stays outside the <code>if</code></h4>
+        <p>
+          Recognition runs at 30 Hz, drawing at 60. If you put <code>scene.render()</code>
+          inside the <code>if</code>, the fades of hands coming in and going out would be
+          jerky. Outside, the scene keeps animating even when nothing new arrives from the
+          camera.
+        </p>
+
+        <div class="callout why">
+          <span class="label">Summary of the rates</span>
+          <p>
+            <strong>~60 times a second</strong>: the loop runs and the 3D scene is redrawn.<br />
+            <strong>~30 times a second</strong>: a new frame arrives and the model works.<br />
+            <strong>once a second</strong>: the fps counter is updated.
+          </p>
+        </div>
+
+        <h3>Counting frames (the right ones)</h3>
+        <figure class="code">
+          <figcaption><span class="tag">src/main.ts</span></figcaption>
+          <pre><code>frames++;
+if (now - fpsWindowStart &gt;= 1000) {
+  ui.fps.textContent = `${Math.round((frames * 1000) / (now - fpsWindowStart))} fps · ${tracker.delegate}`;
+  frames = 0;
+  fpsWindowStart = now;
+}</code></pre>
+        </figure>
+        <p>
+          Note <em>where</em> this block sits: inside the <code>if</code>. It counts the
+          <strong>analysed</strong> frames, not the drawn ones. The number of draws would always be 60 and
+          would tell you nothing; the number of analyses tells you whether the application "keeps up" with the hand.
+          It is the only metric that really matters, and it is also the first place to look when something
+          is slow.
+        </p>
+
+        <h3>Start and stop</h3>
+        <figure class="code">
+          <figcaption><span class="tag">src/main.ts</span></figcaption>
+          <pre><code>async function start(): Promise&lt;void&gt; {
+  ui.error.hidden = true;
+  setState("loading", "Avvio…");
+  try {
+    // L'ORDINE CONTA: prima il modello (pesante, ~8 MB, ma non chiede niente all'utente),
+    // poi la webcam. Così il permesso viene chiesto quando manca poco al via, e non si tiene
+    // la telecamera accesa per secondi mentre si scarica il modello.
+    // Il `??=` fa sì che alla seconda accensione il modello già in memoria venga riusato.
+    tracker ??= await HandTracker.create();
+    stream = await startCamera(ui.video);
+
+    if (document.hidden) { stop(); return; }
+
+    // Le proporzioni reali del video decidono l'area utile della scena 3D.
+    scene.setFrameAspect(ui.video.videoWidth / ui.video.videoHeight);
+    lastVideoTime = -1;
+    setState("running", "● Camera accesa");
+    cancelAnimationFrame(rafId);   // per sicurezza: mai due cicli in parallelo
+    loop();
+  } catch (e) {
+    stop();
+    ui.error.textContent = e instanceof CameraError
+      ? e.message
+      : `Errore durante l'avvio: ${(e as Error).message ?? e}`;
+    ui.error.hidden = false;
+    setState("error", "Camera spenta");
+  }
+}</code></pre>
+        </figure>
+        <div class="callout warn">
+          <span class="label">The two-loops bug</span>
+          <p>
+            <code>cancelAnimationFrame(rafId)</code> before <code>loop()</code> looks useless. It is
+            not: a double click on the start button is enough, or a restart while the first
+            <code>start()</code> is still waiting for the camera, and you end up with two loops running in
+            parallel. The symptom is bizarre — the application uses twice the resources and the hand stutters — and the
+            cause is hard to imagine by looking at the drawing code.
+          </p>
+        </div>
+
+        <figure class="code">
+          <figcaption><span class="tag">src/main.ts</span></figcaption>
+          <pre><code>function stop(): void {
+  cancelAnimationFrame(rafId);
+  stopCamera(ui.video, stream);
+  stream = null;
+  scene.update("Right", null);
+  scene.update("Left", null);
+  streak.Right = streak.Left = 0;
+  smoothers.Right = smoothers.Left = null;
+
+  // Il ciclo principale è fermo, ma la dissolvenza della mano dura ancora un decimo di
+  // secondo: si continua a disegnare per una ventina di fotogrammi, poi basta.
+  let n = 20;
+  const fade = () =&gt; { scene.render(); if (--n &gt; 0) requestAnimationFrame(fade); };
+  fade();
+
+  setState("idle", "Camera spenta");
+}</code></pre>
+        </figure>
+        <p>
+          The recognizer, note, is <strong>not</strong> closed: it stays in memory, ready for an
+          instant restart. It is closed only when you leave the page. The webcam, instead, turns
+          off at once: it is the camera, not a model.
+        </p>
+
+        <h3>A single place decides what you see</h3>
+        <figure class="code">
+          <figcaption><span class="tag">src/main.ts</span></figcaption>
+          <pre><code>type State = "idle" | "loading" | "running" | "error";
+
+function setState(state: State, status: string): void {
+  document.body.dataset.state = state;
+  ui.status.textContent = status;
+  ui.status.classList.toggle("live", state === "running");
+  ui.intro.hidden = state === "running";
+  ui.hud.hidden = state !== "running";
+  ui.preview.hidden = state !== "running" || ui.togglePreview.getAttribute("aria-pressed") !== "true";
+  ui.start.disabled = state === "loading";
+  ui.start.textContent = state === "loading" ? "Avvio in corso…" : "Accendi la camera";
+}</code></pre>
+        </figure>
+        <div class="callout why">
+          <span class="label">Why this boring function is worth writing</span>
+          <p>
+            Because it avoids the most common class of bugs in an interface: two elements telling
+            different states. The button says "Turn on camera" while the label says "● Camera
+            on", because one of the two was updated in one code branch and the other was not. With a
+            single place that decides everything, that situation is impossible by construction. It is also the
+            reason this application does not need React.
+          </p>
+        </div>
+
+        <a class="uplink" href="#indice">↑ Contents</a>
+      </section>
+      <hr />
+
+      <!-- ====================================================================================
+           CAPITOLO 5
+           ==================================================================================== -->
+      <section class="step" id="cap5">
+        <h2><span class="num">5</span> Drawing: first in 2D, then in 3D</h2>
+        <p class="sub">
+          We start from the version that works in ten lines, to see something alive straight away.
+          Then we move to 3D.
+        </p>
+        <ul class="chips">
+          <li>src/main.ts</li>
+          <li>src/hand3d.ts</li>
+        </ul>
+
+        <h3>The easy version: a 2D canvas</h3>
+        <p>
+          MediaPipe includes a utility that draws landmarks and connections on a 2D context. It is used for
+          the preview — that panel with the webcam and the dots on top — and it is the quickest way to
+          check that recognition works.
+        </p>
+        <figure class="code">
+          <figcaption><span class="tag">src/main.ts</span></figcaption>
+          <pre><code>import { DrawingUtils } from "@mediapipe/tasks-vision";
+
+const overlayCtx = ui.overlay.getContext("2d")!;
+const drawing = new DrawingUtils(overlayCtx);
+
+// …dentro il ciclo, per ogni mano trovata:
+
+// La tela ha le dimensioni REALI del video (es. 640×480); il CSS poi la rimpicciolisce.
+// Così i punti disegnati coincidono con l'immagine che c'è sotto.
+if (ui.overlay.width !== video.videoWidth) {
+  ui.overlay.width = video.videoWidth;
+  ui.overlay.height = video.videoHeight;
+}
+overlayCtx.clearRect(0, 0, ui.overlay.width, ui.overlay.height);
+
+drawing.drawConnectors(landmarks, HAND_CONNECTIONS, { color: "#38bdf8", lineWidth: 3 });
+drawing.drawLandmarks(landmarks, { color: "#ffffff", radius: 2.5, lineWidth: 1 });</code></pre>
+        </figure>
+        <p>
+          <code>HAND_CONNECTIONS</code> is the table of the 21 pairs of landmarks to connect
+          (wrist→thumb, knuckle→phalanx and so on). MediaPipe provides it:
+        </p>
+        <figure class="code">
+          <figcaption><span class="tag">src/tracker.ts</span></figcaption>
+          <pre><code>// Riesportata da qui perché la usano sia l'anteprima 2D sia la scena 3D, e nessuna delle
+// due deve importare MediaPipe solo per questo.
+export const HAND_CONNECTIONS = GestureRecognizer.HAND_CONNECTIONS;</code></pre>
+        </figure>
+        <p>In the CSS, the preview is mirrored:</p>
+        <figure class="code">
+          <figcaption><span class="tag">src/style.css</span></figcaption>
+          <pre><code>.preview video,
+.preview canvas {
+  object-fit: cover;
+  transform: scaleX(-1);   /* effetto specchio, SOLO visivo */
+}</code></pre>
+        </figure>
+        <div class="callout warn">
+          <span class="label">Remember this, you will need it soon</span>
+          <p>
+            That flip is <strong>only visual</strong>: it makes the preview look like a
+            mirror. The numbers coming from MediaPipe stay those of the real, non-mirrored
+            footage. This is where the right/left bug of chapter 6 comes from.
+          </p>
+        </div>
+
+        <h3>Moving to 3D: Three.js</h3>
+        <pre><code>npm install three@0.186.0
+npm install --save-dev @types/three@0.186.0   # stessa versione, o descrive funzioni che non esistono</code></pre>
+        <div class="callout why">
+          <span class="label">Why Three.js and not "bare" WebGL</span>
+          <p>
+            Direct WebGL means writing shaders, projection matrices and graphics context
+            management: hundreds of lines before you even see a sphere. Three.js is the
+            standard library for this, it has no dependencies of its own, and the whole scene of this project fits in
+            a single three-hundred-line file, comments included. In exchange it weighs about half a megabyte
+            compressed: for a 3D application it is the right price.
+          </p>
+        </div>
+
+        <h3>The minimal scene</h3>
+        <figure class="code">
+          <figcaption><span class="tag">src/hand3d.ts</span></figcaption>
+          <pre><code>import * as THREE from "three";
+
+// `alpha: true`: lo sfondo lo mette il CSS (una sfumatura), la tela resta trasparente.
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+// Su schermi ad alta densità si disegna al massimo al doppio della risoluzione: oltre non si
+// vede la differenza e si spreca lavoro (e batteria).
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+const scene = new THREE.Scene();
+
+// fov 35°, aspect provvisorio, piani di taglio vicino/lontano
+const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
+// Telecamera FERMA davanti all'origine: si muove la mano, non l'inquadratura.
+// È ciò che rende immediato l'effetto specchio.
+camera.position.set(0, 0, 10);
+camera.lookAt(0, 0, 0);
+
+// Tre luci:
+scene.add(new THREE.HemisphereLight(0xdbeafe, 0x1e1b4b, 1.4)); // diffusa cielo/terra: niente ombre nere
+const key = new THREE.DirectionalLight(0xffffff, 2.2);
+key.position.set(3, 5, 8);                                      // principale: dà volume
+scene.add(key);
+const rim = new THREE.DirectionalLight(0x818cf8, 1.2);
+rim.position.set(-4, -2, -6);                                   // radente violacea: stacca dallo sfondo
+scene.add(rim);</code></pre>
+        </figure>
+        <div class="callout why">
+          <span class="label">Why three lights and not one</span>
+          <p>
+            With a single directional light, the shaded side of every sphere turns black and the hand
+            looks cut out. The hemisphere light fills the shadows with a colour instead of black;
+            the key light gives volume; the grazing one from behind traces a bright rim that separates
+            the figure from the dark background. It is the classic three-point scheme of photography, and in 3D
+            it works the same.
+          </p>
+        </div>
+
+        <h3>Converting the coordinates</h3>
+        <p>
+          MediaPipe speaks in image coordinates (0…1, origin at the top left, y pointing
+          down). Three.js speaks in world coordinates (origin at the centre, y pointing up, arbitrary
+          units). The bridge between the two worlds is this function:
+        </p>
+        <figure class="code">
+          <figcaption><span class="tag">src/hand3d.ts</span></figcaption>
+          <pre><code>const DEPTH_GAIN = 1.6;
+
+toWorld(p: Point3): Point3 {
+  const width = this.frameAspect * this.frameHeight;
+  return {
+    x: (0.5 - p.x) * width,               // centra E specchia
+    y: (0.5 - p.y) * this.frameHeight,    // centra E rovescia (in 3D la y cresce in alto)
+    z: -p.z * width * DEPTH_GAIN,         // verso l'osservatore, un po' esagerata
+  };
+}</code></pre>
+        </figure>
+        <p>
+          The <code>0.5 -</code> does <strong>two jobs in one subtraction</strong>. It moves the origin
+          from the corner of the image to the centre, and it flips the direction of the axis:
+        </p>
+        <ul>
+          <li>
+            on <code>x</code> the flip is the <strong>mirror effect</strong>: you move your hand to the
+            right, the one on the screen goes right, as in front of a mirror. Without it, the
+            movement would be reversed and the experience immediately becomes unpleasant;
+          </li>
+          <li>
+            on <code>y</code> it is the conversion between the convention of images and that of
+            3D graphics. If you skip it, the hand is upside down.
+          </li>
+        </ul>
+        <p>
+          <code>DEPTH_GAIN = 1.6</code> amplifies depth: without it, moving the hand closer to the camera
+          would barely be noticeable, because MediaPipe's <code>z</code> is small compared with the other
+          two coordinates. The value is chosen by eye — above 2 the hand starts to look deformed.
+        </p>
+
+        <h3>One object per joint, one per bone</h3>
+        <div class="callout why">
+          <span class="label">The idea that holds the whole file together</span>
+          <p>
+            The objects are created <strong>only once</strong> in the constructor; on every frame they are
+            only <em>moved</em>. Creating and destroying 40 objects 60 times a second would keep the
+            garbage collector constantly busy, and you would see it: stutters at irregular
+            intervals, the kind you cannot relate to anything.
+          </p>
+        </div>
+        <figure class="code">
+          <figcaption><span class="tag">src/hand3d.ts</span></figcaption>
+          <pre><code>// Due geometrie per TUTTA la scena: una sfera di raggio 1 e un cilindro alto 1.
+// Ogni oggetto le riusa cambiando solo posizione, rotazione e scala.
+const jointGeo = new THREE.SphereGeometry(1, 20, 14);
+const boneGeo = new THREE.CylinderGeometry(1, 1, 1, 14);
+
+// Tre materiali condivisi, non uno per oggetto: cambiare la trasparenza di un materiale
+// la cambia per tutti gli oggetti che lo usano — ed è così che funziona la dissolvenza.
+this.solid = new THREE.MeshStandardMaterial({ color, roughness: 0.35, metalness: 0.1, transparent: true });
+this.tips = new THREE.MeshStandardMaterial({
+  color: 0xffffff,
+  emissive: color,        // "emette" luce propria: le punte si notano anche in ombra
+  emissiveIntensity: 0.9,
+  roughness: 0.3,
+  transparent: true,
+});
+
+for (let i = 0; i &lt; 21; i++) {
+  const joint = new THREE.Mesh(jointGeo, FINGERTIPS.has(i) ? this.tips : this.solid);
+  this.joints.push(joint);
+  this.group.add(joint);
+}
+for (let i = 0; i &lt; HAND_CONNECTIONS.length; i++) {
+  const bone = new THREE.Mesh(boneGeo, this.solid);
+  this.bones.push(bone);
+  this.group.add(bone);
+}
+
+/** Posizioni di lavoro riusate a ogni fotogramma, per non allocare 21 vettori ogni volta. */
+private readonly world = Array.from({ length: 21 }, () =&gt; new THREE.Vector3());</code></pre>
+        </figure>
+        <p>
+          <code>MeshStandardMaterial</code> is a "physical" material: it reacts to lights, so the
+          spheres look like volumes and not flat circles. The fingertips use a material that emits
+          its own light, so they stay readable even when they end up in shadow.
+        </p>
+
+        <h3>How to place a bone</h3>
+        <p>
+          This is the only piece of real maths in the drawing. You have a cylinder 1 high and 1 wide,
+          centred at the origin and oriented along the Y axis. You have to take it from a point A to a point B.
+          Three operations:
+        </p>
+        <figure class="code">
+          <figcaption><span class="tag">src/hand3d.ts</span></figcaption>
+          <pre><code>const up = new THREE.Vector3(0, 1, 0);
+const dir = new THREE.Vector3();
+
+HAND_CONNECTIONS.forEach(({ start, end }, i) =&gt; {
+  const a = this.world[start];
+  const b = this.world[end];
+  const bone = this.bones[i];
+
+  dir.subVectors(b, a);
+  const len = dir.length();
+
+  // 1. POSIZIONE: il punto medio fra A e B
+  bone.position.addVectors(a, b).multiplyScalar(0.5);
+
+  // 2. ROTAZIONE: quella che porta l'asse Y (verso naturale del cilindro) sulla direzione A→B.
+  //    `divideScalar(len)` normalizza la direzione; il controllo evita la divisione per zero
+  //    quando due punti coincidono — cosa che capita nei primi fotogrammi.
+  if (len &gt; 1e-6) bone.quaternion.setFromUnitVectors(up, dir.divideScalar(len));
+
+  // 3. SCALA: raggio sui lati, lunghezza del segmento in altezza
+  bone.scale.set(boneR, len, boneR);
+});</code></pre>
+        </figure>
+        <p>
+          <code>setFromUnitVectors</code> is the function that saves you from learning quaternions:
+          given two unit vectors, it computes the rotation that takes the first onto the second. You only have to
+          remember that the two vectors must be <strong>normalized</strong>, that is of length 1 — and that is
+          exactly what <code>divideScalar(len)</code> does.
+        </p>
+
+        <h3>Sizes proportional to the hand</h3>
+        <figure class="code">
+          <figcaption><span class="tag">src/hand3d.ts</span></figcaption>
+          <pre><code>// Distanza polso → nocca del medio: è la "taglia" della mano in questo fotogramma.
+const size = this.world[0].distanceTo(this.world[9]);
+const jointR = size * 0.075;
+const boneR = size * 0.05;
+
+this.joints.forEach((j, i) =&gt; {
+  j.position.copy(this.world[i]);
+  // Polso un po' più grosso, punte leggermente più grandi: dà carattere alla figura.
+  j.scale.setScalar(FINGERTIPS.has(i) ? jointR * 1.15 : i === 0 ? jointR * 1.4 : jointR);
+});</code></pre>
+        </figure>
+        <p>
+          If the radii were constant, a distant hand would look made of balloons and a close one of
+          pins. By tying them to a distance inside the hand, the figure stays believable at any
+          distance from the camera, for free.
+        </p>
+
+        <h3>The palm</h3>
+        <figure class="code">
+          <figcaption><span class="tag">src/hand3d.ts</span></figcaption>
+          <pre><code>/** Polso (0), base del pollice (1) e le quattro nocche (5, 9, 13, 17). */
+const PALM = [0, 1, 5, 9, 13, 17];
+
+const palmGeo = new THREE.BufferGeometry();
+palmGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(PALM.length * 3), 3));
+// Un ventaglio di triangoli che parte dal polso:
+// (polso, pollice, indice), (polso, indice, medio), e così via.
+palmGeo.setIndex([0, 1, 2,  0, 2, 3,  0, 3, 4,  0, 4, 5]);
+
+this.palm = new THREE.Mesh(palmGeo, this.palmMaterial);
+// I vertici cambiano a ogni fotogramma, ma Three.js calcola il volume d'ingombro una volta
+// sola. Senza questa riga, ogni tanto decide che il palmo è fuori inquadratura e lo salta.
+this.palm.frustumCulled = false;
+
+// …e a ogni fotogramma si riscrivono i sei vertici nel buffer già allocato:
+const pos = this.palm.geometry.getAttribute("position") as THREE.BufferAttribute;
+PALM.forEach((idx, k) =&gt; pos.setXYZ(k, this.world[idx].x, this.world[idx].y, this.world[idx].z));
+pos.needsUpdate = true;                      // senza questo i dati non tornano alla scheda grafica
+this.palm.geometry.computeVertexNormals();   // ricalcola l'orientamento per l'illuminazione</code></pre>
+        </figure>
+        <div class="callout warn">
+          <span class="label">
+            Two lines that save hours: <code>frustumCulled</code> and <code>needsUpdate</code>
+          </span>
+          <p>
+            <strong><code>frustumCulled = false</code></strong>. To avoid drawing objects
+            out of frame, Three.js checks a bounding volume computed only once. If the vertices
+            move, that volume becomes wrong and the palm <em>disappears intermittently</em>.
+            Confusing symptom: it looks like a transparency problem.
+          </p>
+          <p>
+            <strong><code>pos.needsUpdate = true</code></strong>. Without it, Three.js does not resend the data
+            to the graphics card: the palm stays frozen in the position of the first frame while
+            the fingers move. Another classic.
+          </p>
+        </div>
+
+        <h3>The fades</h3>
+        <figure class="code">
+          <figcaption><span class="tag">src/hand3d.ts</span></figcaption>
+          <pre><code>tick(dt: number): void {
+  // `dt * 12` rende la dissolvenza indipendente dagli fps: circa un decimo di secondo
+  // su qualunque macchina, che gira a 30, 60 o 144 Hz.
+  this.opacity += (this.targetOpacity - this.opacity) * Math.min(1, dt * 12);
+  if (this.opacity &lt; 0.01 &amp;&amp; this.targetOpacity === 0) this.opacity = 0;
+
+  // A zero l'oggetto si spegne del tutto: Three.js salta i gruppi non visibili.
+  this.group.visible = this.opacity &gt; 0;
+  this.solid.opacity = this.opacity;
+  this.tips.opacity = this.opacity;
+  this.palmMaterial.opacity = this.opacity * 0.35;   // il palmo resta comunque velato
+}</code></pre>
+        </figure>
+        <p>
+          Without a fade, every time the model loses the hand for one frame the figure
+          disappears and reappears abruptly. With a tenth of a second of transition, the same loss
+          becomes invisible.
+        </p>
+
+        <h3>Adapting to the window</h3>
+        <figure class="code">
+          <figcaption><span class="tag">src/hand3d.ts</span></figcaption>
+          <pre><code>private resize(): void {
+  const w = this.canvas.clientWidth || window.innerWidth;
+  const h = this.canvas.clientHeight || window.innerHeight;
+  this.renderer.setSize(w, h, false);   // false = non toccare la dimensione CSS
+  this.camera.aspect = w / h;
+  this.camera.updateProjectionMatrix(); // OBBLIGATORIO dopo aver cambiato aspect o fov
+
+  // Quanto mondo entra in verticale alla distanza della mano.
+  const visibleH = 2 * this.camera.position.z * Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2));
+  // Si sceglie il lato che "stringe" di più, così il rettangolo del video entra sempre tutto.
+  const fit = this.camera.aspect &gt; this.frameAspect ? visibleH : (visibleH * this.camera.aspect) / this.frameAspect;
+
+  // Telefono in verticale: senza ingrandimento la mano sarebbe minuscola fra due bande vuote.
+  // Si accetta che vicino ai bordi laterali possa uscire dall'inquadratura.
+  const zoom = Math.min(1.4, Math.max(1, this.frameAspect / this.camera.aspect));
+  this.frameHeight = fit * 0.92 * zoom;  // 0.92 = un margine perché la mano non tocchi i bordi
+}</code></pre>
+        </figure>
+        <p>
+          If you forget <code>updateProjectionMatrix()</code> the scene keeps being drawn with the
+          old proportions: the hand looks squashed or stretched after every resize of the
+          window. It is the first place to look when "the 3D is crooked".
+        </p>
+
+        <a class="uplink" href="#indice">↑ Contents</a>
+      </section>
+      <hr />
+
+      <!-- ====================================================================================
+           CAPITOLO 6
+           ==================================================================================== -->
+      <section class="step" id="cap6">
+        <h2><span class="num">6</span> Making it look smooth</h2>
+        <p class="sub">
+          At this point everything works and it looks badly made. Three problems, three cures — and the third is the
+          most elegant in the whole project.
+        </p>
+        <ul class="chips">
+          <li>src/filter.ts</li>
+          <li>src/main.ts</li>
+        </ul>
+
+        <h3>Problem 1: the landmarks jitter</h3>
+        <p>
+          Hold your hand perfectly still and watch the dots in the preview: they dance. It is not your
+          fault, it is the model: every frame is a slightly different image (sensor noise,
+          compression, lighting that changes a little), and the neural network answers with
+          slightly different numbers. On the screen, a hand that vibrates.
+        </p>
+
+        <h4>The obvious cure, and why it is not enough</h4>
+        <p>
+          Averaging with the previous frames. It removes the jitter, but introduces
+          <strong>lag</strong>: move your hand suddenly and the one on the screen arrives later, as
+          if it were in treacle. It is the classic trade-off between stability and responsiveness, and with a
+          fixed-strength filter you cannot win: if you filter enough to stop the jitter,
+          you filter too much to follow a movement.
+        </p>
+
+        <h4>The One Euro filter, explained in words</h4>
+        <p>
+          The idea (Casiez, Roussel, Vogel — CHI 2012) is shamelessly simple:
+          <strong>change the strength of the filter according to how much the landmark is moving</strong>.
+        </p>
+        <ul>
+          <li><strong>landmark almost still</strong> → filter a lot → no vibration;</li>
+          <li><strong>fast landmark</strong> → filter little → no noticeable lag.</li>
+        </ul>
+        <p>
+          It works because the two defects never show up together. When the hand is still, the
+          lag cannot be seen (nothing is moving for it to lag behind). When the hand
+          races, the jitter cannot be seen (it is hidden by the movement). The filter exploits exactly this:
+          it always corrects the defect that is visible at that moment.
+        </p>
+        <p>The name comes from the title of the paper: a filter that "costs one euro", that is, very simple.</p>
+
+        <h4>The code, in three pieces</h4>
+        <figure class="code">
+          <figcaption><span class="tag">src/filter.ts</span> — 1/3: the basic low-pass</figcaption>
+          <pre><code>/**
+ * Filtro passa-basso elementare: `y = α·x + (1-α)·y_precedente`.
+ * Con α vicino a 1 segue fedelmente il valore; vicino a 0 lo insegue lentamente.
+ */
+class LowPass {
+  private y: number | null = null;
+
+  filter(x: number, alpha: number): number {
+    this.y = this.y === null ? x : alpha * x + (1 - alpha) * this.y;
+    return this.y;
+  }
+
+  last(): number | null {
+    return this.y;
+  }
+}</code></pre>
+        </figure>
+        <figure class="code">
+          <figcaption><span class="tag">src/filter.ts</span> — 2/3: from hertz to α</figcaption>
+          <pre><code>/**
+ * Converte una "frequenza di taglio" in hertz nel coefficiente α del passa-basso, tenendo
+ * conto di quanto tempo è passato DAVVERO fra due fotogrammi: così il filtro si comporta
+ * allo stesso modo a 30 o a 60 fotogrammi al secondo.
+ */
+const alpha = (cutoff: number, dt: number) =&gt; 1 / (1 + 1 / (2 * Math.PI * cutoff * dt));</code></pre>
+        </figure>
+        <figure class="code">
+          <figcaption><span class="tag">src/filter.ts</span> — 3/3: the core</figcaption>
+          <pre><code>export class OneEuroFilter {
+  private x = new LowPass();   // filtra il valore
+  private dx = new LowPass();  // filtra la sua velocità
+  private lastTime: number | null = null;
+
+  constructor(minCutoff = 1.2, beta = 8, dCutoff = 1) { /* … */ }
+
+  filter(value: number, timeMs: number): number {
+    const prev = this.x.last();
+
+    // Tempo trascorso in secondi. Al primo giro si ipotizzano 30 fps; il minimo di 1 ms
+    // evita una divisione per zero se arrivassero due misure con lo stesso istante.
+    const dt = this.lastTime === null ? 1 / 30 : Math.max((timeMs - this.lastTime) / 1000, 1e-3);
+    this.lastTime = timeMs;
+
+    // Velocità stimata del punto (unità al secondo), a sua volta filtrata perché
+    // altrimenti salterebbe come il dato grezzo da cui è calcolata.
+    const derivative = prev === null ? 0 : (value - prev) / dt;
+    const edx = this.dx.filter(derivative, alpha(this.dCutoff, dt));
+
+    // ← IL CUORE DEL METODO: la soglia di filtro cresce con la velocità.
+    const cutoff = this.minCutoff + this.beta * Math.abs(edx);
+    return this.x.filter(value, alpha(cutoff, dt));
+  }
+}</code></pre>
+        </figure>
+        <p>Three parameters, three knobs:</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Parameter</th>
+                <th>Value</th>
+                <th>What it controls</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>minCutoff</code></td>
+                <td>1.2</td>
+                <td>how much to filter when the hand is still: lower = more stable but slower</td>
+              </tr>
+              <tr>
+                <td><code>beta</code></td>
+                <td>8</td>
+                <td>how much to "open" the filter with speed: higher = follows fast movements better</td>
+              </tr>
+              <tr>
+                <td><code>dCutoff</code></td>
+                <td>1</td>
+                <td>filter on the speed estimate, so that it does not jump around</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout try">
+          <span class="label">How to tune them</span>
+          <p>
+            By eye, in this order. First set <code>beta</code> to 0 and lower
+            <code>minCutoff</code> until the still hand is perfectly stable (it will be very slow
+            in its movements). Then raise <code>beta</code> until fast movements are immediate again. If
+            the jitter comes back, you went too high.
+          </p>
+        </div>
+
+        <h4>Applying it to the 21 landmarks</h4>
+        <figure class="code">
+          <figcaption><span class="tag">src/filter.ts</span></figcaption>
+          <pre><code>/**
+ * Ogni coordinata ha il proprio filtro indipendente: 21 punti × 3 assi = 63 filtri,
+ * ognuno con due numeri di stato. Costa niente e mantiene il codice banale.
+ */
+export class LandmarkSmoother {
+  private filters = Array.from({ length: 21 * 3 }, () =&gt; new OneEuroFilter());
+
+  smooth(points: { x: number; y: number; z: number }[], timeMs: number) {
+    return points.map((p, i) =&gt; ({
+      x: this.filters[i * 3].filter(p.x, timeMs),
+      y: this.filters[i * 3 + 1].filter(p.y, timeMs),
+      z: this.filters[i * 3 + 2].filter(p.z, timeMs),
+    }));
+  }
+}</code></pre>
+        </figure>
+        <div class="callout warn">
+          <span class="label">One instance per hand, thrown away when the hand disappears</span>
+          <p>
+            If you reuse the same <code>LandmarkSmoother</code> when the hand reappears, the filter
+            "remembers" where it was before and the hand arrives <em>crawling</em> from the old position.
+            A very strange effect to watch and very hard to blame on the filter.
+          </p>
+        </div>
+
+        <h3>Problem 2: the ghost hand</h3>
+        <p>
+          On sudden image changes, MediaPipe now and then "sees" for <strong>a single
+          frame</strong> a second hand that is not there. In this project's tests it happened 2
+          times out of 117: on the screen it was an annoying pink flash.
+        </p>
+        <p>The cure is to wait for a confirmation:</p>
+        <figure class="code">
+          <figcaption><span class="tag">src/main.ts</span></figcaption>
+          <pre><code>const CONFIRM_FRAMES = 3;
+const streak: Record&lt;Side, number&gt; = { Right: 0, Left: 0 };
+
+result.landmarks.forEach((landmarks, i) =&gt; {
+  let side = realSide(result.handedness[i]?.[0]?.categoryName);
+  // Se MediaPipe attribuisce lo stesso lato a entrambe le mani (succede raramente), la
+  // seconda finisce nell'altro contenitore: meglio un'etichetta sbagliata che una mano
+  // che sparisce.
+  if (seen.has(side)) side = side === "Right" ? "Left" : "Right";
+  seen.add(side);
+  streak[side]++;
+
+  // Il filtro lavora ANCHE durante i fotogrammi di conferma, così quando la mano appare
+  // è già stabile invece di assestarsi sotto gli occhi di chi guarda.
+  smoothers[side] ??= new LandmarkSmoother();
+  const smoothed = smoothers[side]!.smooth(landmarks, now);
+  if (streak[side] &lt; CONFIRM_FRAMES) return;   // non ancora confermata: niente da disegnare
+
+  scene.update(side, smoothed);
+  // …
+});
+
+// Le mani non viste in questo fotogramma svaniscono e i loro contatori si azzerano.
+for (const side of ["Right", "Left"] as Side[]) {
+  if (!seen.has(side)) {
+    streak[side] = 0;
+    scene.update(side, null);
+    smoothers[side] = null;
+  }
+}</code></pre>
+        </figure>
+        <p>
+          Cost: a tenth of a second of delay when the hand appears, which nobody notices. Benefit:
+          zero ghost hands. Note the detail of the filter running even during the confirmation
+          frames — it is free and makes the hand appear already steady.
+        </p>
+
+        <h3>Problem 3: right and left are swapped</h3>
+        <figure class="code">
+          <figcaption><span class="tag">src/main.ts</span></figcaption>
+          <pre><code>/**
+ * MediaPipe decide destra/sinistra dando per scontato che l'immagine sia GIÀ SPECCHIATA,
+ * come in una videochiamata. Il fotogramma grezzo della webcam però non lo è, quindi la
+ * sua etichetta va ribaltata.
+ */
+function realSide(label: string | undefined): Side {
+  return label === "Left" ? "Right" : "Left";
+}</code></pre>
+        </figure>
+        <div class="callout why">
+          <span class="label">How you notice a bug like this</span>
+          <p>
+            Not by looking at it: looking at your own hand it is very easy to convince yourself it is right. You need
+            an independent test. In this project it was a photo of a
+            <strong>left</strong> hand taken from the MediaPipe tests, fed to the model: the
+            library answered "Right". End of discussion.
+          </p>
+          <p>
+            In chapter 8 this check became one of the eight automated tests, precisely because
+            it is a bug that is very easy to reintroduce without noticing.
+          </p>
+        </div>
+
+        <h3>One last subtlety: who uses the filtered landmarks</h3>
+        <figure class="code">
+          <figcaption><span class="tag">src/main.ts</span></figcaption>
+          <pre><code>// 1) la mano 3D, con i punti ADDOLCITI dal filtro
+scene.update(side, smoothed);
+
+// 2) l'anteprima 2D, con i punti GREZZI: lì serve la corrispondenza esatta con l'immagine
+drawing.drawConnectors(landmarks, HAND_CONNECTIONS, { color: side === "Right" ? "#38bdf8" : "#f472b6", lineWidth: 3 });
+drawing.drawLandmarks(landmarks, { color: "#ffffff", radius: 2.5, lineWidth: 1 });</code></pre>
+        </figure>
+        <p>
+          In the preview the dots sit <em>on top of</em> the webcam image: if they were filtered,
+          you would see them slide relative to the real fingers, and it would look like a calibration error. In
+          3D there is nothing to compare them with, and the filter is pure gain.
+        </p>
+
+        <a class="uplink" href="#indice">↑ Contents</a>
+      </section>
+      <hr />
+
+      <!-- ====================================================================================
+           CAPITOLO 7
+           ==================================================================================== -->
+      <section class="step" id="cap7">
+        <h2><span class="num">7</span> Going online</h2>
+        <p class="sub">
+          You need HTTPS (otherwise the webcam does not start) and you need a rule that makes the sentence
+          "the images do not leave your browser" verifiable, not just promised.
+        </p>
+        <ul class="chips">
+          <li>vite.config.ts</li>
+          <li>server.mjs</li>
+          <li>Caddyfile</li>
+        </ul>
+
+        <h3>The build</h3>
+        <pre><code>npm run build
+# 1. prepare-assets.mjs → wasm e modello in public/mediapipe/
+# 2. tsc                → controlla i tipi, non produce niente
+# 3. vite build         → impacchetta, minifica e scrive in dist/</code></pre>
+        <div class="callout why">
+          <span class="label">Why <code>tsc</code> in the middle, if it produces no files</span>
+          <p>
+            Because Vite <strong>does not check types</strong>: it just strips them, which is why
+            it is fast. Without that step, a type error would reach production and
+            become a runtime error. Putting it in the build chain means that a
+            build with type errors simply does not complete.
+          </p>
+        </div>
+        <p>
+          In <code>dist/</code> you find the <code>index.html</code>, an <code>assets/</code> folder with
+          the content-signed files and the copy of <code>public/</code>. It is all static: any
+          server can serve it.
+        </p>
+
+        <h3>An eighty-line static server</h3>
+        <p>
+          If you can let your reverse proxy read the folder directly, do it and skip this
+          paragraph. In this project it was not possible: the proxy runs as a user that cannot enter
+          the project folder, and copying the site elsewhere would have scattered pieces of the
+          project outside its folder. So: a Node process that serves
+          <code>dist/</code> and listens <em>only</em> on the machine itself.
+        </p>
+        <figure class="code">
+          <figcaption><span class="tag">server.mjs</span> — the parts that matter</figcaption>
+          <pre><code>import { createReadStream, statSync } from "node:fs";
+import { createServer } from "node:http";
+import { extname, join, normalize, resolve } from "node:path";
+
+const ROOT = resolve(process.env.ROOT ?? "app/dist");
+const PORT = +(process.env.PORT ?? 8791);
+/** Solo interfaccia locale: nessuno può raggiungere questo processo scavalcando il proxy. */
+const HOST = process.env.HOST ?? "127.0.0.1";
+
+/**
+ * Il tipo dichiarato per ogni estensione. Non è un dettaglio: il file .wasm deve arrivare
+ * come `application/wasm`, altrimenti il browser si rifiuta di compilarlo al volo e
+ * MediaPipe non parte affatto.
+ */
+const TYPES = {
+  ".html": "text/html; charset=utf-8",
+  ".js": "text/javascript; charset=utf-8",
+  ".css": "text/css; charset=utf-8",
+  ".svg": "image/svg+xml",
+  ".wasm": "application/wasm",
+  ".task": "application/octet-stream",   // il modello dei gesti
+};
+
+const server = createServer((req, res) =&gt; {
+  const url = new URL(req.url ?? "/", "http://localhost");
+
+  // SICUREZZA: si ricostruisce il percorso assoluto e si pretende che stia dentro ROOT.
+  // `normalize` risolve i "..", il controllo blocca i tentativi tipo /../../etc/passwd.
+  // È l'unico punto davvero delicato di questo file.
+  let path = resolve(join(ROOT, normalize(decodeURIComponent(url.pathname))));
+  if (path !== ROOT &amp;&amp; !path.startsWith(ROOT + "/")) {
+    res.writeHead(403).end("Forbidden");
+    return;
+  }
+
+  let info;
+  try {
+    info = statSync(path);
+    if (info.isDirectory()) { path = join(path, "index.html"); info = statSync(path); }
+  } catch {
+    res.writeHead(404, { "content-type": "text/plain; charset=utf-8" }).end("Non trovato");
+    return;
+  }
+
+  // ETag da dimensione e data: se il browser ha già il file identico rispondiamo 304 e
+  // non rispediamo 11 MB di WebAssembly a ogni ricarica.
+  const etag = `"${info.size.toString(16)}-${info.mtimeMs.toString(16)}"`;
+  if (req.headers["if-none-match"] === etag) { res.writeHead(304).end(); return; }
+
+  res.writeHead(200, {
+    "content-type": TYPES[extname(path)] ?? "application/octet-stream",
+    "content-length": info.size,
+    etag,
+    // I file in assets/ hanno l'impronta del contenuto nel nome: se cambiano, cambia il
+    // nome, quindi si possono tenere in cache per sempre.
+    "cache-control": path.includes("/assets/") ? "public, max-age=31536000, immutable" : "public, max-age=300",
+  });
+
+  createReadStream(path).pipe(res);   // a pezzi: nessun file grande tenuto in memoria
+});
+
+server.listen(PORT, HOST);</code></pre>
+        </figure>
+        <div class="callout warn">
+          <span class="label">The type of the <code>.wasm</code></span>
+          <p>
+            If the server answers <code>application/octet-stream</code> for a
+            <code>.wasm</code> file, the browser refuses to compile it on the fly and MediaPipe does not start. The
+            error message talks about streaming compilation and never mentions the content-type: it is one
+            of the most common lost quarter-hours in this kind of project.
+          </p>
+        </div>
+
+        <h3>The reverse proxy, with HTTPS</h3>
+        <p>
+          In front of the static server we put <a href="https://caddyserver.com/docs/">Caddy</a>, which
+          takes care of the certificate (it obtains and renews it on its own), compression and the
+          security headers. The full chain:
+        </p>
+        <pre><code>internet → Caddy (HTTPS, intestazioni) → 127.0.0.1:8791 → server.mjs → dist/</code></pre>
+        <figure class="code">
+          <figcaption><span class="tag">Caddyfile</span></figcaption>
+          <pre><code>mano.esempio.com {
+    encode zstd gzip
+    reverse_proxy 127.0.0.1:8791
+
+    header {
+        X-Content-Type-Options nosniff
+        X-Frame-Options DENY
+        Referrer-Policy no-referrer
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        -Server
+
+        # La camera solo per questa origine; microfono e geolocalizzazione per nessuno.
+        Permissions-Policy "camera=(self), microphone=(), geolocation=()"
+
+        Content-Security-Policy "default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self'; worker-src 'self' blob:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+    }
+
+    # Nessun dato personale transita dal server, ma non serve nemmeno tenere log degli accessi.
+    log {
+        output discard
+    }
+}</code></pre>
+        </figure>
+
+        <h3>The CSP, directive by directive</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Directive</th>
+                <th>What it does</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>default-src 'none'</code></td>
+                <td>start from a total ban, then reopen only what you need</td>
+              </tr>
+              <tr>
+                <td><code>script-src 'self' 'wasm-unsafe-eval'</code></td>
+                <td>
+                  JavaScript only from your domain; the wasm permission is needed to compile the
+                  MediaPipe runtime and does <strong>not</strong> enable JavaScript <code>eval()</code>
+                </td>
+              </tr>
+              <tr>
+                <td><code>style-src 'self'</code></td>
+                <td>only your own stylesheets: no <code>&lt;style&gt;</code> in the page, no <code>style=&quot;…&quot;</code></td>
+              </tr>
+              <tr>
+                <td><code>img-src 'self' data: blob:</code></td>
+                <td>your images, or images generated by the page itself</td>
+              </tr>
+              <tr>
+                <td><code>media-src 'self' blob:</code></td>
+                <td>the webcam stream reaches the page as <code>blob:</code>: without this the preview stays black</td>
+              </tr>
+              <tr>
+                <td><strong><code>connect-src 'self'</code></strong></td>
+                <td><strong>the line that matters</strong> — see below</td>
+              </tr>
+              <tr>
+                <td><code>frame-ancestors 'none'</code></td>
+                <td>nobody can frame your site inside theirs to steal clicks</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout why">
+          <span class="label">Why <code>connect-src 'self'</code> is the real guarantee</span>
+          <p>
+            Up to here, "the webcam images do not leave the browser" is a promise: you have read
+            the code and found no <code>fetch</code>, and you trust it. But the site also contains
+            hundreds of kilobytes of compiled library that nobody reads line by line.
+          </p>
+          <p>
+            <code>connect-src 'self'</code> changes the nature of the claim. It tells the browser:
+            <em>this page may make network requests only to its own domain</em>. A
+            <code>fetch</code> to any other address — written by you by mistake, hidden in
+            a dependency, injected by an attack — is <strong>blocked by the browser</strong> and
+            reported in the console. It is no longer the code that promises: it is the browser that refuses.
+          </p>
+          <p>
+            It is a promise anyone can check in thirty seconds, without reading your code:
+            open the developer tools, Network tab, and check that nothing goes outside.
+          </p>
+        </div>
+
+        <h3>The hidden telemetry</h3>
+        <p>
+          And here is a real case where that rule earned its place.
+          <code>@mediapipe/tasks-vision</code> creates inside every task a logger that every 60
+          seconds sends some usage metrics to a Google endpoint: task type, mode, timings,
+          operating system. No images — but it is still a call to a third party, and the library offers
+          no way to turn it off. We discovered it <em>precisely because</em> the CSP
+          blocked it and the browser reported it in the console.
+        </p>
+        <figure class="code">
+          <figcaption><span class="tag">vite.config.ts</span></figcaption>
+          <pre><code>function disableMediapipeTelemetry(): Plugin {
+  const pattern = "flush(t,e){if(this.error)";
+  return {
+    name: "disable-mediapipe-telemetry",
+    enforce: "pre",   // prima degli altri plugin: il codice dev'essere ancora l'originale
+    transform(code, id) {
+      if (!id.includes("@mediapipe/tasks-vision/vision_bundle")) return null;
+      if (!code.includes(pattern)) {
+        // Se un aggiornamento cambia quella stringa, la build si FERMA con un messaggio
+        // chiaro, invece di lasciar passare in silenzio la telemetria riaccesa. È voluto.
+        this.error("telemetria MediaPipe: pattern non trovato, ricontrollare la patch");
+      }
+      // `this.h=[]` svuota la coda dei messaggi, `t?.()` avvisa il chiamante che è andata bene.
+      // Dopo la sostituzione il minificatore si accorge che il resto della funzione è
+      // irraggiungibile e cancella anche l'indirizzo.
+      return { code: code.replace(pattern, "flush(t,e){this.h=[];t?.();return;if(this.error)"), map: null };
+    },
+  };
+}
+
+export default defineConfig({
+  plugins: [disableMediapipeTelemetry()],
+  // Di norma Vite pre-impacchetta le dipendenze prima di servirle in sviluppo, e in quella
+  // fase i plugin di trasformazione non passano. Escludendo MediaPipe, la patch vale anche
+  // con `npm run dev`.
+  optimizeDeps: { exclude: ["@mediapipe/tasks-vision"] },
+  build: { chunkSizeWarningLimit: 900 },
+});</code></pre>
+        </figure>
+        <div class="callout warn">
+          <span class="label">A fragile patch, on purpose</span>
+          <p>
+            Replacing an exact string inside a minified file is fragile and we know it. But the
+            fragility here is a <em>feature</em>: the day the library changes that string,
+            the build fails with an explicit message and someone goes to look. The silent
+            alternative — a <code>try/catch</code> that ignores the problem — would turn the
+            telemetry back on without anyone ever knowing.
+          </p>
+        </div>
+
+        <h3>Automated checks before publishing</h3>
+        <p>
+          Publishing is a script that runs the build, <strong>then checks</strong>, and stops at the
+          first failed check, leaving the previous, working version online:
+        </p>
+        <pre><code>✓ nessuno &lt;script&gt; o style= scritto dentro le pagine di dist/
+✓ nessun indirizzo esterno nei file prodotti
+✓ nessuna traccia dell'endpoint di telemetria
+✓ wasm e modello presenti e della dimensione attesa
+✓ la configurazione del proxy è valida
+✓ il servizio risponde dopo il riavvio</code></pre>
+        <p>
+          They are six <code>grep</code> and two <code>curl</code>. They are worth more than any mental
+          reminder, because they never forget.
+        </p>
+
+        <a class="uplink" href="#indice">↑ Contents</a>
+      </section>
+      <hr />
+
+      <!-- ====================================================================================
+           CAPITOLO 8
+           ==================================================================================== -->
+      <section class="step" id="cap8">
+        <h2><span class="num">8</span> Testing without a webcam</h2>
+        <p class="sub">
+          The project lives on a server with no screen and no camera. And the most important thing to
+          check is precisely "the camera turns on and the hand is tracked".
+        </p>
+        <ul class="chips">
+          <li>tests/e2e/run.mjs</li>
+          <li>tests/e2e/make-video.sh</li>
+        </ul>
+
+        <div class="callout why">
+          <span class="label">Why not unit tests</span>
+          <p>
+            The things that can break here are: camera permissions, loading the
+            WebAssembly, the CSP, WebGL. <strong>None of these exists outside a real browser.</strong>
+            Simulating them with mocks would give a test that passes while the site is broken — the worst of
+            all possible worlds, because it also makes you feel safe.
+          </p>
+        </div>
+
+        <h3>Piece 1: a fake webcam</h3>
+        <p>
+          Chromium can use a <strong>video file instead of the camera</strong>. You just build
+          an MJPEG clip with a moving hand — in this project four public photos from the
+          MediaPipe tests (victory, thumb up, index up, fist) edited with ffmpeg so that
+          the hand sways over the background — and pass it to the browser at startup:
+        </p>
+        <pre><code>--use-fake-ui-for-media-stream            # concede il permesso senza mostrare il pop-up
+--use-fake-device-for-media-stream       # usa una telecamera simulata…
+--use-file-for-fake-video-capture=…/hands.mjpeg   # …alimentata dal filmato
+--enable-unsafe-swiftshader              # WebGL via software: il server non ha scheda grafica</code></pre>
+
+        <h3>Piece 2: the same proxy as production</h3>
+        <figure class="code">
+          <figcaption><span class="tag">tests/e2e/run.mjs</span></figcaption>
+          <pre><code>// Si riusa il frammento di configurazione DI PRODUZIONE cambiando due sole cose: il nome
+// del sito diventa localhost su HTTP (niente certificati nel test). Tutte le intestazioni
+// restano identiche: è il punto di questo test.
+const snippet = readFileSync(join(app, "../deploy/Caddyfile.snippet"), "utf8")
+  .replace(/^mano\.esempio\.com \{/m, `http://localhost:${PORT} {`);
+
+writeFileSync(join(cache, "Caddyfile"), `{\n    admin off\n}\n${snippet}`);
+const caddy = spawn("caddy", ["run", "--adapter", "caddyfile", "--config", join(cache, "Caddyfile")]);</code></pre>
+        </figure>
+        <p>
+          This way the CSP is the real one too: if a security rule breaks the site, you find out here and
+          not on publishing day.
+        </p>
+
+        <h3>Piece 3: Playwright, and a back door</h3>
+        <p>
+          A test cannot "see" a 3D scene. So the page, and only when asked to,
+          writes what it is seeing into <code>data-*</code> attributes:
+        </p>
+        <figure class="code">
+          <figcaption><span class="tag">src/main.ts</span></figcaption>
+          <pre><code>const E2E = new URLSearchParams(location.search).has("e2e");
+
+// …dentro il ciclo:
+if (E2E) {
+  document.body.dataset.hands = String(shown.length);
+  document.body.dataset.sides = shown.join(",");
+  document.body.dataset.gestures = shownGestures.join(",");
+  document.body.dataset.wrist = result.landmarks[0] ? result.landmarks[0][0].x.toFixed(3) : "";
+}</code></pre>
+        </figure>
+        <div class="callout warn">
+          <span class="label">Why it is off outside tests</span>
+          <p>
+            Because it is still data about the hand of whoever uses the site, and any browser
+            extension could read it from the page. A back door for tests should be opened only
+            when needed, and the key is in the address: <code>?e2e</code>.
+          </p>
+        </div>
+
+        <h3>What is worth checking</h3>
+        <p>
+          Eight checks. None is about "function X returns Y": all of them are about
+          <em>the application works</em>.
+        </p>
+        <pre><code>✓ la risposta ha la CSP di produzione
+✓ la camera si accende e il modello si carica
+✓ almeno 10 rilevazioni con la mano
+✓ almeno 3 dei 4 gesti del video sono riconosciuti
+✓ la mano del video (sinistra) è indicata come sinistra
+✓ il movimento viene seguito (il polso si sposta di oltre 0,15)
+✓ dopo «Spegni camera» lo stream è rilasciato
+✓ nessuna richiesta verso altri domini, nessun errore in console</code></pre>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Check</th>
+                <th>What it protects</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>the left hand is called left</td>
+                <td>the flip of chapter 6, very easy to break without noticing</td>
+              </tr>
+              <tr>
+                <td>the wrist moves by more than 0.15</td>
+                <td>
+                  that the application <em>tracks</em>, not just recognizes: a bug in the frame
+                  loop would give a correct but motionless hand
+                </td>
+              </tr>
+              <tr>
+                <td>the stream is released</td>
+                <td>the webcam light that stays on after turning off</td>
+              </tr>
+              <tr>
+                <td>zero external requests</td>
+                <td>the privacy promise, measured instead of declared</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <figure class="code">
+          <figcaption><span class="tag">tests/e2e/run.mjs</span> — the privacy test</figcaption>
+          <pre><code>const external = [];  // richieste verso domini diversi da localhost: devono restare zero
+
+page.on("request", (r) =&gt; {
+  const u = new URL(r.url());
+  if (u.protocol.startsWith("http") &amp;&amp; u.hostname !== "localhost") external.push(r.url());
+});
+
+// …alla fine:
+check(external.length === 0, `nessuna richiesta esterna (trovate: ${external.length})`);</code></pre>
+        </figure>
+        <p>
+          The test ends by printing <code>E2E OK</code> and leaves a screenshot on disk, to look at by
+          eye: automation checks the numbers, the eye checks that you have not ended up with an upside-down
+          purple hand.
+        </p>
+
+        <a class="uplink" href="#indice">↑ Contents</a>
+      </section>
+      <hr />
+
+      <!-- ====================================================================================
+           CAPITOLO 9
+           ==================================================================================== -->
+      <section class="step" id="cap9">
+        <h2><span class="num">9</span> The mistakes you will make</h2>
+        <p class="sub">
+          This is not pessimism: these are the real problems met while building this application, with the
+          symptom to recognize. Almost every odd line in the code comes from one of these.
+        </p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Symptom</th>
+                <th>Cause</th>
+                <th>Cure</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>The right hand is called left</td>
+                <td>
+                  MediaPipe assumes the image is already mirrored, as in a video call; the
+                  raw webcam frame is not
+                </td>
+                <td>
+                  <code>realSide()</code> that flips the label, and a test with a photo of a known hand
+                  (chapter 6)
+                </td>
+              </tr>
+              <tr>
+                <td>A flash of a second hand that does not exist</td>
+                <td>
+                  on sudden image changes the model "sees" a ghost hand for one frame —
+                  2 times out of 117 in the tests
+                </td>
+                <td>confirmation over 3 consecutive frames before drawing (chapter 6)</td>
+              </tr>
+              <tr>
+                <td>Everything extremely slow: 3-5 seconds per frame</td>
+                <td>
+                  emulated GPU (virtual machine, server without a graphics card, problematic driver):
+                  the GPU is slower than the CPU
+                </td>
+                <td>
+                  measuring the average time and switching automatically to CPU above 150 ms; <code>?delegate=cpu</code>
+                  to force it (chapter 3)
+                </td>
+              </tr>
+              <tr>
+                <td>The palm disappears and reappears intermittently</td>
+                <td>
+                  Three.js computes the bounding volume only once, but the palm vertices change
+                  on every frame: now and then it decides it is out of frame
+                </td>
+                <td><code>palm.frustumCulled = false</code> (chapter 5)</td>
+              </tr>
+              <tr>
+                <td>The palm stays still while the fingers move</td>
+                <td>the modified data is not sent back to the graphics card</td>
+                <td><code>pos.needsUpdate = true</code> after writing the vertices (chapter 5)</td>
+              </tr>
+              <tr>
+                <td>The hand is upside down, or moves the wrong way</td>
+                <td>
+                  missing conversion between the downward <code>y</code> of images and the
+                  upward <code>y</code> of 3D graphics, or a forgotten mirror on
+                  <code>x</code>
+                </td>
+                <td>the <code>0.5 -</code> in <code>toWorld()</code> (chapter 5)</td>
+              </tr>
+              <tr>
+                <td>The hand looks squashed after resizing the window</td>
+                <td>
+                  the virtual camera keeps projecting with the old proportions
+                </td>
+                <td><code>camera.updateProjectionMatrix()</code> after every change of <code>aspect</code></td>
+              </tr>
+              <tr>
+                <td>Blocked requests to a Google domain</td>
+                <td>MediaPipe's hidden telemetry, which starts on its own every 60 seconds</td>
+                <td>the Vite plugin that empties the sending function (chapter 7)</td>
+              </tr>
+              <tr>
+                <td>MediaPipe does not start, the error talks about streaming compilation</td>
+                <td>the server answers with the wrong content-type for the <code>.wasm</code> file</td>
+                <td><code>application/wasm</code> in the server's type table (chapter 7)</td>
+              </tr>
+              <tr>
+                <td>
+                  <code>Cannot read properties of undefined</code> on
+                  <code>navigator.mediaDevices</code>
+                </td>
+                <td>the page is not in a secure context: <code>http://</code> on an IP address</td>
+                <td>HTTPS, or <code>localhost</code> in development (chapter 2)</td>
+              </tr>
+              <tr>
+                <td>The webcam light stays on after "turn off"</td>
+                <td>the <code>&lt;video&gt;</code> element was stopped, not the stream</td>
+                <td><code>stream.getTracks().forEach((t) =&gt; t.stop())</code> (chapter 2)</td>
+              </tr>
+              <tr>
+                <td>The application uses twice the resources and the hand stutters</td>
+                <td>two <code>requestAnimationFrame</code> loops in parallel, from a double start</td>
+                <td><code>cancelAnimationFrame(rafId)</code> before restarting the loop (chapter 4)</td>
+              </tr>
+              <tr>
+                <td>The hand arrives "crawling" when it reappears</td>
+                <td>the reused filter remembers the previous position</td>
+                <td>throw away the filter when the hand disappears (chapter 6)</td>
+              </tr>
+              <tr>
+                <td>On the phone the hand is tiny between two empty bands</td>
+                <td>
+                  the video is 4:3 landscape, the screen is portrait: the usable area shrinks
+                  a great deal
+                </td>
+                <td>zoom up to 1.4× in portrait, and a media query at 600px (chapter 5)</td>
+              </tr>
+              <tr>
+                <td><code>NaN</code> proportions in the scene, sometimes</td>
+                <td>
+                  <code>video.videoWidth</code> read before the metadata was available
+                </td>
+                <td>wait for <code>loadedmetadata</code> (chapter 2)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout why">
+          <span class="label">The common thread</span>
+          <p>
+            Look at how many of these bugs are not logic errors, but <strong>unstated assumptions that do not
+            hold</strong>: "the image is mirrored", "the vertices do not move", "the GPU is
+            faster", "the video dimensions are already available". It is the kind of problem you do not
+            prevent by reading the code: you prevent it by trying it on a machine different from your own.
+          </p>
+        </div>
+
+        <a class="uplink" href="#indice">↑ Contents</a>
+      </section>
+      <hr />
+
+      <!-- ====================================================================================
+           CAPITOLO 10
+           ==================================================================================== -->
+      <section class="step alt" id="cap10">
+        <h2><span class="num">10</span> Where to go next</h2>
+        <p class="sub">
+          You have a pipeline that works: video → landmarks → filter → figure. Changing the central piece
+          opens up a whole catalogue.
+        </p>
+
+        <h3>The other MediaPipe tasks</h3>
+        <p>
+          The same <code>@mediapipe/tasks-vision</code> library contains much more than the hand
+          recognizer, and they all follow the <em>identical</em> shape: <code>FilesetResolver</code>,
+          <code>createFromOptions</code>, <code>…ForVideo(video, timestamp)</code>.
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Task</th>
+                <th>What it returns</th>
+                <th>Idea</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>PoseLandmarker</code></td>
+                <td>33 body landmarks: head, shoulders, elbows, hips, knees, ankles</td>
+                <td>
+                  a stick figure that imitates you. It is the second demo of this site:
+                  <a href="/en/corpo/">the Body page</a>
+                </td>
+              </tr>
+              <tr>
+                <td><code>FaceLandmarker</code></td>
+                <td>478 face landmarks, plus 52 "blendshapes" (smile, closed eye…)</td>
+                <td>a mask that follows your expressions, or an avatar that copies you</td>
+              </tr>
+              <tr>
+                <td><code>ImageSegmenter</code></td>
+                <td>a mask that separates the person from the background</td>
+                <td>blurred or replaced background, as in video calls</td>
+              </tr>
+              <tr>
+                <td><code>ObjectDetector</code></td>
+                <td>boxes and labels of the objects in frame</td>
+                <td>count things, or make the scene react to an object</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout why">
+          <span class="label">What really changes when moving to the whole body</span>
+          <p>
+            One file: the one that talks to MediaPipe. The frame loop, the anti-jitter filter,
+            the coordinate conversion and the scaffolding of the 3D scene stay identical — the filter
+            becomes 33×3 instead of 21×3, and the connection table changes. That is exactly the
+            advantage you buy by separating the modules in chapter 1: you do the hard work once.
+          </p>
+        </div>
+
+        <h3>Exercises, easiest first</h3>
+        <ol>
+          <li>
+            <strong>Change the colours.</strong> One constant in <code>hand3d.ts</code>. It helps you
+            get comfortable without risk.
+          </li>
+          <li>
+            <strong>Add a gesture of your own.</strong> Without training anything: look at the distances between the
+            fingertips and the wrist. "All tips far from the palm and the thumb apart" is an
+            open hand; "index tip very close to the thumb tip" is the OK gesture.
+          </li>
+          <li>
+            <strong>Make the scene react.</strong> With a closed fist the hand turns red, with
+            victory some particles appear. The value is already there, in
+            <code>result.gestures[i][0].categoryName</code>.
+          </li>
+          <li>
+            <strong>Measure the thumb-index distance</strong> and use it as a slider: raise and lower a
+            value by pinching your fingers. It is the classic "pinch" without a touchscreen.
+          </li>
+          <li>
+            <strong>Draw in the air.</strong> Trace a trail behind the index tip, and
+            erase with the fist. You need a list of past points and a line geometry.
+          </li>
+          <li>
+            <strong>Hand + body together.</strong> Two recognizers on the same frame. Watch out:
+            it doubles the cost, and it is the moment when the fps counter of chapter 4 becomes your
+            best friend.
+          </li>
+        </ol>
+
+        <h3>Official documentation</h3>
+        <ul class="links">
+          <li>
+            <a href="https://ai.google.dev/edge/mediapipe/solutions/vision/gesture_recognizer/web_js"
+              >MediaPipe — Gesture Recognizer for the web</a
+            >
+            <span class="desc">the recognizer options, the exact shape of the results, the supported gestures</span>
+          </li>
+          <li>
+            <a href="https://ai.google.dev/edge/mediapipe/solutions/vision/hand_landmarker"
+              >MediaPipe — Hand Landmarker</a
+            >
+            <span class="desc">the map of the 21 landmarks, if you do not need gestures</span>
+          </li>
+          <li>
+            <a href="https://ai.google.dev/edge/mediapipe/solutions/vision/pose_landmarker"
+              >MediaPipe — Pose Landmarker</a
+            >
+            <span class="desc">the 33 landmarks of the whole body: the natural next step</span>
+          </li>
+          <li>
+            <a href="https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia"
+              >MDN — <code>getUserMedia()</code></a
+            >
+            <span class="desc">constraints, errors, secure context: the source chapter 2 comes from</span>
+          </li>
+          <li>
+            <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP"
+              >MDN — Content Security Policy</a
+            >
+            <span class="desc">all the directives, with examples of what breaks if you get them wrong</span>
+          </li>
+          <li>
+            <a href="https://threejs.org/manual/">Three.js — the manual</a>
+            <span class="desc">scene, cameras, materials, lights: explained with interactive examples</span>
+          </li>
+          <li>
+            <a href="https://vite.dev/guide/">Vite — the guide</a>
+            <span class="desc">configuration, build, the <code>public/</code> folder, plugins</span>
+          </li>
+          <li>
+            <a href="https://playwright.dev/docs/intro">Playwright — documentation</a>
+            <span class="desc">to write the test of chapter 8</span>
+          </li>
+          <li>
+            <a href="https://caddyserver.com/docs/caddyfile">Caddy — the Caddyfile</a>
+            <span class="desc">reverse proxy, automatic HTTPS, headers</span>
+          </li>
+          <li>
+            <a href="https://gery.casiez.net/1euro/">One Euro filter — the original paper</a>
+            <span class="desc">the maths of chapter 6, with an interactive demo</span>
+          </li>
+        </ul>
+
+        <div class="callout try">
+          <span class="label">A final tip</span>
+          <p>
+            Do not build the whole chain before trying it. Get the webcam started and stop there. Then
+            print to the console the number of hands seen, and stop there. Then draw the dots in 2D, and
+            stop there. Every piece that works on its own is a piece you will not have to suspect when
+            something goes wrong — and something will go wrong, because chapter 9 exists.
+          </p>
+        </div>
+
+        <a class="uplink" href="#indice">↑ Contents</a>
+      </section>
+
+      <footer class="pagefoot">
+        <p>
+          All the code in this tutorial is the code that actually runs on this site: you can
+          see it in action on its pages.
+        </p>
+        <p>
+          The pages: <a href="/en/">Mano</a> · <a href="/en/sfida/">Duel</a> · <a href="/en/onda/">Energy Wave</a> ·
+          <a href="/en/corpo/">Body</a> · <a href="/en/corso/">TypeScript Course</a> · <a href="/scuola/mkdocs/en/">School course</a>
+        </p>
+      </footer>
+    </main>
+
+    <!-- L'unico script della pagina: serve soltanto a far includere a Vite il foglio di stile. -->
+    <script type="module" src="/src/tutorial.ts"></script>
+  </body>
+</html>

@@ -19,6 +19,7 @@
  * entrare**: bloccare tutti perché il contatore non risponde sarebbe peggio del limite che non si
  * applica. Solo un 503 esplicito vuol dire «al completo».
  */
+import { t } from "./i18n";
 
 /** Ogni apertura della pagina ha il suo numero casuale, tenuto solo in memoria. */
 const id = crypto.randomUUID();
@@ -64,8 +65,7 @@ export async function entra(attesa: (testo: string | null) => void, annullata: (
       return true;
     }
     attesa(
-      "Il sito è al completo: ci sono già troppe persone che lo stanno usando. " +
-        "Sei in attesa: appena si libera un posto parte da solo. Se preferisci, riprova più tardi.",
+      t("presenza.completo"),
     );
     await new Promise((ok) => setTimeout(ok, RIPROVA_MS));
   }

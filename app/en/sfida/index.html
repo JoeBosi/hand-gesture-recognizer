@@ -1,0 +1,116 @@
+<!doctype html>
+<!--
+  sfida/index.html — sasso, carta, forbici fra due persone.
+
+  Due giocatori davanti alla stessa webcam, una mano a testa. La partita è a round: si conta
+  «tre, due, uno, via!», in quel momento la pagina guarda i due gesti, assegna il punto, e si
+  ricomincia. Chi arriva a 2 punti vince.
+
+  Perché funziona senza addestrare niente: sasso, carta e forbici sono TRE DEGLI OTTO gesti che il
+  modello di MediaPipe già conosce — `Closed_Fist`, `Open_Palm`, `Victory`. Il progetto quel
+  modello ce l'ha già in casa per la pagina principale, quindi questa pagina non aggiunge né
+  dipendenze né file da scaricare.
+
+  Chi è il giocatore 1 e chi il 2 lo decide la POSIZIONE sullo schermo, non l'etichetta
+  destra/sinistra del modello: la posizione è una misura, l'etichetta è un'ipotesi che il modello
+  fa assumendo di vedere una persona sola allo specchio — e qui le persone sono due.
+
+  Regola della CSP di produzione: niente <script> scritti qui dentro, niente attributi style="",
+  nessun indirizzo esterno.
+-->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Rock, paper, scissors between two people in front of the webcam: first to 2 points wins. All in the browser." />
+    <meta name="theme-color" content="#0b1020" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Duel</title>
+    <link rel="canonical" href="https://mano.giuseppebosi.com/en/sfida/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Mano" />
+    <meta property="og:locale" content="en_GB" />
+    <meta property="og:title" content="Duel" />
+    <meta property="og:description" content="Rock, paper, scissors between two people in front of the webcam: first to 2 points wins. All in the browser." />
+    <meta property="og:url" content="https://mano.giuseppebosi.com/en/sfida/" />
+    <link rel="alternate" hreflang="it" href="https://mano.giuseppebosi.com/sfida/" />
+    <link rel="alternate" hreflang="en" href="https://mano.giuseppebosi.com/en/sfida/" />
+    <link rel="alternate" hreflang="x-default" href="https://mano.giuseppebosi.com/sfida/" />
+  </head>
+
+  <!-- data-state lo aggiorna sfida.ts: idle | loading | running | error -->
+  <body data-state="idle">
+    <header class="topbar">
+      <div class="brand">✊✋✌️ Duel</div>
+      <nav class="nav" aria-label="Site pages">
+        <a href="/en/">Mano</a>
+        <a href="/en/sfida/" aria-current="page">Duel</a>
+        <a href="/en/onda/">Energy Wave</a>
+        <a href="/en/corpo/">Body</a>
+      </nav>
+      <div class="destra">
+        <div class="status" id="status" role="status" aria-live="polite">Camera off</div>
+        <button type="button" class="icona" id="schermo-intero" aria-pressed="false">⛶ Full screen</button>
+      </div>
+    </header>
+
+    <main class="stage" id="stage" hidden>
+      <video id="video" autoplay muted playsinline></video>
+      <canvas id="overlay" aria-label="The two players' hands, with the recognized gesture"></canvas>
+      <!-- Tela dei coriandoli: sta sopra tutto e non riceve clic (vedi .coriandoli in sfida.css).
+           È separata dall'altra perché quella viene ripulita a ogni fotogramma. -->
+      <canvas class="coriandoli" id="coriandoli" aria-hidden="true"></canvas>
+
+      <!-- Tabellone: i punti dei due giocatori, sempre visibile durante la partita. -->
+      <div class="tabellone" id="tabellone">
+        <div class="giocatore g1">
+          <span class="nome">◀ Left</span>
+          <span class="punti" id="punti1">0</span>
+        </div>
+        <div class="separatore">–</div>
+        <div class="giocatore g2">
+          <span class="punti" id="punti2">0</span>
+          <span class="nome">Right ▶</span>
+        </div>
+      </div>
+
+      <!-- Il cartello grande al centro: il conto alla rovescia, l'esito del round, la vittoria.
+           role="status" perché venga annunciato anche da un lettore di schermo. -->
+      <div class="cartello" id="cartello" role="status" aria-live="polite" hidden></div>
+
+      <!-- Riga di istruzioni in basso: cosa deve fare chi guarda. -->
+      <p class="istruzioni" id="istruzioni"></p>
+
+      <!-- Compare solo a partita finita -->
+      <button type="button" class="primary rigioca" id="rigioca" hidden>▶ Play again</button>
+    </main>
+
+    <section class="intro" id="intro">
+      <h1>Rock, paper, scissors</h1>
+      <p>
+        Two people in front of the webcam, one hand each. On “go” each of you makes a move and
+        holds it still: <strong>the first to reach 2 points wins</strong>. A voice reads the countdown
+        and the score (the “Voice” button turns it off; some browsers have it read by an online
+        service).
+      </p>
+      <button type="button" class="primary" id="start">Turn on camera and play</button>
+      <p class="privacy">
+        The images of <strong>both players</strong> stay in this browser: nothing is sent
+        to a server, nothing is recorded, nothing is saved.
+      </p>
+      <p class="error" id="error" hidden></p>
+    </section>
+
+    <footer class="hud" id="hud" hidden>
+      <div class="gestures" id="gestures"></div>
+      <div class="controls">
+        <span class="metric" id="fps">– fps</span>
+        <button type="button" id="voce" aria-pressed="true">🔊 Voice</button>
+        <button type="button" id="ricomincia">Restart from 0</button>
+        <button type="button" id="stop">Turn off camera</button>
+      </div>
+    </footer>
+
+    <script type="module" src="/src/sfida.ts"></script>
+  </body>
+</html>

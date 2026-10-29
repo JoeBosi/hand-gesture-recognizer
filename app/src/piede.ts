@@ -4,9 +4,9 @@
  * testo sta in un posto solo; niente innerHTML né stili in linea (CSP).
  */
 import "./piede.css";
+import "./lingua";
+import { lingua, percorso, t } from "./i18n";
 
-const AUTORE =
-  "Giuseppe Bosi, Dottore in Ingegneria Elettronica (V.O.), Professore di Scienze e Tecnologie Informatiche";
 
 function link(testo: string, href: string): HTMLAnchorElement {
   const a = document.createElement("a");
@@ -19,26 +19,26 @@ function piede(): void {
   const f = document.createElement("footer");
   f.className = "piede-sito";
   const autore = document.createElement("p");
-  autore.textContent = AUTORE;
+  autore.textContent = t("piede.autore");
   const licenze = document.createElement("p");
   licenze.append(
-    "Testi ",
-    link("CC BY 4.0", "https://creativecommons.org/licenses/by/4.0/deed.it"),
-    " · Codice ",
+    t("piede.testi") + " ",
+    link("CC BY 4.0", lingua === "en" ? "https://creativecommons.org/licenses/by/4.0/" : "https://creativecommons.org/licenses/by/4.0/deed.it"),
+    " · " + t("piede.codice") + " ",
     link("MIT", "https://opensource.org/license/mit"),
     " · ",
-    link("Crediti", "/crediti/"),
+    link(t("piede.crediti"), percorso("/crediti/")),
     " · ",
-    link("Privacy", "/privacy/"),
+    link("Privacy", percorso("/privacy/")),
     " · ",
-    link("Source code on GitHub", "https://github.com/JoeBosi/hand-gesture-recognizer"),
+    link(t("piede.github"), "https://github.com/JoeBosi/hand-gesture-recognizer"),
   );
   const altri = document.createElement("p");
   altri.append(
-    link("www.giuseppebosi.com", "https://www.giuseppebosi.com"),
+    link("www.giuseppebosi.com", lingua === "en" ? "https://www.giuseppebosi.com/en/" : "https://www.giuseppebosi.com"),
     " · ",
     link("LinkedIn", "https://www.linkedin.com/in/giuseppebosi"),
-    " · Altri corsi: ",
+    " · " + t("piede.altri") + ": ",
     link("JSON & API", "https://corso-api-json.giuseppebosi.com/"),
     " · ",
     link("llama.cpp", "https://corso-llamacpp.giuseppebosi.com/"),

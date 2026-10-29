@@ -37,3 +37,13 @@ body[data-state] .piede-sito a {
 body[data-state]:not([data-state="idle"]) .piede-sito {
   display: none;
 }
+
+/* Il selettore della lingua (lingua.ts): nel menu in alto, o in una barretta in cima ai documenti. */
+.barra-lingua {
+  padding: 8px 16px 0;
+  text-align: right;
+  font: 0.9rem/1.4 system-ui, sans-serif;
+}
+.barra-lingua .scelta-lingua {
+  color: inherit;
+}

@@ -1,0 +1,79 @@
+<!doctype html>
+<!--
+  corpo/index.html — la seconda demo: il corpo intero.
+
+  È la copia della pagina della mano con tre differenze: il titolo, i testi, e lo script che la
+  anima (`/src/corpo.ts` invece di `/src/main.ts`). Gli id degli elementi sono gli stessi apposta,
+  così i due file TypeScript si assomigliano riga per riga e il foglio di stile è uno solo.
+
+  Regola della CSP di produzione: niente <script> scritti qui dentro, niente attributi style="",
+  nessun indirizzo esterno.
+-->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="The webcam watches your body and reproduces its skeleton on screen, all in the browser." />
+    <meta name="theme-color" content="#0b1020" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Body · Mano</title>
+    <link rel="canonical" href="https://mano.giuseppebosi.com/en/corpo/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Mano" />
+    <meta property="og:locale" content="en_GB" />
+    <meta property="og:title" content="Body · Mano" />
+    <meta property="og:description" content="The webcam watches your body and reproduces its skeleton on screen, all in the browser." />
+    <meta property="og:url" content="https://mano.giuseppebosi.com/en/corpo/" />
+    <link rel="alternate" hreflang="it" href="https://mano.giuseppebosi.com/corpo/" />
+    <link rel="alternate" hreflang="en" href="https://mano.giuseppebosi.com/en/corpo/" />
+    <link rel="alternate" hreflang="x-default" href="https://mano.giuseppebosi.com/corpo/" />
+  </head>
+
+  <body data-state="idle">
+    <canvas id="scene" aria-label="3D reproduction of the body skeleton"></canvas>
+
+    <header class="topbar">
+      <div class="brand">🕺 Body</div>
+      <nav class="nav" aria-label="Site pages">
+        <a href="/en/">Mano</a>
+        <a href="/en/sfida/">Duel</a>
+        <a href="/en/onda/">Energy Wave</a>
+        <a href="/en/corpo/" aria-current="page">Body</a>
+      </nav>
+      <div class="destra">
+        <div class="status" id="status" role="status" aria-live="polite">Camera off</div>
+        <button type="button" class="icona" id="schermo-intero" aria-pressed="false">⛶ Full screen</button>
+      </div>
+    </header>
+
+    <section class="intro" id="intro">
+      <h1>Stand in front of the webcam</h1>
+      <p>
+        Head, arms, torso and legs are reproduced here as a stylised skeleton.
+        Step back a couple of metres: the more of your body is in frame, the more complete the figure.
+      </p>
+      <button type="button" class="primary" id="start">Turn on camera</button>
+      <p class="privacy">
+        Everything happens in your browser: camera images are not sent to any server
+        or saved.
+      </p>
+      <p class="error" id="error" hidden></p>
+    </section>
+
+    <aside class="preview" id="preview" hidden>
+      <video id="video" autoplay muted playsinline></video>
+      <canvas id="overlay"></canvas>
+    </aside>
+
+    <footer class="hud" id="hud" hidden>
+      <div class="gestures" id="gestures"></div>
+      <div class="controls">
+        <span class="metric" id="fps">– fps</span>
+        <button type="button" id="toggle-preview" aria-pressed="true">Hide camera</button>
+        <button type="button" id="stop">Turn off camera</button>
+      </div>
+    </footer>
+
+    <script type="module" src="/src/corpo.ts"></script>
+  </body>
+</html>

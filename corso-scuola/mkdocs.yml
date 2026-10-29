@@ -10,6 +10,7 @@ site_dir: site
 
 theme:
   name: material
+  custom_dir: overrides  # solo i link hreflang (it, en, x-default) nell'intestazione
   language: it
   font: false          # niente Google Fonts: caratteri del sistema, nessuna richiesta esterna
   palette:
@@ -21,6 +22,28 @@ theme:
     - navigation.top
     - content.code.copy
     - content.code.annotate
+
+# Due lingue (dal 29/10/2026): italiano agli indirizzi di sempre, inglese sotto /en/.
+# I file inglesi stanno accanto agli italiani con il suffisso: index.en.md, lezione-01.en.js.
+plugins:
+  - search
+  - i18n:
+      docs_structure: suffix
+      reconfigure_material: true
+      languages:
+        - locale: it
+          name: Italiano
+          default: true
+          build: true
+        - locale: en
+          name: English
+          build: true
+          site_name: The Hand on the Computer
+          site_description: Recognize the hand from the webcam in a few lines of code — a course for people who know C
+          copyright: 'by Prof. Giuseppe Bosi, Master''s-level degree in Electronic Engineering (5-year Italian Laurea, pre-reform, EQF level 7), Professor of Computer Science and Technology · <a href="https://www.giuseppebosi.com/en/">www.giuseppebosi.com</a><br>Text <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> · Code <a href="https://opensource.org/license/mit">MIT</a> · <a href="/en/crediti/">Credits</a> · <a href="/en/privacy/">Privacy</a>'
+          nav_translations:
+            Indice del corso: Course index
+            "Lezione 1 · I punti della mano": "Lesson 1 · The hand landmarks"
 
 extra_css: [comune/accessi.css]
 extra_javascript: [comune/accessi.js]

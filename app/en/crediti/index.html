@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="The libraries, models and tools the Mano site is built with, and their licences." />
+    <meta name="theme-color" content="#0b1020" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Credits · Mano</title>
+    <link rel="canonical" href="https://mano.giuseppebosi.com/en/crediti/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Mano" />
+    <meta property="og:locale" content="en_GB" />
+    <meta property="og:title" content="Credits · Mano" />
+    <meta property="og:description" content="The libraries, models and tools the Mano site is built with, and their licences." />
+    <meta property="og:url" content="https://mano.giuseppebosi.com/en/crediti/" />
+    <link rel="alternate" hreflang="it" href="https://mano.giuseppebosi.com/crediti/" />
+    <link rel="alternate" hreflang="en" href="https://mano.giuseppebosi.com/en/crediti/" />
+    <link rel="alternate" hreflang="x-default" href="https://mano.giuseppebosi.com/crediti/" />
+  </head>
+  <body>
+    <nav class="sitenav" aria-label="Site pages">
+      <span class="brand">✋ Mano</span>
+      <a href="/en/">Mano</a>
+      <a href="/en/sfida/">Duel</a>
+      <a href="/en/onda/">Energy Wave</a>
+      <a href="/en/corpo/">Body</a>
+    </nav>
+    <main>
+      <header class="hero">
+        <p class="eyebrow">Credits</p>
+        <h1>What this site is built with</h1>
+        <p class="lede">
+          The site relies on open libraries and models written by others. Here is the list, with the
+          licence of each one and the link to its source. All files are served by this site: the browser
+          downloads nothing from other addresses.
+        </p>
+      </header>
+
+      <h2>Recognition of the hand, body and face</h2>
+      <ul>
+        <li><a href="https://ai.google.dev/edge/mediapipe/solutions/vision/hand_landmarker/web_js">MediaPipe Tasks Vision</a> 1.0.1 by Google (Apache 2.0 licence): the library that, inside the browser, finds the landmarks of the hand, body and face in every frame.</li>
+        <li>The MediaPipe models <code>hand_landmarker</code>, <code>gesture_recognizer</code>, <code>pose_landmarker_lite</code> and <code>face_landmarker</code> by Google (Apache 2.0 licence): the pre-trained neural networks the library uses. The model cards are in the <a href="https://ai.google.dev/edge/mediapipe/solutions/guide">MediaPipe documentation</a>.</li>
+      </ul>
+
+      <h2>Graphics and page building</h2>
+      <ul>
+        <li><a href="https://threejs.org/">three.js</a> 0.186 (MIT licence): the 3D hand and skeleton.</li>
+        <li><a href="https://vite.dev/">Vite</a> (MIT licence) and <a href="https://www.typescriptlang.org/">TypeScript</a> (Apache 2.0 licence): they build the code of the pages.</li>
+        <li><a href="https://nodejs.org/">Node.js</a> (MIT licence): the small server that delivers the files.</li>
+      </ul>
+
+      <h2>The school course</h2>
+      <ul>
+        <li><a href="https://p5js.org/">p5.js</a> (LGPL 2.1 licence) and its <a href="https://editor.p5js.org/">web editor</a>: the environment where students write their code.</li>
+        <li><a href="https://ml5js.org/">ml5.js</a> 1.4.0 (MIT licence), with Google's HandPose model: the hand recognition used in the lessons.</li>
+        <li>The three versions of the course site are built with <a href="https://www.mkdocs.org/">MkDocs</a> 1.6.1 (BSD 2 licence) and the <a href="https://squidfunk.github.io/mkdocs-material/">Material for MkDocs</a> 9.7.7 theme (MIT licence), with <a href="https://quarto.org/">Quarto</a> 1.10.19 (MIT licence, with Bootstrap and Bootstrap Icons, MIT licence) and with <a href="https://rust-lang.github.io/mdBook/">mdBook</a> 0.5.4 (MPL 2.0 licence, with the Open Sans and Source Code Pro fonts, highlight.js and Font Awesome, each with its own free licence).</li>
+        <li>The emoji in the MkDocs version of the course are <a href="https://github.com/jdecked/twemoji">Twemoji</a> (graphics under CC BY 4.0 licence).</li>
+      </ul>
+
+      <h2>Sources</h2>
+      <ul>
+        <li>The numbering of the 21 hand landmarks and the 33 body landmarks follows the MediaPipe documentation: <a href="https://ai.google.dev/edge/mediapipe/solutions/vision/hand_landmarker">hands</a>, <a href="https://ai.google.dev/edge/mediapipe/solutions/vision/pose_landmarker">body</a>.</li>
+        <li>The rules on the webcam in the browser come from MDN: <a href="https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia">getUserMedia</a>.</li>
+      </ul>
+
+      <h2>Licences of this site</h2>
+      <p>
+        The texts are published under the <a href="https://creativecommons.org/licenses/by/4.0/deed.en">Creative Commons Attribution 4.0</a> licence:
+        you may copy and modify them as long as you credit the author. The code is published under the
+        <a href="https://opensource.org/license/mit">MIT</a> licence.
+      </p>
+    </main>
+    <script type="module" src="/src/documento.ts"></script>
+  </body>
+</html>

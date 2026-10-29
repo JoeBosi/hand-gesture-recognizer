@@ -1,0 +1,12 @@
+{#- hreflang: ogni pagina indica se stessa e l'altra lingua; x-default = italiano (Google Search Central). -#}
+{% extends "base.html" %}
+{% block extrahead %}
+  {{ super() }}
+  {%- if page and page.url is not none %}
+  {%- set base = "https://mano.giuseppebosi.com/scuola/mkdocs/" %}
+  {%- set rel = page.url | replace("en/", "", 1) if page.url.startswith("en/") else page.url %}
+  <link rel="alternate" hreflang="it" href="{{ base }}{{ rel }}" />
+  <link rel="alternate" hreflang="en" href="{{ base }}en/{{ rel }}" />
+  <link rel="alternate" hreflang="x-default" href="{{ base }}{{ rel }}" />
+  {%- endif %}
+{% endblock %}

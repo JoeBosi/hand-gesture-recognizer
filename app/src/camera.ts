@@ -9,6 +9,7 @@
  * nessun `MediaRecorder`, nessun salvataggio; il flusso finisce solo dentro l'elemento <video>.
  * Vedi .claude/skills/webcam-capture/SKILL.md
  */
+import { t } from "./i18n";
 
 /** Errore "previsto", con un messaggio già scritto per l'utente. Lo distingue da un bug vero. */
 export class CameraError extends Error {}
@@ -18,10 +19,10 @@ export class CameraError extends Error {}
  * Sono i nomi standard di `DOMException` restituiti da getUserMedia.
  */
 const MESSAGES: Record<string, string> = {
-  NotAllowedError: "Permesso negato: consenti l'uso della camera dalle impostazioni del browser e riprova.",
-  NotFoundError: "Nessuna webcam trovata su questo dispositivo.",
-  NotReadableError: "La webcam è occupata da un'altra applicazione.",
-  OverconstrainedError: "La webcam non supporta la risoluzione richiesta.",
+  NotAllowedError: t("cam.negato"),
+  NotFoundError: t("cam.nessuna"),
+  NotReadableError: t("cam.occupata"),
+  OverconstrainedError: t("cam.risoluzione"),
 };
 
 /**
@@ -40,7 +41,7 @@ export async function startCamera(video: HTMLVideoElement, onEnded?: () => void)
   // I browser danno accesso alla camera solo in "contesto sicuro": HTTPS oppure localhost.
   // Senza questo controllo l'app fallirebbe con un errore oscuro su `navigator.mediaDevices`.
   if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
-    throw new CameraError("La camera funziona solo su una pagina HTTPS.");
+    throw new CameraError(t("cam.https"));
   }
 
   let stream: MediaStream;
@@ -58,7 +59,7 @@ export async function startCamera(video: HTMLVideoElement, onEnded?: () => void)
     });
   } catch (e) {
     const name = e instanceof DOMException ? e.name : "";
-    throw new CameraError(MESSAGES[name] ?? "Impossibile accendere la camera.");
+    throw new CameraError(MESSAGES[name] ?? t("cam.impossibile"));
   }
 
   video.srcObject = stream;

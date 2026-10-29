@@ -101,7 +101,8 @@ def main():
     FORMATO, docs, lavoro = sys.argv[1], Path(sys.argv[2]), Path(sys.argv[3])
     for f in docs.rglob("*"):
         dest = lavoro / f.relative_to(docs)
-        if f.is_dir():
+        # I file inglesi (`*.en.md`, `*.en.js`) sono solo per MkDocs: Quarto e mdBook restano in italiano.
+        if f.is_dir() or f.stem.endswith(".en"):
             continue
         dest.parent.mkdir(parents=True, exist_ok=True)
         if f.suffix == ".md":
@@ -118,7 +119,7 @@ def main():
 def sommario(docs: Path, lavoro: Path):
     """SUMMARY.md di mdBook: l'indice prima, poi le lezioni in ordine, ognuna con il suo titolo."""
     voci = ["# Sommario", "", "[Indice del corso](index.md)", ""]
-    for f in sorted((docs / "lezioni").glob("*.md")):
+    for f in sorted(x for x in (docs / "lezioni").glob("*.md") if not x.stem.endswith(".en")):
         titolo = f.read_text().split("\n", 1)[0].lstrip("# ").strip()
         voci.append(f"- [{titolo}](lezioni/{f.name})")
     (lavoro / "SUMMARY.md").write_text("\n".join(voci) + "\n")
