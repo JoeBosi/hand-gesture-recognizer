@@ -1,19 +1,15 @@
-{#- Selettore della lingua: link ASSOLUTI alla stessa pagina nell'altra lingua, senza l'attributo
-    hreflang sul link. Con quello, Material scarica sitemap.xml partendo dall'indirizzo relativo
-    della lezione e in console compare un 404 (visto il 29/10/2026). -#}
+{#- Selettore della lingua: una bandierina con il codice della lingua, come nella home page di
+    www.giuseppebosi.com (regola di Giuseppe, 30/10/2026). Link ASSOLUTO alla stessa pagina
+    nell'altra lingua e SENZA l'attributo hreflang sul link: con quello, Material scarica
+    sitemap.xml partendo dall'indirizzo relativo della lezione e in console compare un 404
+    (visto il 29/10/2026). -#}
 {%- set base = "https://mano.giuseppebosi.com/scuola/mkdocs/" %}
-{%- set rel = (page.url | replace("en/", "", 1) if page.url.startswith("en/") else page.url) if page and page.url is not none else "" %}
+{%- set inglese = page and page.url is not none and page.url.startswith("en/") %}
+{%- set rel = (page.url | replace("en/", "", 1) if inglese else page.url) if page and page.url is not none else "" %}
 <div class="md-header__option">
-  <div class="md-select">
-    {% set icon = config.theme.icon.alternate or "material/translate" %}
-    <button class="md-header__button md-icon" aria-label="{{ lang.t('select.language') }}">
-      {% include ".icons/" ~ icon ~ ".svg" %}
-    </button>
-    <div class="md-select__inner">
-      <ul class="md-select__list">
-        <li class="md-select__item"><a href="{{ base }}{{ rel }}" lang="it" class="md-select__link">Italiano</a></li>
-        <li class="md-select__item"><a href="{{ base }}en/{{ rel }}" lang="en" class="md-select__link">English</a></li>
-      </ul>
-    </div>
-  </div>
+  {%- if inglese %}
+  <a class="lang" href="{{ base }}{{ rel }}" lang="it" title="Versione italiana"><svg viewBox="0 0 3 2" width="17" height="11" aria-hidden="true"><path fill="#009246" d="M0 0h1v2H0z"/><path fill="#fff" d="M1 0h1v2H1z"/><path fill="#CE2B37" d="M2 0h1v2H2z"/></svg>IT</a>
+  {%- else %}
+  <a class="lang" href="{{ base }}en/{{ rel }}" lang="en" title="English version"><svg viewBox="0 0 60 30" width="22" height="11" aria-hidden="true"><clipPath id="fg"><path d="M0,0v30h60V0z"/></clipPath><clipPath id="fh"><path d="M30,15h30v15zv15H0zH0V0zV0h30z"/></clipPath><g clip-path="url(#fg)"><path d="M0,0v30h60V0z" fill="#012169"/><path d="M0,0 60,30M60,0 0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 60,30M60,0 0,30" clip-path="url(#fh)" stroke="#C8102E" stroke-width="4"/><path d="M30,0v30M0,15h60" stroke="#fff" stroke-width="10"/><path d="M30,0v30M0,15h60" stroke="#C8102E" stroke-width="6"/></g></svg>EN</a>
+  {%- endif %}
 </div>

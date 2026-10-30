@@ -14,7 +14,7 @@ lo vedi, la lezione è riuscita.
 
 | # | Lezione | Cosa ottieni alla fine | Tempo |
 |---|---|---|---|
-| 1 | [I punti della mano](lezioni/01-punti-della-mano.md) | La tua webcam sullo schermo, con 21 pallini verdi che seguono la tua mano | 60 min |
+| 1 | [I punti e le ossa della mano](lezioni/01-punti-della-mano.md) | La tua webcam sullo schermo, con la mano disegnata sopra: 21 pallini verdi uniti da linee bianche | 60 min |
 | 2 | Quante dita? *(in preparazione)* | Un numero grande che dice quante dita stai alzando, da 0 a 5 | 60–90 min |
 | 3 | Il gesto *(in preparazione)* | Una scritta che riconosce il gesto: 👍 pollice su, ✊ pugno, ✋ mano aperta | 60–90 min |
 | 4 | Il bersaglio *(in preparazione)* | Un gioco: tocchi con l'indice i cerchi che compaiono, con punteggio e tempo | 90 min |

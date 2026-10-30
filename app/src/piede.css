@@ -47,3 +47,17 @@ body[data-state]:not([data-state="idle"]) .piede-sito {
 .barra-lingua .scelta-lingua {
   color: inherit;
 }
+
+/* Bandierina della lingua, come nella home page di www.giuseppebosi.com */
+a.scelta-lingua {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: 600 12px ui-monospace, monospace;
+  white-space: nowrap;
+}
+a.scelta-lingua svg {
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px #0002;
+  flex: none;
+}

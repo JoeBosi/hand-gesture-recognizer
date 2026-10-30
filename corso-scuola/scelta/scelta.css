@@ -7,3 +7,7 @@ a:hover, a:focus-visible { border-color: #3f51b5; }
 footer { text-align: center; font-size: 0.85rem; color: #64748b; padding: 0 16px 40px; }
 footer p { margin: 4px 0; }
 footer a { display: inline; padding: 0; border: 0; background: none; color: inherit; font-weight: 400; text-decoration: underline; }
+
+/* Bandierina della lingua, come nella home page di www.giuseppebosi.com */
+a.lang { display: inline-flex; align-items: center; gap: 6px; font: 600 12px ui-monospace, monospace; white-space: nowrap; vertical-align: middle; }
+a.lang svg { border-radius: 2px; box-shadow: 0 0 0 1px #0002; flex: none; }

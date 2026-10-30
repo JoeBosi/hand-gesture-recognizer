@@ -43,14 +43,14 @@ plugins:
           copyright: 'by Prof. Giuseppe Bosi, Master''s-level degree in Electronic Engineering (5-year Italian Laurea, pre-reform, EQF level 7), Professor of Computer Science and Technology · <a href="https://www.giuseppebosi.com/en/">www.giuseppebosi.com</a><br>Text <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> · Code <a href="https://opensource.org/license/mit">MIT</a> · <a href="/en/crediti/">Credits</a> · <a href="/en/privacy/">Privacy</a>'
           nav_translations:
             Indice del corso: Course index
-            "Lezione 1 · I punti della mano": "Lesson 1 · The hand landmarks"
+            "Lezione 1 · I punti e le ossa della mano": "Lesson 1 · The points and the bones of the hand"
 
 extra_css: [comune/accessi.css]
 extra_javascript: [comune/accessi.js]
 
 nav:
   - Indice del corso: index.md
-  - "Lezione 1 · I punti della mano": lezioni/01-punti-della-mano.md
+  - "Lezione 1 · I punti e le ossa della mano": lezioni/01-punti-della-mano.md
 
 markdown_extensions:
   - admonition

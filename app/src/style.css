@@ -285,6 +285,7 @@ button:disabled {
   .nav a {
     font-size: 0.78rem;
     padding: 3px 8px;
+    white-space: nowrap; /* «Energy Wave» su una riga: il menu scorre di lato */
   }
   .status {
     font-size: 0.8rem;

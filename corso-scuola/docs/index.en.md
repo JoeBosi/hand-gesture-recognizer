@@ -16,7 +16,7 @@ end of the lesson, the lesson worked.
 
 | # | Lesson | What you get at the end | Time |
 |---|---|---|---|
-| 1 | [The hand landmarks](lezioni/01-punti-della-mano.md) | Your webcam on screen, with 21 green dots following your hand | 60 min |
+| 1 | [The points and the bones of the hand](lezioni/01-punti-della-mano.md) | Your webcam on screen, with your hand drawn on top: 21 green dots joined by white lines | 60 min |
 | 2 | How many fingers? *(in preparation)* | A big number telling how many fingers you are raising, from 0 to 5 | 60–90 min |
 | 3 | The gesture *(in preparation)* | A label that recognizes the gesture: 👍 thumb up, ✊ fist, ✋ open palm | 60–90 min |
 | 4 | The target *(in preparation)* | A game: touch the circles that appear with your index finger, with score and time | 90 min |
