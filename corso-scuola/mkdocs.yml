@@ -40,7 +40,7 @@ plugins:
           build: true
           site_name: The Hand on the Computer
           site_description: Recognize the hand from the webcam in a few lines of code — a course for people who know C
-          copyright: 'by Prof. Giuseppe Bosi, Master''s-level degree in Electronic Engineering (5-year Italian Laurea, pre-reform, EQF level 7), Professor of Computer Science and Technology · <a href="https://www.giuseppebosi.com/en/">www.giuseppebosi.com</a><br>Text <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> · Code <a href="https://opensource.org/license/mit">MIT</a> · <a href="/en/crediti/">Credits</a> · <a href="/en/privacy/">Privacy</a>'
+          copyright: 'by Prof. Giuseppe Bosi, Master''s-level degree in Electronic Engineering (5-year Italian Laurea, pre-reform, EQF level 7), Teacher of Computer Science and Technology · <a href="https://www.giuseppebosi.com/en/">www.giuseppebosi.com</a><br>Text <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> · Code <a href="https://opensource.org/license/mit">MIT</a> · <a href="/en/crediti/">Credits</a> · <a href="/en/privacy/">Privacy</a>'
           nav_translations:
             Indice del corso: Course index
             "Lezione 1 · I punti e le ossa della mano": "Lesson 1 · The points and the bones of the hand"

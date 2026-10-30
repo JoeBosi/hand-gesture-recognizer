@@ -52,5 +52,5 @@ Most comments and documentation are in Italian: the project is used in Italian c
 
 ## Author
 
-**Giuseppe Bosi** — Master's-level degree in Electronic Engineering (5-year Italian Laurea, pre-reform, EQF level 7); Professor of Computer Science and Technology (Scienze e Tecnologie Informatiche).
+**Giuseppe Bosi** — Master's-level degree in Electronic Engineering (5-year Italian Laurea, pre-reform, EQF level 7); Teacher of Computer Science and Technology (Scienze e Tecnologie Informatiche).
 [www.giuseppebosi.com](https://www.giuseppebosi.com) · [LinkedIn](https://www.linkedin.com/in/giuseppebosi)

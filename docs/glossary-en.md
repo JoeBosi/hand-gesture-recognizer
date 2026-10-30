@@ -13,7 +13,7 @@ agent) uses these terms; if a term is missing, add it here first, then translate
   exclamation marks the original does not have.
 - Signature: "Prof. Giuseppe Bosi" in both languages; in English "by Prof. Giuseppe Bosi".
 - Author line in English: "Giuseppe Bosi, Master's-level degree in Electronic Engineering (5-year Italian
-  Laurea, pre-reform, EQF level 7), Professor of Computer Science and Technology". Short form allowed:
+  Laurea, pre-reform, EQF level 7), Teacher of Computer Science and Technology". Short form allowed:
   "Master's equivalent degree in Electronic Engineering". Never "M.Sc.", "licensed engineer", "Ing.".
 - Author site in English pages: https://www.giuseppebosi.com/en/
 - Page names in the menu keep the Italian URL (`/sfida/` → `/en/sfida/`) but get an English label.
