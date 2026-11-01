@@ -25,7 +25,7 @@
 - [Privacy](https://mano.giuseppebosi.com/privacy/): cosa raccoglie il sito e dove va.
 
 ## English
-The whole site is also in English under /en/ (by Prof. Giuseppe Bosi, Master's-level degree in Electronic Engineering (5-year Italian Laurea, pre-reform, EQF level 7); author site https://www.giuseppebosi.com/en/).
+The whole site is also in English under /en/ (by Prof. Giuseppe Bosi, Master's-level degree in Electronic Engineering (5-year Italian Laurea, EQF level 7); author site https://www.giuseppebosi.com/en/).
 - [Mano](https://mano.giuseppebosi.com/en/): the webcam watches your hand and reproduces it in 3D, recognizing gestures.
 - [Duel](https://mano.giuseppebosi.com/en/sfida/): rock, paper, scissors for two people in front of one webcam.
 - [Energy Wave](https://mano.giuseppebosi.com/en/onda/): hands together for 4 seconds charge an energy ball and fire a beam.
