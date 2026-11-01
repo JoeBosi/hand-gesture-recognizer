@@ -5,7 +5,7 @@ site_name: La mano al computer
 site_description: Riconoscere la mano dalla webcam in poche righe di codice — corso per chi conosce il C
 site_url: https://mano.giuseppebosi.com/scuola/mkdocs/
 docs_dir: docs
-copyright: 'Giuseppe Bosi, Dottore in Ingegneria Elettronica (V.O.), Professore di Scienze e Tecnologie Informatiche<br>Testi <a href="https://creativecommons.org/licenses/by/4.0/deed.it">CC BY 4.0</a> · Codice <a href="https://opensource.org/license/mit">MIT</a> · <a href="/crediti/">Crediti</a> · <a href="/privacy/">Privacy</a>'
+copyright: 'Giuseppe Bosi, Dottore in Ingegneria Elettronica, Professore di Scienze e Tecnologie Informatiche<br>Testi <a href="https://creativecommons.org/licenses/by/4.0/deed.it">CC BY 4.0</a> · Codice <a href="https://opensource.org/license/mit">MIT</a> · <a href="/crediti/">Crediti</a> · <a href="/privacy/">Privacy</a>'
 site_dir: site
 
 theme:

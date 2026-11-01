@@ -50,5 +50,5 @@ docs/           come funziona, note di ricerca e diario delle decisioni
 
 ## Autore
 
-**Giuseppe Bosi**, Dottore in Ingegneria Elettronica (V.O.), Professore di Scienze e Tecnologie Informatiche.
+**Giuseppe Bosi**, Dottore in Ingegneria Elettronica, Professore di Scienze e Tecnologie Informatiche.
 [www.giuseppebosi.com](https://www.giuseppebosi.com) · [LinkedIn](https://www.linkedin.com/in/giuseppebosi)
