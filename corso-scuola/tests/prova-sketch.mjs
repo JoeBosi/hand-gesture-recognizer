@@ -51,7 +51,7 @@ let p5v = "";
 const pagina = () => `<!doctype html><html><head><meta charset="utf-8">
 <script src="https://cdn.jsdelivr.net/npm/p5@${p5v}/lib/p5.min.js"></script>
 <script src="https://unpkg.com/ml5@${ML5}/dist/ml5.js"></script></head><body><script src="sketch.js"></script></body></html>`;
-const srv = createServer((q, r) => r.end(q.url === "/sketch.js" ? sketch : pagina())).listen(18995);
+const srv = createServer((q, r) => r.end(q.url === "/sketch.js" ? sketch : pagina())).listen(Number(process.env.PROVA_PORTA) || 18995);
 
 const browser = await chromium.launch({ args: ["--use-fake-ui-for-media-stream", "--use-fake-device-for-media-stream", `--use-file-for-fake-video-capture=${video}`, "--enable-unsafe-swiftshader"] });
 let falliti = 0;
@@ -60,7 +60,7 @@ for (const v of VERSIONI_P5) {
   const p = await browser.newPage({ viewport: { width: 660, height: 500 } });
   const errori = [];
   p.on("pageerror", (e) => errori.push(e.message));
-  await p.goto("http://localhost:18995/");
+  await p.goto("http://localhost:" + (Number(process.env.PROVA_PORTA) || 18995) + "/", { waitUntil: "domcontentloaded", timeout: 120000 });
   let mani = 0;
   for (let t = 0; t < 90 && !mani; t++) { await p.waitForTimeout(1000); mani = +(await p.evaluate(() => document.body.dataset.mani)) || 0; }
   await p.waitForTimeout(2500);

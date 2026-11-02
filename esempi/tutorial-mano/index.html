@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- without this, phones shrink the page like a desktop site -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mano - tutorial example</title>
+  </head>
+
+  <!-- data-state is updated by main.ts: idle | loading | running | error -->
+  <body data-state="idle">
+    <canvas id="scene" aria-label="3D reproduction of the hand"></canvas>
+
+    <header class="topbar">
+      <div class="brand">Mano</div>
+      <div class="status" id="status" role="status" aria-live="polite">Camera off</div>
+    </header>
+
+    <!-- The camera starts ONLY from this button: an explicit choice, never a side effect of
+         opening the page. -->
+    <section class="intro" id="intro">
+      <h1>Move your hand in front of the webcam</h1>
+      <button type="button" class="primary" id="start">Turn on the camera</button>
+      <p class="privacy">Everything happens in your browser: the images are not sent to any server and not saved.</p>
+      <p class="error" id="error" hidden></p>
+    </section>
+
+    <!-- Webcam preview with the dots on top. muted and playsinline: without them iOS refuses
+         to play the video inside the page. -->
+    <aside class="preview" id="preview" hidden>
+      <video id="video" autoplay muted playsinline></video>
+      <canvas id="overlay"></canvas>
+    </aside>
+
+    <footer class="hud" id="hud" hidden>
+      <div class="gestures" id="gestures"></div>
+      <div class="controls">
+        <span class="metric" id="fps">- fps</span>
+        <button type="button" id="toggle-preview" aria-pressed="true">Hide camera</button>
+        <button type="button" id="stop">Turn off camera</button>
+      </div>
+    </footer>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

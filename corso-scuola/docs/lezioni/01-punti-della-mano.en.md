@@ -82,6 +82,11 @@ paste this program (the button at the top right of the box copies it):
     Do you see the green dots and the white lines on your hand? **The program works.** If not, see
     [If it does not work](#if-it-does-not-work) at the bottom of the page.
 
+!!! tip "Where to try it: free, nothing to install"
+    - **The p5.js editor**, <https://editor.p5js.org/>: the one you use in this lesson. You do not need an account to run the program (an account is only for saving projects).
+    - **The ready-made folder**, with the program and the four solved exercises (`index.html`, `sketch.js`, `exercise-1.js` ... `exercise-4.js`): [open it on StackBlitz](https://stackblitz.com/github/JoeBosi/hand-gesture-recognizer/tree/main/esempi/p5-lesson-01), no account. The webcam does not work inside the small preview frame: open the preview **in a new tab**.
+    - **What you see when it works:** the screenshot of step 4 above, with the dots on your hand. The exercise images show the result of each one.
+
 ---
 
 ## 2. Understand it
@@ -250,17 +255,24 @@ on screen.
 
 **Result:** the dots become red and twice as big.
 
+**What you should see** (your screen, once solved):
+
+![Exercise 1 solved: the hand with bigger red dots, joined by white lines](../img/lezione-01-esercizio-1.png){ width="400" }
+
 ??? example "Solution"
     In the **4) the points** part, change the colour and the diameter:
     ```javascript
     fill(255, 0, 0);               // red
     circle(punto.x, punto.y, 20);  // diameter 20 instead of 10
     ```
-    ![Exercise 1 solved: the hand with bigger red dots, joined by white lines](../img/lezione-01-esercizio-1.png){ width="400" }
 
 ### Exercise 2 — Coloured bones
 
 **Result:** the lines become purple and much thicker.
+
+**What you should see** (your screen, once solved):
+
+![Exercise 2 solved: the hand with thick purple bones and green dots](../img/lezione-01-esercizio-2.png){ width="400" }
 
 *Hint:* `stroke` chooses the colour of the lines, `strokeWeight` their thickness.
 
@@ -270,12 +282,15 @@ on screen.
     stroke(255, 0, 255);   // purple: red + blue
     strokeWeight(8);       // 8 pixels instead of 3
     ```
-    ![Exercise 2 solved: the hand with thick purple bones and green dots](../img/lezione-01-esercizio-2.png){ width="400" }
 
 ### Exercise 3 — Only the index fingertip
 
 **Result:** instead of the 21 dots, **only one** dot remains, big and yellow, on the index
 fingertip. The bones stay.
+
+**What you should see** (your screen, once solved):
+
+![Exercise 3 solved: the white bones of the hand and a single yellow dot on the index fingertip](../img/lezione-01-esercizio-3.png){ width="400" }
 
 *Hint:* the index fingertip is point number 8. You do not need the `for` loop of the points.
 
@@ -286,12 +301,15 @@ fingertip. The bones stay.
     fill(255, 255, 0);               // yellow
     circle(punta.x, punta.y, 30);
     ```
-    ![Exercise 3 solved: the white bones of the hand and a single yellow dot on the index fingertip](../img/lezione-01-esercizio-3.png){ width="400" }
 
 ### Exercise 4 — Where is the finger?
 
 **Result:** at the top left the coordinates of the index fingertip appear, for example
 `x = 312   y = 145`, and they change as you move your finger.
+
+**What you should see** (your screen, once solved):
+
+![Exercise 4 solved: at the top left the x and y coordinates of the index fingertip, written in black](../img/lezione-01-esercizio-4.png){ width="400" }
 
 *Hint:* `text("hello", 20, 40)` writes «hello» at position (20, 40); `textSize(32)` chooses the
 size. In JavaScript texts are joined with `+`, and `round()` removes the decimals.
@@ -303,7 +321,6 @@ size. In JavaScript texts are joined with `+`, and `round()` removes the decimal
     textSize(32);
     text("x = " + round(punta.x) + "   y = " + round(punta.y), 20, 40);
     ```
-    ![Exercise 4 solved: at the top left the x and y coordinates of the index fingertip, written in black](../img/lezione-01-esercizio-4.png){ width="400" }
 
     Try moving your finger upwards: **y decreases**. Remember this, you will need it in lesson 2 to
     tell whether a finger is raised.
@@ -317,6 +334,7 @@ size. In JavaScript texts are joined with `+`, and `round()` removes the decimal
 | The right side stays empty, no webcam | The browser has no permission: click the webcam icon in the address bar and allow it, then press ▶ again |
 | The webcam shows, but no dots | Wait 10–20 seconds: the first time the model is downloading. Then check that the hand is well lit and fully in the image |
 | Below the code it says `ml5 is not defined` | The line from step 2 is missing in `index.html`, mistyped, or ended up in the middle of the p5.js line |
+| Below the code it says `Cannot read properties of undefined (reading 'getConnections')` | The model did not download (slow or interrupted internet): check the connection and press ▶ again |
 | Another red error below the code | You deleted or changed a piece by mistake: paste the program from step 3 again |
 | You show two hands but only one is drawn | That is correct: the program looks for one hand only (`maxHands: 1`) |
 

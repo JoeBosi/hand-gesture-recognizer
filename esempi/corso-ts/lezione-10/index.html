@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>La mia mano</title>
+  </head>
+  <body>
+    <canvas id="scena"></canvas>
+    <h1>La mia mano</h1>
+    <button id="accendi">Accendi la camera</button>
+    <button id="spegni" disabled>Spegni</button>
+    <p id="stato">Camera spenta</p>
+    <p id="errore" hidden></p>
+    <p id="mani"></p>
+    <p id="dita"></p>
+    <p id="gesto"></p>
+    <p><span id="fps"></span> <span id="tremolio"></span></p>
+    <video id="video" autoplay muted playsinline></video>
+    <canvas id="tela" width="640" height="480"></canvas>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

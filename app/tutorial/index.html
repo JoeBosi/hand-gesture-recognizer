@@ -110,6 +110,14 @@
           nulla. Il server fa una cosa sola: consegnare dei file. Il resto avviene dentro il browser.
         </p>
 
+                <!-- prova:tutorial -->
+        <div class="prova">
+          <strong>Provalo online</strong>
+          <p>Vuoi vedere il risultato prima di installare qualcosa? <a href="https://stackblitz.com/github/JoeBosi/hand-gesture-recognizer/tree/main/esempi/tutorial-mano" rel="noopener">Apri l&rsquo;esempio completo in StackBlitz</a> (gratis, senza account; i file si leggono anche <a href="https://github.com/JoeBosi/hand-gesture-recognizer/tree/main/esempi/tutorial-mano" rel="noopener">su GitHub</a>). StackBlitz è un editor che gira nel browser: mostra la pagina in un riquadro a destra, ma lì dentro il browser non concede la webcam. Apri l&rsquo;anteprima in una scheda a parte (l&rsquo;icona &laquo;Open in new tab&raquo; sopra il riquadro) e premi &laquo;Turn on the camera&raquo;. La prima volta il browser scarica il modello (circa 8 MB) e il runtime (circa 11 MB). Le immagini della webcam restano nel tuo browser: l&rsquo;esempio non le invia da nessuna parte.</p>
+          <p>Il testo dell'interfaccia nell'esempio è in inglese (&laquo;Camera on&raquo;, &laquo;Turn off camera&raquo;); la struttura e i nomi dei file sono quelli del tutorial.</p>
+          <figure class="schermata"><img src="/img/tutorial-risultato.jpg" width="1000" height="625" loading="lazy" alt="La pagina Mano a webcam accesa: al centro una mano 3D rosa fatta di sfere e bastoncini, in basso a destra l'anteprima della webcam con i puntini sulla mano, in basso la scritta del gesto riconosciuto"><figcaption>Cosa dovresti vedere: una mano 3D che ripete la tua, la tua immagine nell&rsquo;anteprima con i puntini sopra, e in basso il gesto (qui &laquo;Left: Thumbs up&raquo;, pollice su). Nella prova al posto della webcam c'è un video registrato di una mano (foto pubblica dei test di MediaPipe): con la tua webcam vedrai la tua mano.</figcaption></figure>
+        </div>
+
         <h3>La catena, in cinque anelli</h3>
         <div class="table-wrap">
           <table>
@@ -199,7 +207,7 @@
             <tbody>
               <tr>
                 <td><strong>Node.js</strong></td>
-                <td>20 o successiva</td>
+                <td>20.19 o successiva (meglio la 22)</td>
                 <td>
                   fa girare gli strumenti di sviluppo (Vite) e, alla fine, il piccolo server che
                   pubblica il sito. Include <code>npm</code>.
@@ -234,7 +242,7 @@
 
         <p>Controlla di avere Node:</p>
         <pre><code>node --version
-# v20.x o superiore. Se il comando non esiste: nodejs.org</code></pre>
+# v20.19 o superiore (meglio v22). Se il comando non esiste: nodejs.org</code></pre>
 
         <div class="callout try">
           <span class="label">Prova tu</span>
@@ -439,6 +447,240 @@ ui.start.addEventListener("click", () =&gt; console.log("via!"));</code></pre>
             quando qualcosa smette di funzionare, a runtime. Qui l'errore lo vedi subito, in un posto
             solo.
           </p>
+        </div>
+
+                <!-- prova:tutorial-css -->
+        <h3>Il foglio di stile</h3>
+        <p>
+          Il progetto creato da Vite arriva con un suo <code>src/style.css</code>, pensato per la pagina di esempio. Sostituiscilo con questo: è l&rsquo;intero aspetto della pagina, duecento righe scritte a mano. Servono già adesso, perché l&rsquo;<code>index.html</code> qui sopra usa queste classi.
+        </p>
+        <details>
+          <summary>Mostra <code>src/style.css</code> completo</summary>
+          <figure class="code">
+            <figcaption><span class="tag">src/style.css</span></figcaption>
+            <pre><code>/* L'aspetto della pagina. Scritto a mano, senza framework CSS. */
+:root {
+  color-scheme: dark;
+  --bg-1: #0b1020;
+  --bg-2: #1e1b4b;
+  --text: #e2e8f0;
+  --muted: #a8b4c6;
+  --accent: #38bdf8; /* lo stesso della mano destra in 3D */
+  --accent-2: #f472b6; /* lo stesso della mano sinistra */
+  --panel: rgb(15 23 42 / 0.72);
+  --border: rgb(148 163 184 / 0.22);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  color: var(--text);
+  background: radial-gradient(ellipse at 50% 35%, var(--bg-2) 0%, var(--bg-1) 70%);
+}
+
+/* L'attributo `hidden` dell'HTML deve vincere anche su `display: flex`. */
+[hidden] {
+  display: none !important;
+}
+
+/* La tela 3D: ancorata ai quattro lati della finestra, sotto a tutto il resto. */
+#scene {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  pointer-events: none;
+}
+
+.brand {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.status {
+  font-size: 0.85rem;
+  color: var(--muted);
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+}
+
+.status.live {
+  color: #fecaca;
+  border-color: rgb(248 113 113 / 0.5);
+}
+
+.intro {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(460px, calc(100% - 32px));
+  height: fit-content;
+  padding: 28px 24px;
+  text-align: center;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.intro h1 {
+  margin: 0 0 18px;
+  font-size: 1.5rem;
+}
+
+.intro p {
+  margin: 18px 0 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.error {
+  color: #fca5a5 !important;
+}
+
+button {
+  font: inherit;
+  color: var(--text);
+  background: rgb(51 65 85 / 0.7);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: rgb(71 85 105 / 0.8);
+}
+
+button.primary {
+  font-weight: 600;
+  font-size: 1.05rem;
+  padding: 12px 22px;
+  border: none;
+  color: #0b1020;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+/* L'altezza dell'anteprima segue la larghezza (aspect-ratio): nessun calcolo in JavaScript. */
+.preview {
+  position: fixed;
+  right: 16px;
+  bottom: 84px;
+  width: min(240px, 38vw);
+  aspect-ratio: 4 / 3;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: #000;
+}
+
+/* Effetto specchio, SOLO visivo: i numeri di MediaPipe restano quelli della ripresa vera. */
+.preview video,
+.preview canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+
+.hud {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  backdrop-filter: blur(10px);
+}
+
+.gestures.empty {
+  color: var(--muted);
+}
+
+.controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.metric {
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .preview {
+    top: 58px;
+    bottom: auto;
+    right: 12px;
+    width: 34vw;
+  }
+  .hud {
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+  }
+  .controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+</code></pre>
+          </figure>
+        </details>
+        <p>
+          Anche il resto del codice di questo tutorial è spiegato a pezzi. Il progetto finito, con tutti i file interi, sta in
+          <a href="https://github.com/JoeBosi/hand-gesture-recognizer/tree/main/esempi/tutorial-mano" rel="noopener"><code>esempi/tutorial-mano</code></a>
+          e si prova online da <a href="https://stackblitz.com/github/JoeBosi/hand-gesture-recognizer/tree/main/esempi/tutorial-mano" rel="noopener">StackBlitz</a>: se un pezzo non torna, confrontalo con quel file.
+        </p>
+
+        <!-- prova:tutorial -->
+        <div class="prova">
+          <strong>Provalo</strong>
+          <p>Nella cartella del progetto lancia <code>npm run dev</code> e apri l&rsquo;indirizzo che stampa (<code>http://localhost:5173/</code>).</p>
+          <figure class="schermata"><img src="/img/tutorial-pagina-iniziale.jpg" width="1000" height="625" loading="lazy" alt="La pagina all'avvio: sfondo blu notte, in alto la scritta Mano e lo stato della camera, al centro un riquadro con il titolo e il pulsante per accendere la camera"><figcaption>Cosa dovresti vedere: lo sfondo scuro con l&rsquo;alone viola, il riquadro centrale con il titolo e il pulsante, lo stato &laquo;Camera off&raquo; in alto a destra. Premi il pulsante: per ora nella console del browser (F12) compare solo &laquo;via!&raquo;.</figcaption></figure>
+          <p>Il testo dell'interfaccia nell'esempio è in inglese (&laquo;Camera on&raquo;, &laquo;Turn off camera&raquo;); la struttura e i nomi dei file sono quelli del tutorial.</p>
         </div>
 
         <a class="uplink" href="#indice">↑ Indice</a>
@@ -664,6 +906,49 @@ window.addEventListener("pagehide", () =&gt; {
           </p>
         </div>
 
+                <!-- prova:tutorial -->
+        <div class="prova">
+          <strong>Provalo online</strong>
+          <p>Per vedere la camera prima di avere il riconoscitore, sostituisci per un momento il contenuto di <code>src/main.ts</code> con questo (è la versione minima: accende, mostra l&rsquo;anteprima, spegne). Oppure apri l&rsquo;esempio completo: <a href="https://stackblitz.com/github/JoeBosi/hand-gesture-recognizer/tree/main/esempi/tutorial-mano" rel="noopener">Apri l&rsquo;esempio completo in StackBlitz</a> (gratis, senza account; i file si leggono anche <a href="https://github.com/JoeBosi/hand-gesture-recognizer/tree/main/esempi/tutorial-mano" rel="noopener">su GitHub</a>).</p>
+          <figure class="code">
+            <figcaption><span class="tag">src/main.ts</span> (prova della camera)</figcaption>
+            <pre><code>import "./style.css";
+import { CameraError, startCamera, stopCamera } from "./camera";
+
+const $ = &lt;T extends HTMLElement&gt;(id: string) =&gt; document.getElementById(id) as T;
+const video = $&lt;HTMLVideoElement&gt;("video");
+let stream: MediaStream | null = null;
+
+function show(on: boolean): void {
+  $("intro").hidden = on;
+  $("preview").hidden = !on;
+  $("hud").hidden = !on;
+  $("status").textContent = on ? "Camera on" : "Camera off";
+  $("status").classList.toggle("live", on);
+}
+
+function stop(): void {
+  stopCamera(video, stream);
+  stream = null;
+  show(false);
+}
+
+$("start").addEventListener("click", async () =&gt; {
+  try {
+    stream = await startCamera(video, stop);
+    show(true);
+  } catch (e) {
+    $("error").textContent = e instanceof CameraError ? e.message : String(e);
+    $("error").hidden = false;
+  }
+});
+$("stop").addEventListener("click", stop);
+</code></pre>
+          </figure>
+          <figure class="schermata"><img src="/img/tutorial-camera.jpg" width="1000" height="625" loading="lazy" alt="La pagina con la camera accesa: in basso a destra il riquadro dell'anteprima con l'immagine della webcam, in alto a destra lo stato Camera on con il bordo rosso, in basso la barra con i pulsanti per nascondere e spegnere la camera"><figcaption>Cosa dovresti vedere: dopo il permesso, nel riquadro in basso a destra l&rsquo;immagine della webcam (specchiata), lo stato in alto a destra con il bordo rosso e la barra dei comandi. &laquo;Turn off camera&raquo; spegne la spia della webcam. Nella prova al posto della webcam c'è un video registrato di una mano (foto pubblica dei test di MediaPipe): con la tua webcam vedrai la tua mano.</figcaption></figure>
+          <p>Il testo dell'interfaccia nell'esempio è in inglese (&laquo;Camera on&raquo;, &laquo;Turn off camera&raquo;); la struttura e i nomi dei file sono quelli del tutorial.</p>
+        </div>
+
         <a class="uplink" href="#indice">↑ Indice</a>
       </section>
       <hr />
@@ -683,7 +968,7 @@ window.addEventListener("pagehide", () =&gt; {
         </ul>
 
         <h3>La libreria</h3>
-        <pre><code>npm install @mediapipe/tasks-vision@1.0.1</code></pre>
+        <pre><code>npm install --save-exact @mediapipe/tasks-vision@1.0.1</code></pre>
         <div class="callout why">
           <span class="label">Perché MediaPipe, e perché la versione è fissata esatta</span>
           <p>
@@ -1049,6 +1334,7 @@ console.log("asset MediaPipe pronti in public/mediapipe/");</code></pre>
   "test:e2e": "node tests/e2e/run.mjs"
 }</code></pre>
         </figure>
+        <p>La riga <code>test:e2e</code> serve solo al capitolo 8: finché quel file non esiste, lasciala fuori. <code>--save-exact</code> nei comandi di installazione fa scrivere in <code>package.json</code> la versione esatta (<code>1.0.1</code>) e non <code>^1.0.1</code>.</p>
         <div class="callout why">
           <span class="label">Perché <code>public/</code></span>
           <p>
@@ -1057,6 +1343,16 @@ console.log("asset MediaPipe pronti in public/mediapipe/");</code></pre>
             devono essere raggiungibili a un indirizzo fisso, come
             <code>/mediapipe/gesture_recognizer.task</code>.
           </p>
+        </div>
+
+                <!-- prova:tutorial -->
+        <div class="prova">
+          <strong>Due varianti: dal tuo sito, o l&rsquo;esempio online</strong>
+          <p>Il tutorial serve runtime e modello dal sito stesso, con <code>scripts/prepare-assets.mjs</code> e <code>/mediapipe/…</code>: è la scelta giusta per un sito vero, perché la CSP ammette solo richieste verso il proprio dominio. Provata da zero: dopo <code>npm run assets</code> la pagina gira e, controllando le richieste del browser, non ne parte nessuna verso altri domini.</p>
+          <p>L&rsquo;esempio online (StackBlitz) non ha uno script da lanciare prima, quindi in <code>src/tracker.ts</code> usa due indirizzi pubblici, entrambi alla versione fissata: scarica solo i file, non invia niente.</p>
+          <pre><code>const WASM_PATH = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.0.1/wasm";
+const MODEL_PATH =
+  "https://storage.googleapis.com/mediapipe-models/gesture_recognizer/gesture_recognizer/float16/1/gesture_recognizer.task";</code></pre>
         </div>
 
         <a class="uplink" href="#indice">↑ Indice</a>
@@ -1334,9 +1630,16 @@ export const HAND_CONNECTIONS = GestureRecognizer.HAND_CONNECTIONS;</code></pre>
           </p>
         </div>
 
+                <!-- prova:tutorial -->
+        <div class="prova">
+          <strong>Provalo online</strong>
+          <p>Nell&rsquo;esempio completo il 3D è già acceso. Per vedere solo il 2D di questo passo, commenta la riga <code>scene.update(side, smoothed);</code> in <code>src/main.ts</code>: restano l&rsquo;anteprima con i puntini e il nome del gesto. <a href="https://stackblitz.com/github/JoeBosi/hand-gesture-recognizer/tree/main/esempi/tutorial-mano" rel="noopener">Apri l&rsquo;esempio completo in StackBlitz</a> (gratis, senza account; i file si leggono anche <a href="https://github.com/JoeBosi/hand-gesture-recognizer/tree/main/esempi/tutorial-mano" rel="noopener">su GitHub</a>).</p>
+          <figure class="schermata"><img src="/img/tutorial-punti-2d.jpg" width="1000" height="625" loading="lazy" alt="La pagina senza la mano 3D: in basso a destra l'anteprima della webcam con una mano che ha sopra puntini bianchi uniti da linee, in basso la scritta Left: Thumbs up"><figcaption>Cosa dovresti vedere: nell&rsquo;anteprima i 21 puntini bianchi sulla mano, uniti dalle linee (rosa per la mano sinistra, azzurre per la destra), e in basso il nome del gesto. Nella prova al posto della webcam c'è un video registrato di una mano (foto pubblica dei test di MediaPipe): con la tua webcam vedrai la tua mano.</figcaption></figure>
+        </div>
+
         <h3>Il passaggio al 3D: Three.js</h3>
-        <pre><code>npm install three@0.186.0
-npm install --save-dev @types/three@0.186.0   # stessa versione, o descrive funzioni che non esistono</code></pre>
+        <pre><code>npm install --save-exact three@0.186.0
+npm install --save-dev --save-exact @types/three@0.186.0   # stessa versione, o descrive funzioni che non esistono</code></pre>
         <div class="callout why">
           <span class="label">Perché Three.js e non WebGL "nudo"</span>
           <p>
@@ -1622,6 +1925,13 @@ this.palm.geometry.computeVertexNormals();   // ricalcola l'orientamento per l'i
           proporzioni vecchie: la mano appare schiacciata o stirata dopo ogni ridimensionamento della
           finestra. È il primo posto dove guardare quando "il 3D è storto".
         </p>
+
+                <!-- prova:tutorial -->
+        <div class="prova">
+          <strong>Provalo online</strong>
+          <p>La pagina si adatta alla finestra (il codice della sezione &laquo;Adattarsi alla finestra&raquo;): stesso esempio, aperto in una finestra stretta come quella di un telefono. <a href="https://stackblitz.com/github/JoeBosi/hand-gesture-recognizer/tree/main/esempi/tutorial-mano" rel="noopener">Apri l&rsquo;esempio completo in StackBlitz</a> (gratis, senza account; i file si leggono anche <a href="https://github.com/JoeBosi/hand-gesture-recognizer/tree/main/esempi/tutorial-mano" rel="noopener">su GitHub</a>).</p>
+          <figure class="schermata"><img src="/img/tutorial-risultato-mobile.jpg" width="390" height="800" loading="lazy" alt="La stessa pagina larga 390 pixel: la mano 3D resta intera al centro, l'anteprima sta in alto a destra, la barra dei comandi occupa la larghezza in basso"><figcaption>Cosa dovresti vedere: a 390 pixel di larghezza nessuno scorrimento orizzontale; la mano 3D resta intera, l&rsquo;anteprima va in alto a destra e la barra dei comandi occupa tutta la larghezza. Nella prova al posto della webcam c'è un video registrato di una mano (foto pubblica dei test di MediaPipe): con la tua webcam vedrai la tua mano.</figcaption></figure>
+        </div>
 
         <a class="uplink" href="#indice">↑ Indice</a>
       </section>
@@ -2009,6 +2319,37 @@ server.listen(PORT, HOST);</code></pre>
           </p>
         </div>
 
+                <!-- prova:tutorial -->
+        <div class="prova">
+          <strong>Cosa dovresti vedere</strong>
+          <p><code>npm run build</code> nel progetto finito (l&rsquo;esempio online non ha il passo <code>assets</code>; i nomi con l&rsquo;impronta e i tempi cambiano da una volta all&rsquo;altra):</p>
+          <pre><code>&gt; tutorial-mano@1.0.0 build
+&gt; tsc &amp;&amp; vite build
+
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 12 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   1.92 kB │ gzip:   0.90 kB
+dist/assets/index-CVZ5f3Vi.css    2.63 kB │ gzip:   1.11 kB
+dist/assets/index-ByPbvf65.js   695.38 kB │ gzip: 181.50 kB
+
+✓ built in 17.47s</code></pre>
+          <p>Il server da ottanta righe, lanciato da zero sulla cartella <code>dist/</code> e provato con <code>curl</code> (con i file del tutorial in <code>public/mediapipe/</code>): il file <code>.wasm</code> parte come <code>application/wasm</code>, un file già visto risponde 304, un file che non c&rsquo;è risponde 404 e un percorso che prova a uscire da <code>dist/</code> non arriva a nessun file.</p>
+          <pre><code>$ ROOT=dist PORT=8865 node server.mjs &amp;
+$ curl -sI localhost:8865/ | head -1
+HTTP/1.1 200 OK
+$ curl -sI localhost:8865/mediapipe/wasm/vision_wasm_internal.wasm | grep -i content-type
+content-type: application/wasm
+$ curl -s -o /dev/null -w "%{http_code}\n" -H 'If-None-Match: "&lt;l'etag ricevuto&gt;"' localhost:8865/index.html
+304
+$ curl -s -o /dev/null -w "%{http_code}\n" localhost:8865/nope
+404
+$ curl -s -o /dev/null -w "%{http_code}\n" --path-as-is "localhost:8865/%2e%2e/%2e%2e/etc/passwd"
+404</code></pre>
+        </div>
+
         <h3>Il reverse proxy, con HTTPS</h3>
         <p>
           Davanti al server statico mettiamo <a href="https://caddyserver.com/docs/">Caddy</a>, che si
@@ -2318,6 +2659,22 @@ check(external.length === 0, `nessuna richiesta esterna (trovate: ${external.len
           viola a rovescio.
         </p>
 
+                <!-- prova:tutorial-g -->
+        <div class="prova">
+          <strong>Provalo</strong>
+          <p>I tre pezzi qui sopra, in versione piccola e completa, stanno nel progetto finito: <code>tests/fake-webcam/make-video.sh</code> costruisce il filmato con una mano (foto pubblica dei test di MediaPipe) e <code>tests/fake-webcam/run.mjs</code> apre la build in Chromium con quella webcam finta. Lanciati da zero:</p>
+          <pre><code>bash tests/fake-webcam/make-video.sh                 # costruisce hand.mjpeg (servono curl e ffmpeg)
+npm install --save-dev playwright@1.63.0
+npx playwright install chromium
+npm run build
+npx vite preview --port 4173 &amp;                     # serve dist/ su http://localhost:4173/
+node tests/fake-webcam/run.mjs http://localhost:4173/ tests/fake-webcam/hand.mjpeg</code></pre>
+          <p>L&rsquo;esito reale: la camera si accende, il modello trova la mano (sinistra, pollice su), e dopo &laquo;Turn off camera&raquo; il flusso è rilasciato. Lo script esce con 0 se non ci sono errori in console, con 1 altrimenti. L&rsquo;esempio online scarica runtime e modello da jsDelivr e da Google, perciò qui il controllo delle richieste esterne è quello del capitolo 3 (variante dal tuo sito).</p>
+          <pre><code>state: running | hands: 1 | side: Left | gesture: Thumb_Up
+after stop: video.srcObject is null, the camera is released
+errors: none</code></pre>
+        </div>
+
         <a class="uplink" href="#indice">↑ Indice</a>
       </section>
       <hr />
@@ -2559,6 +2916,45 @@ check(external.length === 0, `nessuna richiesta esterna (trovate: ${external.len
             tuo migliore amico.
           </li>
         </ol>
+
+                <!-- prova:tutorial -->
+        <div class="prova">
+          <strong>Provalo online</strong>
+          <p>Gli esercizi si fanno sull&rsquo;esempio completo: <a href="https://stackblitz.com/github/JoeBosi/hand-gesture-recognizer/tree/main/esempi/tutorial-mano" rel="noopener">Apri l&rsquo;esempio completo in StackBlitz</a> (gratis, senza account; i file si leggono anche <a href="https://github.com/JoeBosi/hand-gesture-recognizer/tree/main/esempi/tutorial-mano" rel="noopener">su GitHub</a>). Tre sono provati, con il risultato che dovresti vedere; gli altri sono idee da costruire e partono dallo stesso progetto.</p>
+          <p><strong>1. Cambia i colori</strong> (<code>hand3d.ts</code>, una costante):</p>
+          <pre><code>// in hand3d.ts: un verde e un arancione al posto dell'azzurro e del rosa
+const COLORS = { Right: 0x4ade80, Left: 0xfb923c } as const;</code></pre>
+          <figure class="schermata"><img src="/img/tutorial-esercizio-1.jpg" width="1000" height="625" loading="lazy" alt="La mano 3D arancione al posto di quella rosa"><figcaption>Cosa dovresti vedere: la mano sinistra in arancione (la destra sarebbe verde). Nella prova al posto della webcam c'è un video registrato di una mano (foto pubblica dei test di MediaPipe): con la tua webcam vedrai la tua mano.</figcaption></figure>
+          <p><strong>3. Fai reagire la scena</strong> (il pugno chiuso rende la mano rossa):</p>
+          <pre><code>// 1) in hand3d.ts: esporta i colori
+export const COLORS = { Right: 0x38bdf8, Left: 0xf472b6 } as const;
+
+// 2) in hand3d.ts, dentro StylizedHand: un metodo che ricolora tutta la mano
+setColor(color: number): void {
+  this.solid.color.setHex(color);
+  this.tips.emissive.setHex(color);
+  this.palmMaterial.color.setHex(color);
+}
+
+// 3) in hand3d.ts, dentro HandScene: lo gira alla mano giusta
+setColor(side: Side, color: number): void {
+  this.hands[side].setColor(color);
+}
+
+// 4) in main.ts (import { COLORS, HandScene, type Side } from "./hand3d"), prima di shown.push(side):
+scene.setColor(side, gesture?.categoryName === "Closed_Fist" ? 0xef4444 : COLORS[side]);</code></pre>
+          <figure class="schermata"><img src="/img/tutorial-esercizio-3.jpg" width="1000" height="625" loading="lazy" alt="La mano 3D rossa con le dita chiuse a pugno, in basso la scritta Left: Fist"><figcaption>Cosa dovresti vedere: con il pugno chiuso la mano diventa rossa e in basso compare &laquo;Left: Fist&raquo;; con un altro gesto torna del suo colore. Nella prova al posto della webcam c'è un video registrato di una mano (foto pubblica dei test di MediaPipe): con la tua webcam vedrai la tua mano.</figcaption></figure>
+          <p><strong>4. Il &laquo;pinch&raquo; come cursore</strong> (distanza pollice-indice, da 0% a 100%; sopra il 90% è anche il gesto &laquo;OK&raquo; dell&rsquo;esercizio 2):</p>
+          <pre><code>// in main.ts, dentro il ciclo delle mani, prima di shown.push(side):
+// pinch = distanza fra la punta del pollice (4) e quella dell'indice (8), in percentuale
+const d = Math.hypot(landmarks[4].x - landmarks[8].x, landmarks[4].y - landmarks[8].y);
+const pinch = Math.round(Math.max(0, Math.min(1, 1 - d / 0.25)) * 100);
+
+// e nell'etichetta in basso:
+labels.push(`${side}: ${name ?? "hand"} - pinch ${pinch}%`);</code></pre>
+          <figure class="schermata"><img src="/img/tutorial-esercizio-4.jpg" width="1000" height="625" loading="lazy" alt="In basso la scritta Left: Thumbs up - pinch con una percentuale"><figcaption>Cosa dovresti vedere: in basso, accanto al gesto, la percentuale di pinch; stringi pollice e indice e sale verso 100%, apri le dita e scende verso 0%. Nella prova al posto della webcam c'è un video registrato di una mano (foto pubblica dei test di MediaPipe): con la tua webcam vedrai la tua mano.</figcaption></figure>
+          <p>Gli esercizi 5 (disegnare nell&rsquo;aria) e 6 (mano e corpo insieme) non sono provati: sono proposte aperte.</p>
+        </div>
 
         <h3>Documentazione ufficiale</h3>
         <ul class="links">

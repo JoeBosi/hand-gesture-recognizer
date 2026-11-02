@@ -83,6 +83,11 @@ incolla questo programma (il pulsante in alto a destra del riquadro lo copia):
     Vedi i pallini verdi e le linee bianche sulla tua mano? **Il programma funziona.** Se no, guarda
     [Se non funziona](#se-non-funziona) in fondo alla pagina.
 
+!!! tip "Dove provarlo: gratis e senza installare niente"
+    - **L'editor di p5.js**, <https://editor.p5js.org/>: è quello che usi in questa lezione. Per far partire il programma non serve nessun account (serve solo per salvare i progetti).
+    - **La cartella già pronta**, con il programma e i quattro esercizi risolti (`index.html`, `sketch.js`, `exercise-1.js` ... `exercise-4.js`): [aprila su StackBlitz](https://stackblitz.com/github/JoeBosi/hand-gesture-recognizer/tree/main/esempi/p5-lesson-01), senza account. La webcam non funziona nel riquadro piccolo dell'anteprima: apri l'anteprima **in una nuova scheda**.
+    - **Cosa vedi se funziona:** la schermata del passo 4 qui sopra, con i pallini sulla tua mano. Le immagini degli esercizi mostrano il risultato di ognuno.
+
 ---
 
 ## 2. Capirlo
@@ -249,17 +254,24 @@ successo quello che ti aspettavi.
 
 **Risultato:** i pallini diventano rossi e grandi il doppio.
 
+**Cosa dovresti vedere** (la tua schermata, dopo aver risolto):
+
+![Esercizio 1 risolto: la mano con pallini rossi più grandi, uniti da linee bianche](../img/lezione-01-esercizio-1.png){ width="400" }
+
 ??? example "Soluzione"
     Nel pezzo **4) i punti**, cambia il colore e il diametro:
     ```javascript
     fill(255, 0, 0);               // rosso
     circle(punto.x, punto.y, 20);  // diametro 20 invece di 10
     ```
-    ![Esercizio 1 risolto: la mano con pallini rossi più grandi, uniti da linee bianche](../img/lezione-01-esercizio-1.png){ width="400" }
 
 ### Esercizio 2 — Ossa colorate
 
 **Risultato:** le linee diventano viola e molto più spesse.
+
+**Cosa dovresti vedere** (la tua schermata, dopo aver risolto):
+
+![Esercizio 2 risolto: la mano con ossa viola spesse e pallini verdi](../img/lezione-01-esercizio-2.png){ width="400" }
 
 *Suggerimento:* il colore delle linee lo sceglie `stroke`, lo spessore `strokeWeight`.
 
@@ -269,12 +281,15 @@ successo quello che ti aspettavi.
     stroke(255, 0, 255);   // viola: rosso + blu
     strokeWeight(8);       // 8 pixel invece di 3
     ```
-    ![Esercizio 2 risolto: la mano con ossa viola spesse e pallini verdi](../img/lezione-01-esercizio-2.png){ width="400" }
 
 ### Esercizio 3 — Solo la punta dell'indice
 
 **Risultato:** al posto dei 21 pallini resta **un solo** pallino, grande e giallo, sulla punta
 dell'indice. Le ossa restano.
+
+**Cosa dovresti vedere** (la tua schermata, dopo aver risolto):
+
+![Esercizio 3 risolto: le ossa bianche della mano e un solo pallino giallo sulla punta dell'indice](../img/lezione-01-esercizio-3.png){ width="400" }
 
 *Suggerimento:* la punta dell'indice è il punto numero 8. Non serve il `for` dei punti.
 
@@ -285,12 +300,15 @@ dell'indice. Le ossa restano.
     fill(255, 255, 0);               // giallo
     circle(punta.x, punta.y, 30);
     ```
-    ![Esercizio 3 risolto: le ossa bianche della mano e un solo pallino giallo sulla punta dell'indice](../img/lezione-01-esercizio-3.png){ width="400" }
 
 ### Esercizio 4 — Dove sta il dito?
 
 **Risultato:** in alto a sinistra compaiono le coordinate della punta dell'indice, per esempio
 `x = 312   y = 145`, e cambiano mentre muovi il dito.
+
+**Cosa dovresti vedere** (la tua schermata, dopo aver risolto):
+
+![Esercizio 4 risolto: in alto a sinistra le coordinate x e y della punta dell'indice, scritte in nero](../img/lezione-01-esercizio-4.png){ width="400" }
 
 *Suggerimento:* `text("ciao", 20, 40)` scrive «ciao» alla posizione (20, 40); `textSize(32)`
 sceglie la grandezza. In JavaScript i testi si uniscono con `+`, e `round()` toglie i decimali.
@@ -302,7 +320,6 @@ sceglie la grandezza. In JavaScript i testi si uniscono con `+`, e `round()` tog
     textSize(32);
     text("x = " + round(punta.x) + "   y = " + round(punta.y), 20, 40);
     ```
-    ![Esercizio 4 risolto: in alto a sinistra le coordinate x e y della punta dell'indice, scritte in nero](../img/lezione-01-esercizio-4.png){ width="400" }
 
     Prova a muovere il dito verso l'alto: la **y diminuisce**. Ricordatelo, servirà nella
     lezione 2 per capire se un dito è alzato.
@@ -316,6 +333,7 @@ sceglie la grandezza. In JavaScript i testi si uniscono con `+`, e `round()` tog
 | A destra resta tutto vuoto, niente webcam | Il browser non ha il permesso: clicca l'icona della webcam nella barra dell'indirizzo e consenti, poi premi ▶ di nuovo |
 | La webcam si vede, ma niente pallini | Aspetta 10–20 secondi: alla prima volta il modello si sta scaricando. Poi controlla che la mano sia ben illuminata e intera nell'immagine |
 | Sotto il codice c'è scritto `ml5 is not defined` | Manca la riga del passo 2 in `index.html`, è scritta male o è finita in mezzo alla riga di p5.js |
+| Sotto il codice c'è scritto `Cannot read properties of undefined (reading 'getConnections')` | Il modello non si è scaricato (internet lento o interrotto): controlla la connessione e premi ▶ di nuovo |
 | Un altro errore in rosso sotto il codice | Hai cancellato o cambiato un pezzo per sbaglio: incolla di nuovo il programma del passo 3 |
 | Mostri due mani ma ne vedi disegnata una | È giusto così: il programma cerca una mano sola (`maxHands: 1`) |
 

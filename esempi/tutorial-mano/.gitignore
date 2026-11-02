@@ -1,0 +1,5 @@
+node_modules/
+dist/
+tests/fake-webcam/*.jpg
+tests/fake-webcam/*.mjpeg
+tests/fake-webcam/result.png

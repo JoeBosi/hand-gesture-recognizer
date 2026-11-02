@@ -589,3 +589,42 @@ footer {
     break-before: page;
   }
 }
+
+/* --- «Provalo online» e «Cosa dovresti vedere» (schermate vere del risultato) ------------------- */
+.prova {
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin: 14px 0 18px;
+  font-size: 0.96rem;
+  background: rgb(74 222 128 / 0.07);
+  border: 1px solid rgb(74 222 128 / 0.35);
+}
+.prova > strong:first-child {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #4ade80;
+}
+.prova p {
+  margin: 0 0 8px;
+}
+.prova pre {
+  overflow-x: auto;
+}
+figure.schermata {
+  margin: 10px 0 4px;
+}
+figure.schermata img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid rgb(148 163 184 / 0.3);
+}
+figure.schermata figcaption {
+  margin-top: 6px;
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
