@@ -1,12 +1,60 @@
-{#- hreflang: ogni pagina indica se stessa e l'altra lingua; x-default = italiano (Google Search Central). -#}
 {% extends "base.html" %}
+{#- SEO (2/11/2026): titolo e descrizione di ogni pagina, Open Graph, Twitter e dati strutturati
+    Course. Una riga per pagina, chiave = page.url; le pagine nuove senza riga usano i valori del sito. -#}
+{%- set seo_pagine = {
+  "": ["Corso p5.js e ml5.js: riconoscere la mano dalla webcam · La mano al computer",
+       "Corso per la scuola: con p5.js e ml5.js gli studenti che conoscono il C riconoscono la mano dalla webcam e costruiscono un gioco da comandare con le dita."],
+  "lezioni/01-punti-della-mano/": ["Lezione 1: i 21 punti e le ossa della mano con ml5 handPose · La mano al computer",
+       "Prima lezione: accendi la webcam nell'editor di p5.js e disegna sulla mano i 21 punti e le ossa con ml5 handPose, passo per passo con le schermate."],
+  "en/": ["p5.js and ml5.js course: recognize the hand from the webcam · The Hand on the Computer",
+       "A school course: with p5.js and ml5.js, students who know C recognize the hand from the webcam and build a game you control with your fingers."],
+  "en/lezioni/01-punti-della-mano/": ["Lesson 1: the 21 hand points and bones with ml5 handPose · The Hand on the Computer",
+       "First lesson: turn on the webcam in the p5.js editor and draw the 21 points and the bones of the hand with ml5 handPose, step by step with screenshots."],
+} %}
+{%- set seo = seo_pagine.get(page.url if page and page.url is not none else "", none) %}
+{%- if seo and page and page.meta is not none %}{% set _ = page.meta.update({"description": seo[1]}) %}{% endif %}
+{%- set inglese = page and page.url is not none and page.url.startswith("en/") %}
+
+{% block htmltitle %}
+  {%- if seo %}<title>{{ seo[0] }}</title>{% else %}{{ super() }}{% endif %}
+{% endblock %}
+
 {% block extrahead %}
   {{ super() }}
   {%- if page and page.url is not none %}
   {%- set base = "https://mano.giuseppebosi.com/scuola/mkdocs/" %}
-  {%- set rel = page.url | replace("en/", "", 1) if page.url.startswith("en/") else page.url %}
+  {%- set rel = page.url | replace("en/", "", 1) if inglese else page.url %}
   <link rel="alternate" hreflang="it" href="{{ base }}{{ rel }}" />
   <link rel="alternate" hreflang="en" href="{{ base }}en/{{ rel }}" />
   <link rel="alternate" hreflang="x-default" href="{{ base }}{{ rel }}" />
+  {%- if seo %}
+  {%- set img = "https://mano.giuseppebosi.com/og-mano-en.png" if inglese else "https://mano.giuseppebosi.com/og-mano.png" %}
+  {%- set alt = "A drawn hand with 21 green points joined by white lines, and the title Mano" if inglese else "Una mano disegnata con 21 punti verdi uniti da linee bianche, e il titolo Mano" %}
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="{{ config.site_name }}" />
+  <meta property="og:locale" content="{{ 'en_US' if inglese else 'it_IT' }}" />
+  <meta property="og:title" content="{{ seo[0] }}" />
+  <meta property="og:description" content="{{ seo[1] }}" />
+  <meta property="og:url" content="{{ base }}{{ page.url }}" />
+  <meta property="og:image" content="{{ img }}" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="{{ alt }}" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="{{ seo[0] }}" />
+  <meta name="twitter:description" content="{{ seo[1] }}" />
+  <meta name="twitter:image" content="{{ img }}" />
+  <meta name="twitter:image:alt" content="{{ alt }}" />
+  <script type="application/ld+json">{{ {
+    "@context": "https://schema.org", "@type": "Course", "name": seo[0], "description": seo[1],
+    "url": base ~ page.url, "inLanguage": "en" if inglese else "it", "image": img,
+    "isAccessibleForFree": true, "license": "https://creativecommons.org/licenses/by/4.0/",
+    "author": {"@type": "Person", "name": "Giuseppe Bosi", "honorificPrefix": "Prof.",
+               "url": "https://www.giuseppebosi.com/en/" if inglese else "https://www.giuseppebosi.com",
+               "sameAs": ["https://www.giuseppebosi.com", "https://www.linkedin.com/in/giuseppebosi",
+                          "https://github.com/JoeBosi/hand-gesture-recognizer"]},
+    "provider": {"@type": "Person", "name": "Giuseppe Bosi", "url": "https://www.giuseppebosi.com"}
+  } | tojson }}</script>
+  {%- endif %}
   {%- endif %}
 {% endblock %}

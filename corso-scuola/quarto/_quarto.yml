@@ -16,7 +16,7 @@ website:
   page-navigation: true
   # Link assoluti: Quarto riscrive quelli che iniziano con / come pagine del proprio progetto.
   page-footer:
-    center: 'Prof. Giuseppe Bosi, Scienze e Tecnologie Informatiche<br>Testi <a href="https://creativecommons.org/licenses/by/4.0/deed.it">CC BY 4.0</a> · Codice <a href="https://opensource.org/license/mit">MIT</a> · <a href="https://mano.giuseppebosi.com/crediti/">Crediti</a> · <a href="https://mano.giuseppebosi.com/privacy/">Privacy</a>'
+    center: 'Prof. Giuseppe Bosi, Scienze e Tecnologie Informatiche<br>Testi <a href="https://creativecommons.org/licenses/by/4.0/deed.it">CC BY 4.0</a> · Codice <a href="https://opensource.org/license/mit">MIT</a> · <a href="https://mano.giuseppebosi.com/crediti/">Crediti</a> · <a href="https://mano.giuseppebosi.com/privacy/">Privacy</a><br><a href="https://www.giuseppebosi.com">www.giuseppebosi.com</a> · <a href="https://github.com/JoeBosi/hand-gesture-recognizer">GitHub</a> · <a href="https://www.linkedin.com/in/giuseppebosi">LinkedIn</a>'
   back-to-top-navigation: true
   sidebar:
     style: docked

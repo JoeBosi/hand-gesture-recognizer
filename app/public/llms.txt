@@ -12,6 +12,8 @@
 - [Tutorial](https://mano.giuseppebosi.com/tutorial/): come si programma da zero una web app che riconosce la mano dalla webcam.
 - [Corso di TypeScript](https://mano.giuseppebosi.com/corso/): 10 lezioni, dalla prima variabile alla mano che segue la webcam.
 - [La mano al computer, corso per la scuola](https://mano.giuseppebosi.com/scuola/): p5.js e ml5.js per chi conosce il C, in tre versioni (MkDocs, Quarto, mdBook).
+- [Lezione 1: i punti e le ossa della mano](https://mano.giuseppebosi.com/scuola/mkdocs/lezioni/01-punti-della-mano/): webcam e ml5 handPose nell'editor di p5.js, passo per passo.
+- [Codice sorgente su GitHub](https://github.com/JoeBosi/hand-gesture-recognizer): tutto il sito, licenza MIT.
 
 ## Altri corsi dello stesso autore
 - [Giuseppe Bosi](https://www.giuseppebosi.com): sito dell'autore.
@@ -33,4 +35,6 @@ The whole site is also in English under /en/ (by Prof. Giuseppe Bosi, Master's-l
 - [Tutorial](https://mano.giuseppebosi.com/en/tutorial/): how to build a web app that recognizes the hand from the webcam, from scratch.
 - [TypeScript Course](https://mano.giuseppebosi.com/en/corso/): 10 lessons, from the first variable to a hand that follows the webcam.
 - [The Hand on the Computer](https://mano.giuseppebosi.com/scuola/mkdocs/en/): school course with p5.js and ml5.js for students who know C.
+- [Lesson 1: the points and the bones of the hand](https://mano.giuseppebosi.com/scuola/mkdocs/en/lezioni/01-punti-della-mano/): webcam and ml5 handPose in the p5.js editor, step by step.
+- [Source code on GitHub](https://github.com/JoeBosi/hand-gesture-recognizer): the whole site, MIT license.
 - [Credits](https://mano.giuseppebosi.com/en/crediti/) · [Privacy](https://mano.giuseppebosi.com/en/privacy/)

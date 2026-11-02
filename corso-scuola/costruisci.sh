@@ -36,6 +36,8 @@ python3 -I corso-scuola/convertitore/converti.py mdbook corso-scuola/docs "$LIBR
 cp corso-scuola/mdbook/book.toml "$LIBRO/"
 "$MDBOOK" build "$LIBRO" -d "$PWD/corso-scuola/site-mdbook" 2>&1 | grep -v ' INFO ' || true
 [ -s corso-scuola/site-mdbook/index.html ] || { echo "mdbook: costruzione fallita" >&2; exit 1; }
+# Quarto e mdBook sono copie della versione MkDocs: canonical verso MkDocs, alt, un solo h1.
+python3 -I corso-scuola/seo-copie.py corso-scuola/site-quarto corso-scuola/site-mdbook
 
 if [ $# -ge 1 ]; then
   DEST="$1/scuola"

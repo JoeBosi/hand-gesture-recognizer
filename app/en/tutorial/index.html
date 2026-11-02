@@ -15,21 +15,28 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Tutorial: how to program from scratch a web app that recognizes the hand from the webcam and animates it in 3D in the browser."
-    />
+    <meta name="description" content="How to build, from scratch, a web app that recognizes the hand from the webcam with MediaPipe and animates it in 3D with Three.js, step by step." />
     <meta name="theme-color" content="#0b1020" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>Tutorial · Mano</title>
+    <title>Tutorial: build a hand-tracking web app with MediaPipe and Three.js · Mano</title>
     <link rel="canonical" href="https://mano.giuseppebosi.com/en/tutorial/" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Mano" />
-    <meta property="og:locale" content="en_GB" />
-    <meta property="og:title" content="Tutorial · Mano" />
-    <meta property="og:description" content="Tutorial: how to program from scratch a web app that recognizes the hand from the webcam and animates it in 3D in the browser." />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="it_IT" />
+    <meta property="og:title" content="Tutorial: build a hand-tracking web app with MediaPipe and Three.js · Mano" />
+    <meta property="og:description" content="How to build, from scratch, a web app that recognizes the hand from the webcam with MediaPipe and animates it in 3D with Three.js, step by step." />
     <meta property="og:url" content="https://mano.giuseppebosi.com/en/tutorial/" />
-    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Course", "name": "Tutorial · Mano", "description": "Tutorial: how to program from scratch a web app that recognizes the hand from the webcam and animates it in 3D in the browser.", "url": "https://mano.giuseppebosi.com/en/tutorial/", "inLanguage": "en", "author": {"@type": "Person", "name": "Giuseppe Bosi", "honorificPrefix": "Prof.", "jobTitle": "Teacher of Computer Science and Technology", "url": "https://www.giuseppebosi.com/en/", "sameAs": ["https://www.giuseppebosi.com", "https://www.linkedin.com/in/giuseppebosi"]}, "provider": {"@type": "Person", "name": "Giuseppe Bosi", "honorificPrefix": "Prof.", "jobTitle": "Teacher of Computer Science and Technology", "url": "https://www.giuseppebosi.com/en/", "sameAs": ["https://www.giuseppebosi.com", "https://www.linkedin.com/in/giuseppebosi"]}, "isAccessibleForFree": true, "license": "https://creativecommons.org/licenses/by/4.0/"}</script>
+    <meta property="og:image" content="https://mano.giuseppebosi.com/og-mano-en.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="A drawn hand with 21 green points joined by white lines, and the title Mano" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Tutorial: build a hand-tracking web app with MediaPipe and Three.js · Mano" />
+    <meta name="twitter:description" content="How to build, from scratch, a web app that recognizes the hand from the webcam with MediaPipe and animates it in 3D with Three.js, step by step." />
+    <meta name="twitter:image" content="https://mano.giuseppebosi.com/og-mano-en.png" />
+    <meta name="twitter:image:alt" content="A drawn hand with 21 green points joined by white lines, and the title Mano" />
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Course", "name": "Tutorial: build a hand-tracking web app with MediaPipe and Three.js · Mano", "description": "How to build, from scratch, a web app that recognizes the hand from the webcam with MediaPipe and animates it in 3D with Three.js, step by step.", "url": "https://mano.giuseppebosi.com/en/tutorial/", "inLanguage": "en", "author": {"@type": "Person", "name": "Giuseppe Bosi", "honorificPrefix": "Prof.", "jobTitle": "Teacher of Computer Science and Technology", "url": "https://www.giuseppebosi.com/en/", "sameAs": ["https://www.giuseppebosi.com", "https://www.linkedin.com/in/giuseppebosi", "https://github.com/JoeBosi/hand-gesture-recognizer"]}, "image": "https://mano.giuseppebosi.com/og-mano-en.png", "provider": {"@type": "Person", "name": "Giuseppe Bosi", "honorificPrefix": "Prof.", "jobTitle": "Teacher of Computer Science and Technology", "url": "https://www.giuseppebosi.com/en/", "sameAs": ["https://www.giuseppebosi.com", "https://www.linkedin.com/in/giuseppebosi", "https://github.com/JoeBosi/hand-gesture-recognizer"]}, "isAccessibleForFree": true, "license": "https://creativecommons.org/licenses/by/4.0/"}</script>
     <link rel="alternate" hreflang="it" href="https://mano.giuseppebosi.com/tutorial/" />
     <link rel="alternate" hreflang="en" href="https://mano.giuseppebosi.com/en/tutorial/" />
     <link rel="alternate" hreflang="x-default" href="https://mano.giuseppebosi.com/tutorial/" />

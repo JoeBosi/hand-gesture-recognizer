@@ -22,7 +22,7 @@ import re, shutil, sys
 from pathlib import Path
 
 FORMATO = "quarto"
-PIEDE = ('<small>Prof. Giuseppe Bosi, Scienze e Tecnologie Informatiche<br>' 'Testi <a href="https://creativecommons.org/licenses/by/4.0/deed.it">CC BY 4.0</a> · Codice <a href="https://opensource.org/license/mit">MIT</a> · <a href="/crediti/">Crediti</a> · <a href="/privacy/">Privacy</a></small>')
+PIEDE = ('<small>Prof. Giuseppe Bosi, Scienze e Tecnologie Informatiche<br>' 'Testi <a href="https://creativecommons.org/licenses/by/4.0/deed.it">CC BY 4.0</a> · Codice <a href="https://opensource.org/license/mit">MIT</a> · <a href="/crediti/">Crediti</a> · <a href="/privacy/">Privacy</a><br><a href="https://www.giuseppebosi.com">www.giuseppebosi.com</a> · <a href="https://github.com/JoeBosi/hand-gesture-recognizer">GitHub</a> · <a href="https://www.linkedin.com/in/giuseppebosi">LinkedIn</a></small>')
 ALLARMI = {"tip": "TIP", "note": "NOTE", "warning": "WARNING", "important": "IMPORTANT"}
 TIPI = {"success": "tip", "tip": "tip", "note": "note", "info": "note", "warning": "warning",
         "danger": "important", "example": "note", "question": "note"}

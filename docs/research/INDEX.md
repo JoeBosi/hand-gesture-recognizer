@@ -37,3 +37,4 @@ the topic (rules R2/R4 in `CLAUDE.md`).
 - [2026-10-11 ml5 handPose + p5.js per la scuola](2026-10-11-ml5-handpose-p5-scuola.md) — versioni, API minima, prova con webcam finta
 - [2026-10-29 Sito bilingue](2026-10-29-sito-bilingue.md) — mkdocs-static-i18n, hreflang, pagine /en/
 - [2026-10-30 ml5: una mano sola e le ossa](2026-10-30-ml5-una-mano-e-ossa.md) — maxHands: 1, getConnections(), prova nell'editor p5.js vero
+- [2026-11-02 SEO e IndexNow](2026-11-02-seo-indexnow.md) — titoli, OG/Twitter, JSON-LD, canonical delle copie, IndexNow

@@ -1,38 +1,49 @@
 <!doctype html>
-<!--
-  sfida/index.html — sasso, carta, forbici fra due persone.
-
-  Due giocatori davanti alla stessa webcam, una mano a testa. La partita è a round: si conta
-  «tre, due, uno, via!», in quel momento la pagina guarda i due gesti, assegna il punto, e si
-  ricomincia. Chi arriva a 2 punti vince.
-
-  Perché funziona senza addestrare niente: sasso, carta e forbici sono TRE DEGLI OTTO gesti che il
-  modello di MediaPipe già conosce — `Closed_Fist`, `Open_Palm`, `Victory`. Il progetto quel
-  modello ce l'ha già in casa per la pagina principale, quindi questa pagina non aggiunge né
-  dipendenze né file da scaricare.
-
-  Chi è il giocatore 1 e chi il 2 lo decide la POSIZIONE sullo schermo, non l'etichetta
-  destra/sinistra del modello: la posizione è una misura, l'etichetta è un'ipotesi che il modello
-  fa assumendo di vedere una persona sola allo specchio — e qui le persone sono due.
-
-  Regola della CSP di produzione: niente <script> scritti qui dentro, niente attributi style="",
-  nessun indirizzo esterno.
--->
 <html lang="it">
   <head>
     <meta charset="UTF-8" />
+    <!--
+      sfida/index.html — sasso, carta, forbici fra due persone.
+
+      Due giocatori davanti alla stessa webcam, una mano a testa. La partita è a round: si conta
+      «tre, due, uno, via!», in quel momento la pagina guarda i due gesti, assegna il punto, e si
+      ricomincia. Chi arriva a 2 punti vince.
+
+      Perché funziona senza addestrare niente: sasso, carta e forbici sono TRE DEGLI OTTO gesti che il
+      modello di MediaPipe già conosce — `Closed_Fist`, `Open_Palm`, `Victory`. Il progetto quel
+      modello ce l'ha già in casa per la pagina principale, quindi questa pagina non aggiunge né
+      dipendenze né file da scaricare.
+
+      Chi è il giocatore 1 e chi il 2 lo decide la POSIZIONE sullo schermo, non l'etichetta
+      destra/sinistra del modello: la posizione è una misura, l'etichetta è un'ipotesi che il modello
+      fa assumendo di vedere una persona sola allo specchio — e qui le persone sono due.
+
+      Regola della CSP di produzione: niente <script> scritti qui dentro, niente attributi style="",
+      nessun indirizzo esterno.
+    -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Sasso, carta, forbici fra due persone davanti alla webcam: il primo a 2 punti vince. Tutto nel browser." />
+    <meta name="description" content="Gioca a sasso, carta, forbici in due davanti alla stessa webcam: il computer riconosce i gesti delle mani e tiene il punteggio. Vince chi arriva a 2 punti." />
     <meta name="theme-color" content="#0b1020" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>Sfida</title>
+    <title>Sasso, carta, forbici con la webcam: sfida a due giocatori · Mano</title>
     <link rel="canonical" href="https://mano.giuseppebosi.com/sfida/" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Mano" />
     <meta property="og:locale" content="it_IT" />
-    <meta property="og:title" content="Sfida" />
-    <meta property="og:description" content="Sasso, carta, forbici fra due persone davanti alla webcam: il primo a 2 punti vince. Tutto nel browser." />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:title" content="Sasso, carta, forbici con la webcam: sfida a due giocatori · Mano" />
+    <meta property="og:description" content="Gioca a sasso, carta, forbici in due davanti alla stessa webcam: il computer riconosce i gesti delle mani e tiene il punteggio. Vince chi arriva a 2 punti." />
     <meta property="og:url" content="https://mano.giuseppebosi.com/sfida/" />
+    <meta property="og:image" content="https://mano.giuseppebosi.com/og-mano.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Una mano disegnata con 21 punti verdi uniti da linee bianche, e il titolo Mano" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Sasso, carta, forbici con la webcam: sfida a due giocatori · Mano" />
+    <meta name="twitter:description" content="Gioca a sasso, carta, forbici in due davanti alla stessa webcam: il computer riconosce i gesti delle mani e tiene il punteggio. Vince chi arriva a 2 punti." />
+    <meta name="twitter:image" content="https://mano.giuseppebosi.com/og-mano.png" />
+    <meta name="twitter:image:alt" content="Una mano disegnata con 21 punti verdi uniti da linee bianche, e il titolo Mano" />
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Sasso, carta, forbici con la webcam: sfida a due giocatori · Mano", "description": "Gioca a sasso, carta, forbici in due davanti alla stessa webcam: il computer riconosce i gesti delle mani e tiene il punteggio. Vince chi arriva a 2 punti.", "url": "https://mano.giuseppebosi.com/sfida/", "inLanguage": "it", "author": {"@type": "Person", "name": "Giuseppe Bosi", "honorificPrefix": "Prof.", "jobTitle": "Professore di Scienze e Tecnologie Informatiche", "url": "https://www.giuseppebosi.com", "sameAs": ["https://www.giuseppebosi.com", "https://www.linkedin.com/in/giuseppebosi", "https://github.com/JoeBosi/hand-gesture-recognizer"]}, "image": "https://mano.giuseppebosi.com/og-mano.png", "applicationCategory": "EducationalApplication", "operatingSystem": "Web browser", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"}}</script>
     <link rel="alternate" hreflang="it" href="https://mano.giuseppebosi.com/sfida/" />
     <link rel="alternate" hreflang="en" href="https://mano.giuseppebosi.com/en/sfida/" />
     <link rel="alternate" hreflang="x-default" href="https://mano.giuseppebosi.com/sfida/" />
