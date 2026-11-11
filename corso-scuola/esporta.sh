@@ -65,6 +65,17 @@ stampa starlight "" lezioni/01-punti-della-mano/
 # MkDocs: mkdocs-to-pdf 0.12.1 (WeasyPrint), nel .venv; config corso-scuola/mkdocs-pdf.yml
 .venv/bin/mkdocs build -q -f corso-scuola/mkdocs-pdf.yml >/dev/null 2>&1
 cp "$LAV/mkdocs-pdf/pdf/$NOME.pdf" "$OUT/mkdocs/$NOME-plugin-to-pdf.pdf"
+# MkDocs: mkdocs-print-site-plugin 2.9 (pagina unica) + pandoc di Quarto → EPUB, Word, .tex, PDF via LaTeX
+.venv/bin/mkdocs build -q -f corso-scuola/mkdocs-print.yml >/dev/null 2>&1
+MP="$LAV/mkdocs-print"
+.venv/bin/python corso-scuola/esporta/mkdocs-pandoc.py "$MP/print_page/index.html" "$MP/corso.html"
+for f in epub docx tex pdf; do
+  E=(); [ $f = pdf ] && E=(--pdf-engine=xelatex -V mainfont=DejaVuSans -V geometry:margin=2cm); [ $f = tex ] && E=(-s)
+  (cd "$MP" && PATH="$HOME/.TinyTeX/bin/x86_64-linux:$PATH" "$(dirname "$QUARTO")/tools/x86_64/pandoc" corso.html -f html \
+     -o "$OUT/mkdocs/$NOME-plugin-pandoc.$f" --resource-path=. -M title="La mano al computer" \
+     -M author="Prof. Giuseppe Bosi, Scienze e Tecnologie Informatiche" -M lang=it --toc "${E[@]}" >/dev/null 2>&1)
+done
+mv "$OUT/mkdocs/$NOME-plugin-pandoc.pdf" "$OUT/mkdocs/$NOME-plugin-pandoc-latex.pdf"
 # Starlight: starlight-to-pdf 1.4.0 (Puppeteer) sul sito servito qui sopra; Chrome senza sandbox perché si è root
 (cd corso-scuola/starlight && npx starlight-to-pdf "http://127.0.0.1:$PORTA/scuola/starlight/" \
    --browser-executable "$PWD/../esporta/chrome-root.sh" -p "$OLDPWD/$LAV" -f starlight-plugin \

@@ -1,0 +1,11 @@
+# Export EPUB/Word/LaTeX della versione MkDocs (prova 11/11/2026): mkdocs-print-site-plugin 2.9 unisce il corso
+# in una pagina (print_page/), poi pandoc la converte. Lo usa corso-scuola/esporta.sh.
+INHERIT: mkdocs.yml
+site_dir: ../corso-scuola/esporta-lavoro/mkdocs-print
+plugins:
+  - search
+  - print-site:
+      add_to_navigation: false
+      add_cover_page: false
+      add_table_of_contents: false
+      enumerate_headings: false
