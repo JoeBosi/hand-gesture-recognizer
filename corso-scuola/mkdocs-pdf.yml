@@ -1,0 +1,12 @@
+# Export PDF della versione MkDocs con il plugin di terze parti mkdocs-to-pdf (WeasyPrint), 11/11/2026.
+# Lo usa corso-scuola/esporta.sh; il sito normale resta mkdocs.yml.
+INHERIT: mkdocs.yml
+site_dir: ../corso-scuola/esporta-lavoro/mkdocs-pdf
+plugins:
+  - search
+  - to-pdf:
+      author: Prof. Giuseppe Bosi, Scienze e Tecnologie Informatiche
+      cover_title: La mano al computer
+      cover_subtitle: Riconoscere la mano dalla webcam
+      toc_title: Indice
+      output_path: pdf/La-mano-al-computer.pdf

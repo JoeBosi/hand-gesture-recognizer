@@ -61,4 +61,26 @@ stampa mkdocs    "" lezioni/01-punti-della-mano/
 stampa quarto    index.html lezioni/01-punti-della-mano.html
 stampa mdbook    print.html
 stampa starlight "" lezioni/01-punti-della-mano/
+# 4. Plugin di terze parti, installati nel progetto (11/11/2026, ok di Giuseppe)
+# MkDocs: mkdocs-to-pdf 0.12.1 (WeasyPrint), nel .venv; config corso-scuola/mkdocs-pdf.yml
+.venv/bin/mkdocs build -q -f corso-scuola/mkdocs-pdf.yml >/dev/null 2>&1
+cp "$LAV/mkdocs-pdf/pdf/$NOME.pdf" "$OUT/mkdocs/$NOME-plugin-to-pdf.pdf"
+# Starlight: starlight-to-pdf 1.4.0 (Puppeteer) sul sito servito qui sopra; Chrome senza sandbox perché si è root
+(cd corso-scuola/starlight && npx starlight-to-pdf "http://127.0.0.1:$PORTA/scuola/starlight/" \
+   --browser-executable "$PWD/../esporta/chrome-root.sh" -p "$OLDPWD/$LAV" -f starlight-plugin \
+   --contents-name Indice --format A4 >/dev/null 2>&1)
+cp "$LAV/starlight-plugin.pdf" "$OUT/starlight/$NOME-plugin-starlight-to-pdf.pdf"
+# mdBook: mdbook-typst-pdf, mdbook-pandoc, mdbook-epub, se presenti in strumenti/mdbook-plugin/
+PLUG="$PWD/strumenti/mdbook-plugin"
+if [ -x "$PLUG/mdbook-epub" ]; then
+  MDBOOK="$PWD/$(ls -d strumenti/mdbook-*/mdbook | grep -v plugin | tail -1)"
+  LIB="$LAV/mdbook-plugin"; rm -rf "$LIB"; cp -r corso-scuola/mdbook-lavoro "$LIB"
+  cat corso-scuola/esporta/book-plugin.toml >> "$LIB/book.toml"
+  (cd "$LIB" && PATH="$PLUG:$(dirname "$QUARTO")/../bin/tools/x86_64:$(dirname "$QUARTO")/../bin/tools:$PATH" "$MDBOOK" build -d out) >/dev/null 2>&1 || true
+  find "$LIB/out" -name '*.epub' -exec cp {} "$OUT/mdbook/$NOME-plugin-epub.epub" \;
+  find "$LIB/out/typst-pdf" -name '*.pdf' -exec cp {} "$OUT/mdbook/$NOME-plugin-typst.pdf" \; 2>/dev/null || true
+  find "$LIB/out/pandoc" -name '*.pdf' -exec cp {} "$OUT/mdbook/$NOME-plugin-pandoc-latex.pdf" \; 2>/dev/null || true
+  find "$LIB/out/pandoc" -name '*.tex' -exec cp {} "$OUT/mdbook/$NOME-plugin-pandoc.tex" \; 2>/dev/null || true
+  find "$LIB/out/pandoc" -name '*.docx' -exec cp {} "$OUT/mdbook/$NOME-plugin-pandoc.docx" \; 2>/dev/null || true
+fi
 echo "export pronti in $OUT"; find "$OUT" -type f | sort

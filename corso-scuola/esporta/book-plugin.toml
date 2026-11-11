@@ -1,0 +1,16 @@
+
+# Export con plugin di terze parti (aggiunto da esporta.sh, non nel sito)
+[output.epub]
+
+[output.typst-pdf]
+
+[output.pandoc.profile.pdf]
+output-file = "La-mano-al-computer.pdf"
+pdf-engine = "xelatex"
+
+[output.pandoc.profile.latex]
+output-file = "La-mano-al-computer.tex"
+standalone = true
+
+[output.pandoc.profile.docx]
+output-file = "La-mano-al-computer.docx"
