@@ -1,0 +1,3 @@
+/* Tema chiaro e piè di pagina piccolo, come nelle altre versioni */
+.piede { font-size: var(--sl-text-xs); color: var(--sl-color-gray-3); margin-top: 1.5rem; }
+.sl-markdown-content img { max-width: 100%; height: auto; }

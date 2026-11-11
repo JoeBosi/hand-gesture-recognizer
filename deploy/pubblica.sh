@@ -19,7 +19,7 @@ echo "2. Compilazione"
 ( cd app && npm run build ) >/dev/null
 echo "   ok  ($(du -sh "$DIST" | cut -f1))"
 
-echo "2b. Corso per la scuola (MkDocs, Quarto e mdBook, in $DIST/scuola/)"
+echo "2b. Corso per la scuola (MkDocs, Quarto, mdBook e Starlight, in $DIST/scuola/)"
 corso-scuola/costruisci.sh "$DIST" >/dev/null 2>&1 || { echo "   KO: corso-scuola/costruisci.sh" >&2; exit 1; }
 echo "   ok"
 
@@ -46,8 +46,8 @@ for PAGINA in $(find "$DIST" -name '*.html'); do
   # Il testo dentro <pre> è codice da leggere, non da caricare: nel corso c'è l'esempio
   # <script src="https://unpkg.com/ml5…"> da copiare nell'editor di p5.js, e mdBook lo lascia con le
   # virgolette vere (gli altri le scrivono &quot;). Si toglie prima di cercare le risorse esterne.
-  # Anche <link rel="canonical"> (MkDocs) è solo un indirizzo dichiarato: non scarica nulla.
-  RISORSE=$(perl -0777 -pe 's/<pre\b.*?<\/pre>//gs; s/<link rel="canonical"[^>]*>//g' <<<"$MARKUP")
+  # Anche <link rel="canonical"> e <link rel="alternate" hreflang> sono solo indirizzi dichiarati: non scaricano nulla.
+  RISORSE=$(perl -0777 -pe 's/<pre\b.*?<\/pre>//gs; s/<link rel="(canonical|alternate)"[^>]*>//g' <<<"$MARKUP")
   if grep -qE '(src="https?://|<link[^>]*href="https?://)' <<<"$RISORSE"; then
     echo "   KO: risorsa esterna in ${PAGINA#$DIST/}: nessuna CDN è ammessa" >&2; exit 1
   fi
@@ -86,7 +86,7 @@ done
 # in app/vite.config.ts e il sito andrebbe online monco.
 for p in index.html sfida/index.html onda/index.html corpo/index.html tutorial/index.html corso/index.html crediti/index.html privacy/index.html \
          en/index.html en/sfida/index.html en/onda/index.html en/corpo/index.html en/tutorial/index.html en/corso/index.html en/crediti/index.html en/privacy/index.html scuola/mkdocs/en/index.html \
-         scuola/index.html scuola/mkdocs/index.html scuola/quarto/index.html scuola/mdbook/index.html; do
+         scuola/index.html scuola/mkdocs/index.html scuola/quarto/index.html scuola/mdbook/index.html scuola/starlight/index.html; do
   [ -s "$DIST/$p" ] || { echo "   KO: manca la pagina $p" >&2; exit 1; }
 done
 echo "   ok  (niente inline, niente CDN, niente telemetria o URL ignoti, i quattro modelli e tutte le pagine)"

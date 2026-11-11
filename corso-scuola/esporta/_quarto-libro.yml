@@ -1,0 +1,21 @@
+# Esportazioni del corso con Quarto (11/11/2026): lo stesso testo della versione web, come libro.
+# Lo usa corso-scuola/esporta.sh, sulla cartella di lavoro prodotta da convertitore/converti.py.
+project:
+  type: book
+  output-dir: _libro
+lang: it
+book:
+  title: "La mano al computer"
+  author: "Prof. Giuseppe Bosi, Scienze e Tecnologie Informatiche"
+  chapters:
+    - index.md
+    - lezioni/01-punti-della-mano.md
+format:
+  pdf:
+    documentclass: scrreprt
+    keep-tex: true
+    pdf-engine: xelatex
+  typst: default
+  docx: default
+  epub: default
+  odt: default

@@ -11,3 +11,9 @@ footer a { display: inline; padding: 0; border: 0; background: none; color: inhe
 /* Bandierina della lingua, come nella home page di www.giuseppebosi.com */
 a.lang { display: inline-flex; align-items: center; gap: 6px; font: 600 12px ui-monospace, monospace; white-space: nowrap; vertical-align: middle; }
 a.lang svg { border-radius: 2px; box-shadow: 0 0 0 1px #0002; flex: none; }
+.tabella { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: .9rem; }
+th, td { border: 1px solid #ccd; padding: .4rem .5rem; text-align: left; vertical-align: top; }
+thead th { background: #eef; }
+main:has(table) { max-width: 52rem; }
+table a { display: inline; padding: 0; border: 0; background: none; }

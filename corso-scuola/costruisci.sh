@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
-# Costruisce le due versioni del corso, dalla stessa fonte (corso-scuola/docs/, formato MkDocs):
+# Costruisce le quattro versioni del corso, dalla stessa fonte (corso-scuola/docs/, formato MkDocs):
 #   site/          → MkDocs + Material   (pubblicata in /scuola/mkdocs/)
 #   site-quarto/   → Quarto              (pubblicata in /scuola/quarto/)
 #   site-mdbook/   → mdBook              (pubblicata in /scuola/mdbook/)
+#   site-starlight/ → Astro + Starlight  (pubblicata in /scuola/starlight/)
 # Con un argomento copia le due versioni e la pagina di scelta in <cartella>/scuola/ (lo usa
 # deploy/pubblica.sh con app/dist).
 # Strumenti: .venv (mkdocs), strumenti/quarto-*/ e strumenti/mdbook-*/ — si installano con corso-scuola/installa-strumenti.sh
@@ -36,6 +37,13 @@ python3 -I corso-scuola/convertitore/converti.py mdbook corso-scuola/docs "$LIBR
 cp corso-scuola/mdbook/book.toml "$LIBRO/"
 "$MDBOOK" build "$LIBRO" -d "$PWD/corso-scuola/site-mdbook" 2>&1 | grep -v ' INFO ' || true
 [ -s corso-scuola/site-mdbook/index.html ] || { echo "mdbook: costruzione fallita" >&2; exit 1; }
+STAR=corso-scuola/starlight
+[ -d "$STAR/node_modules" ] || (cd "$STAR" && npm ci --no-audit --no-fund >/dev/null)
+rm -rf "$STAR/src/content/docs" "$STAR/public" corso-scuola/site-starlight
+python3 -I corso-scuola/convertitore/converti.py starlight corso-scuola/docs "$STAR/src/content/docs"
+find "$STAR/src/content/docs" -type d -empty -delete
+(cd "$STAR" && npx astro build >/dev/null 2>&1) || { echo "starlight: costruzione fallita" >&2; exit 1; }
+[ -s corso-scuola/site-starlight/index.html ] || { echo "starlight: manca index.html" >&2; exit 1; }
 # Quarto e mdBook sono copie della versione MkDocs: canonical verso MkDocs, alt, un solo h1.
 python3 -I corso-scuola/seo-copie.py corso-scuola/site-quarto corso-scuola/site-mdbook
 
@@ -45,8 +53,11 @@ if [ $# -ge 1 ]; then
   cp -r corso-scuola/site "$DEST/mkdocs"
   cp -r corso-scuola/site-quarto "$DEST/quarto"
   cp -r corso-scuola/site-mdbook "$DEST/mdbook"
+  cp -r corso-scuola/site-starlight "$DEST/starlight"
+  # gli export (PDF, Word, EPUB...) li fa esporta.sh, lento: qui si copiano quelli già pronti
+  [ -d corso-scuola/site-esporta ] && cp -r corso-scuola/site-esporta "$DEST/esporta"
   cp corso-scuola/scelta/* "$DEST/"
   # Material pubblica anche le mappe del suo codice compilato (.map): servono solo a chi fa debug.
   find "$DEST" -name '*.map' -delete
 fi
-echo "corso costruito: corso-scuola/site (MkDocs), site-quarto (Quarto), site-mdbook (mdBook)"
+echo "corso costruito: corso-scuola/site (MkDocs), site-quarto (Quarto), site-mdbook (mdBook), site-starlight (Starlight)"

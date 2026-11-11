@@ -16,7 +16,14 @@ Per mdBook (che non ha riquadri con titolo né attributi sulle immagini):
   ![alt](img){ width="480" }  →  <img src alt width>
   # Titolo resta com'è; in più si scrive SUMMARY.md (l'indice di mdBook)
 
-Uso: python3 -I converti.py <quarto|mdbook> <docs> <cartella di lavoro>
+Per Starlight (Astro, dal 11/11/2026):
+  !!! tipo "Titolo"   →  :::tip[Titolo] … :::  (riquadri di Starlight: note, tip, caution, danger)
+  ??? tipo "Titolo"   →  <details> come per mdBook
+  ![alt](../img/x){ width }  →  <img src="/scuola/starlight/img/x"> (le immagini stanno in public/img)
+  # Titolo in prima riga      →  title: nell'intestazione YAML
+  link a pagina.md            →  pagina/ (indirizzi di Astro)
+
+Uso: python3 -I converti.py <quarto|mdbook|starlight> <docs> <cartella di lavoro>
 """
 import re, shutil, sys
 from pathlib import Path
@@ -31,7 +38,7 @@ TIPI = {"success": "tip", "tip": "tip", "note": "note", "info": "note", "warning
 def converti(testo: str, docs: Path) -> str:
     righe = testo.split("\n")
     out, i = [], 0
-    if FORMATO == "quarto" and righe and righe[0].startswith("# "):
+    if FORMATO in ("quarto", "starlight") and righe and righe[0].startswith("# "):
         titolo = righe[0][2:].strip().replace('"', '\\"')
         out += ["---", f'title: "{titolo}"', "---"]
         i = 1
@@ -46,7 +53,7 @@ def converti(testo: str, docs: Path) -> str:
                 i += 1
             while corpo and corpo[-1] == "":
                 corpo.pop()
-            if FORMATO == "mdbook":
+            if FORMATO in ("mdbook", "starlight") and segno.startswith("???") or FORMATO == "mdbook":
                 interno = converti_corpo(corpo, docs)
                 if segno.startswith("???"):
                     out += [f"{rientro}<details{' open' if segno.endswith('+') else ''}>",
@@ -59,6 +66,12 @@ def converti(testo: str, docs: Path) -> str:
                         out += [f"{rientro}> **{titolo}**", f"{rientro}>"]
                     out += [f"{rientro}> {c}".rstrip() for c in interno]
                     out.append("")
+                continue
+            if FORMATO == "starlight":
+                tipo_sl = {"tip": "tip", "note": "note", "warning": "caution", "important": "danger"}[TIPI.get(tipo, "note")]
+                out.append(f"{rientro}:::{tipo_sl}" + (f"[{titolo}]" if titolo else ""))
+                out += [rientro + c if c else "" for c in converti_corpo(corpo, docs)]
+                out += [f"{rientro}:::", ""]
                 continue
             attr = f".callout-{TIPI.get(tipo, 'note')}"
             if segno.startswith("???"):
@@ -86,6 +99,12 @@ def sistema(testo: str, docs: Path) -> str:
         return "\n".join(rientro + l if l else l
                          for l in (docs / m.group(2)).read_text().rstrip("\n").split("\n"))
     testo = re.sub(r'^(\s*)--8<-- "([^"]+)"\s*$', includi, testo, flags=re.M)
+    if FORMATO == "starlight":
+        testo = re.sub(r'!\[([^\]]*)\]\((?:\.\./)*img/([^)]+)\)(?:\{\s*width="(\d+)"\s*\})?',
+                       lambda m: f'<img src="/scuola/starlight/img/{m.group(2)}" alt="{m.group(1)}"'
+                                 + (f' width="{m.group(3)}"' if m.group(3) else "") + ">", testo)
+        testo = re.sub(r'\]\(((?!https?:)[^)#]+)\.md(#[^)]*)?\)', r'](\1/\2)', testo)
+        return testo
     if FORMATO == "mdbook":
         testo = re.sub(r'!\[([^\]]*)\]\(([^)]+)\)\{\s*width="(\d+)"\s*\}',
                        r'<img src="\2" alt="\1" width="\3">', testo)
@@ -105,6 +124,9 @@ def main():
         if f.is_dir() or f.stem.endswith(".en"):
             continue
         dest.parent.mkdir(parents=True, exist_ok=True)
+        if FORMATO == "starlight" and f.suffix != ".md":  # immagini, css e js vanno in public/, serviti così come sono
+            dest = lavoro.parent.parent.parent / "public" / f.relative_to(docs)
+            dest.parent.mkdir(parents=True, exist_ok=True)
         if f.suffix == ".md":
             testo = converti(f.read_text(), docs)
             if FORMATO == "mdbook":  # mdBook non ha un piè di pagina configurabile: lo si aggiunge al testo
