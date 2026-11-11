@@ -2,7 +2,7 @@
 # Export con plugin di terze parti (aggiunto da esporta.sh, non nel sito)
 [output.epub]
 
-[output.typst-pdf]
+# mdbook-typst-pdf 0.7.3 provato l'11/11/2026: si ferma con «No such file or directory», tolto.
 
 [output.pandoc.profile.pdf]
 output-file = "La-mano-al-computer.pdf"

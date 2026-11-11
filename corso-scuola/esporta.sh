@@ -76,7 +76,7 @@ if [ -x "$PLUG/mdbook-epub" ]; then
   MDBOOK="$PWD/$(ls -d strumenti/mdbook-*/mdbook | grep -v plugin | tail -1)"
   LIB="$LAV/mdbook-plugin"; rm -rf "$LIB"; cp -r corso-scuola/mdbook-lavoro "$LIB"
   cat corso-scuola/esporta/book-plugin.toml >> "$LIB/book.toml"
-  (cd "$LIB" && PATH="$PLUG:$(dirname "$QUARTO")/../bin/tools/x86_64:$(dirname "$QUARTO")/../bin/tools:$PATH" "$MDBOOK" build -d out) >/dev/null 2>&1 || true
+  (cd "$LIB" && PATH="$PLUG:$(dirname "$QUARTO")/tools/x86_64:$HOME/.TinyTeX/bin/x86_64-linux:$PATH" "$MDBOOK" build -d out) >/dev/null 2>&1 || true
   find "$LIB/out" -name '*.epub' -exec cp {} "$OUT/mdbook/$NOME-plugin-epub.epub" \;
   find "$LIB/out/typst-pdf" -name '*.pdf' -exec cp {} "$OUT/mdbook/$NOME-plugin-typst.pdf" \; 2>/dev/null || true
   find "$LIB/out/pandoc" -name '*.pdf' -exec cp {} "$OUT/mdbook/$NOME-plugin-pandoc-latex.pdf" \; 2>/dev/null || true
